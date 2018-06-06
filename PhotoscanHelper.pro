@@ -42,12 +42,14 @@ INCLUDEPATH += include/
 
 SOURCES += \
         src/PhotoScanHelperApp.cpp \
-        src/UILogic/CollectionSelectionDialog.cpp
-#        src/UILogic/PSHelperMainWindow.cpp \
+        src/UILogic/CollectionSelectionDialog.cpp \
+        src/Model/PSXMLReader.cpp \
+#        src/UILogic/PSHelperMainWindow.cpp
 
 HEADERS += \
-        include/CollectionSelectionDialog.h
-#        include/PSHelperMainWindow.h \
+        include/CollectionSelectionDialog.h \
+        include/PSXMLReader.h \
+#        include/PSHelperMainWindow.h
 
 FORMS += \
         forms/AboutDialog.ui \
