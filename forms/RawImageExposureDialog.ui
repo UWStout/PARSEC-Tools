@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RawImageExposureDialog</class>
+ <widget class="QDialog" name="RawImageExposureDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>745</width>
+    <height>470</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>630</width>
+    <height>470</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Raw Image Exposure</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_5">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>White Balance Settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>White Balance Mode:</string>
+            </property>
+            <property name="buddy">
+             <cstring>WBModeComboBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="WBModeComboBox">
+            <item>
+             <property name="text">
+              <string>Default</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>From Camera</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Image Average</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Custom</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Custom Values:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>R:</string>
+              </property>
+              <property name="buddy">
+               <cstring>RSpinBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="RSpinBox">
+              <property name="decimals">
+               <number>6</number>
+              </property>
+              <property name="minimum">
+               <double>-999.999999000000003</double>
+              </property>
+              <property name="maximum">
+               <double>999.999999000000003</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>G1:</string>
+              </property>
+              <property name="buddy">
+               <cstring>G1SpinBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="G1SpinBox">
+              <property name="decimals">
+               <number>6</number>
+              </property>
+              <property name="minimum">
+               <double>-999.999999000000003</double>
+              </property>
+              <property name="maximum">
+               <double>999.999999000000003</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>B:</string>
+              </property>
+              <property name="buddy">
+               <cstring>BSpinBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="BSpinBox">
+              <property name="decimals">
+               <number>6</number>
+              </property>
+              <property name="minimum">
+               <double>-999.999999000000003</double>
+              </property>
+              <property name="maximum">
+               <double>999.999999000000003</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>G2:</string>
+              </property>
+              <property name="buddy">
+               <cstring>G2SpinBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QDoubleSpinBox" name="G2SpinBox">
+              <property name="decimals">
+               <number>6</number>
+              </property>
+              <property name="minimum">
+               <double>-999.999999000000003</double>
+              </property>
+              <property name="maximum">
+               <double>999.999999000000003</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Brightness Settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Brightness Mode:</string>
+            </property>
+            <property name="buddy">
+             <cstring>BrightModeComboBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="BrightModeComboBox">
+            <item>
+             <property name="text">
+              <string>From Histogram</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>No Adjustment</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Custom Scaler</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_10">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Scale:</string>
+              </property>
+              <property name="buddy">
+               <cstring>BrightScaleSpinBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="BrightScaleSpinBox">
+              <property name="decimals">
+               <number>6</number>
+              </property>
+              <property name="minimum">
+               <double>0.000001000000000</double>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>72</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Example Image:</string>
+           </property>
+           <property name="buddy">
+            <cstring>PreviewImageComboBox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="PreviewImageComboBox"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="PreviewButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Preview</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="ImagePreviewLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>381</width>
+              <height>321</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Destination Folder:</string>
+           </property>
+           <property name="buddy">
+            <cstring>DestinationDirLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="DestinationDirLineEdit">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="DestinationBrowseButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>WBModeComboBox</tabstop>
+  <tabstop>RSpinBox</tabstop>
+  <tabstop>G1SpinBox</tabstop>
+  <tabstop>BSpinBox</tabstop>
+  <tabstop>G2SpinBox</tabstop>
+  <tabstop>BrightModeComboBox</tabstop>
+  <tabstop>BrightScaleSpinBox</tabstop>
+  <tabstop>PreviewImageComboBox</tabstop>
+  <tabstop>PreviewButton</tabstop>
+  <tabstop>DestinationDirLineEdit</tabstop>
+  <tabstop>DestinationBrowseButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>PreviewImageComboBox</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>357</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>38</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>WBModeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>G1SpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>117</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>BSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>G2SpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>BrightModeComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>163</x>
+     <y>318</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>BrightScaleSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>RawImageExposureDialog</receiver>
+   <slot>updateFromGUI()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>128</x>
+     <y>356</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>322</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>asyncGeneratePreview()</slot>
+  <slot>updateFromGUI()</slot>
+ </slots>
+</ui>
