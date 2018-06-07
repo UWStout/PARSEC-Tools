@@ -43,6 +43,9 @@ INCLUDEPATH += include/
 SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
+        src/Model/PSCameraData.cpp \
+        src/Model/PSImageData.cpp \
+        src/Model/PSSensorData.cpp
         src/Model/PSXMLReader.cpp \
         src/Model/PSProjectFileData.cpp \
         src/Model/PSChunkData.cpp \
@@ -55,6 +58,9 @@ HEADERS += \
         include/PSStatusDescribable.h \
         include/PSProjectFileData.h \
         include/PSChunkData.h \
+        include/PSCameraData.h \
+        include/PSImageData.h \
+        include/PSSensorData.h \
 #        include/PSHelperMainWindow.h
 
 FORMS += \
