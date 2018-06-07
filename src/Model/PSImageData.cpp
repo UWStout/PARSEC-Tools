@@ -1,70 +1,67 @@
+#include <exception>
+
 #include "PSImageData.h"
+#include "PSCameraData.h"
+
+#include <QXmlStreamReader>
 
 PSImageData::PSImageData(long pCamID) {
     mCamID = pCamID;
     mFilePath = "";
-    mProperties = new QMap<QString, QString>();
     mCameraData = NULL;
 }
 
-PSImageData::~PSImageData() {
-
-}
+PSImageData::~PSImageData() {}
 
 void PSImageData::addProperty(QString key, QString value) {
     mProperties.insert(key, value);
 }
 
-void PSImageData::setCameraData(PSCameraData pCameraData) { mCameraData = pCameraData; }
+void PSImageData::setCameraData(PSCameraData* pCameraData) { mCameraData = pCameraData; }
 
 long PSImageData::getCamID() { return mCamID; }
 QString PSImageData::getFilePath() { return mFilePath; }
-QString PSImageData::getProperty(QString key) { return mProperties.find(key).value(); }
-PSCameraData PSImageData::getCameraData() { return mCameraData; }
+QString PSImageData::getProperty(QString key) { return mProperties.value(key); }
+PSCameraData* PSImageData::getCameraData() { return mCameraData; }
 
-PSImageData PSImageData::makeFromXML(QXMLReader &reader) { // TODO
+PSImageData* PSImageData::makeFromXML(QXmlStreamReader* reader) {
     // Sanity check
-    if(reader == NULL || reader.getLocalName() != "camera" || !reader.isStartElement()) {
+    if(reader == NULL || reader->name() != "camera" || !reader->isStartElement()) {
         return NULL;
     }
 
-    // In some older file formats, the ID is not there
+    // Note, in some older file formats, the ID is not there
     long camID = -1L;
-    try {
-        camID = Long.parseLong(reader.getAttributeValue(null, "camera_id"));
-    } catch(Exception e) {}
+    if (reader->attributes().hasAttribute("", "camera_id")) {
+        reader->attributes().value("", "camera_id").toLong();
+    }
 
     // Make a new object
-    PSImageData newImage = new PSImageData(camID);
+    PSImageData* newImage = new PSImageData(camID);
 
     // Parse the remaining XML data
     try {
-        while(reader.hasNext()) {
-            reader.next();
-            if(reader.isStartElement()) {
-                switch(reader.getLocalName()) {
-                    case "photo":
-                        newImage.mFilePath = reader.getAttributeValue(null, "path");
-                    break;
-
-                    case "property":
-                    {
-                        String lPropertyName = reader.getAttributeValue(null, "name");
-                        String lPropertyValue = reader.getAttributeValue(null, "value");
-                        newImage.mProperties.put(lPropertyName, lPropertyValue);
-                    }
-                    break;
+        while(!reader->atEnd()) {
+            reader->readNext();
+            if(reader->isStartElement()) {
+                if(reader->name() == "photo") {
+                    newImage->mFilePath = reader->attributes().value("", "path").toString();
+                } else if(reader->name() == "property") {
+                    QString lPropertyName = reader->attributes().value("", "name").toString();
+                    QString lPropertyValue = reader->attributes().value("", "value").toString();
+                    newImage->mProperties.insert(lPropertyName, lPropertyValue);
                 }
             }
 
-            if(reader.isEndElement()) {
-                if(reader.getLocalName().equalsIgnoreCase("camera")) {
+            // Reader might advance to the end element so this should not be mutually exclusive
+            if(reader->isEndElement()) {
+                if(reader->name() == "camera") {
                     return newImage;
                 }
             }
         }
-    } catch (XMLStreamException e) {
-        throw e;
+    } catch (...) {
+        throw new std::logic_error("Error parsing Camera XLM tag to PSImageData");
     }
 
     // Should never reach this except when XML is malformed
