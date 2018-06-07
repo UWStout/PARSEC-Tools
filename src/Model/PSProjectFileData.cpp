@@ -7,7 +7,7 @@ using namespace std;
 #include <QSettings>
 #include <QXmlStreamReader>
 
-//#include "PSChunkData.h"
+#include "PSChunkData.h"
 //#include "PSModelData.h"
 
 PSProjectFileData::PSProjectFileData(QFile*& pPSProjectFile) { //}, QSettings*& settings) {
@@ -92,7 +92,7 @@ bool PSProjectFileData::parseProjectFile() {
 void PSProjectFileData::processArrayElement(QXmlStreamReader* reader, QString elementName) {
     if (elementName == "chunk") {
         // Process this chunk tag
-        PSChunkData* lNewChunk = new PSChunkData(mPSProjectFile, reader, mPathStack);
+        PSChunkData* lNewChunk = new PSChunkData(mPSProjectFile, reader, &mPathStack);
 
         // Save the results
         if(lNewChunk != NULL) {

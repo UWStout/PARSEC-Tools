@@ -1,58 +1,62 @@
+#include <exception>
+
 #include "PSCameraData.h"
+#include "PSSensorData.h"
+#include "PSImageData.h"
+
+#include <QXmlStreamReader>
 
 PSCameraData::PSCameraData(long pID) : ID(pID) {
     mLabel = "";
     mEnabled = false;
 
+    mTransform = NULL;
     mImageData = NULL;
     mSensorData = NULL;
 }
 
-PSCameraData::~PSCameraData() {
+PSCameraData::~PSCameraData() {}
 
-}
-
-PSCameraData PSCameraData::makeFromXML(QXMLReader &reader) {
-
-    // TODO
-
+PSCameraData* PSCameraData::makeFromXML(QXmlStreamReader* reader) {
     // Sanity check
-    if(reader == NULL || reader.getLocalName() != "camera" || !reader.isStartElement()) {
+    if(reader == NULL || reader->name() != "camera" || !reader->isStartElement()) {
         return NULL;
     }
 
     // Build the basic Camera
-    PSCameraData newCamera = new PSCameraData(Long.parseLong(reader.getAttributeValue(null, "id")));
-    newCamera.mLabel = reader.getAttributeValue(null, "label");
-    newCamera.mEnabled = (reader.getAttributeValue(null, "enabled").equalsIgnoreCase("true"));
-    try { newCamera.mSensorID = Long.parseLong(reader.getAttributeValue(null, "sensor_id")); }
-    catch(Exception e) { newCamera.mSensorID = -1L; }
+    PSCameraData* newCamera = new PSCameraData(reader->attributes().value("", "id").toLong());
+    newCamera->mLabel = reader->attributes().value("", "label").toString();
+    newCamera->mEnabled = (reader->attributes().value("", "enabled") == "true");
+    try { newCamera->mSensorID = reader->attributes().value("", "sensor_id").toLong(); }
+    catch(...) { newCamera->mSensorID = -1L; }
 
     try {
-        while(reader.hasNext()) {
-            reader.next();
-            if(reader.isStartElement()) {
-                if(reader.getLocalName().equalsIgnoreCase("transform")) {
-                    QVector<QString> coeffs = reader.getElementText().split("\\s");
-                    newCamera.mTransform = new double[coeffs.length];
-                    for(int i=0; i<coeffs.length; i++) {
-                        newCamera.mTransform[i] = Double.parseDouble(coeffs[i]);
+        while(!reader->atEnd()) {
+            reader->readNext();
+            if(reader->isStartElement()) {
+                if(reader->name() == "transform") {
+                    QVector<QStringRef> coeffs = reader->readElementText().splitRef("\\s");
+                    newCamera->mTransform = new double[coeffs.length()];
+                    for(int i=0; i<coeffs.length(); i++) {
+                        newCamera->mTransform[i] = coeffs[i].toDouble();
                     }
                 }
             }
 
-            if(reader.isEndElement()) {
-                if(reader.getLocalName().equalsIgnoreCase("camera")) {
+            // Reader might advance to the end element so this should not be mutually exclusive
+            if(reader->isEndElement()) {
+                if(reader->name() == "camera") {
                     return newCamera;
                 }
             }
         }
-    } catch (XMLStreamException e) {
-        throw e;
+    } catch (...) {
+        delete newCamera;
+        throw new std::logic_error("Error parsing camera XML tag");
     }
 
     // Should never reach this except when XML is malformed
-    return null;
+    return NULL;
 }
 
 QString PSCameraData::getLabel() { return mLabel; }

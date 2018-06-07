@@ -4,9 +4,9 @@
 #include <QXmlStreamReader>
 
 //#include "PSModelData.h"
-//#include "PSSensorData.h"
-//#include "PSCameraData.h"
-//#include "PSImageData.h"
+#include "PSSensorData.h"
+#include "PSCameraData.h"
+#include "PSImageData.h"
 
 PSChunkData::PSChunkData(QFile* pSourceFile, QXmlStreamReader* reader) {
     PSChunkData(pSourceFile, reader, NULL);
@@ -96,17 +96,17 @@ void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
 void PSChunkData::processArrayElement(QXmlStreamReader* reader, QString elem) {
     if (elem == "sensor") {
         try {
-            PSSensorData lNewSensor = PSSensorData::makeFromXML(reader);
-            mSensors.insert(lNewSensor.ID, lNewSensor);
+            PSSensorData* lNewSensor = PSSensorData::makeFromXML(reader);
+            mSensors.insert(lNewSensor->ID, lNewSensor);
         } catch (...) {
             qWarning("Error while parsing XML to make PSSensorData.");
         }
      } else if (elem == "camera") {
         if(mInsideFrame) {
             try {
-                PSImageData lNewImage = PSImageData::makeFromXML(reader);
-                if(mCameras.contains(lNewImage.getCamID())) {
-                    lNewImage.setCameraData(mCameras.value(lNewImage.getCamID()));
+                PSImageData* lNewImage = PSImageData::makeFromXML(reader);
+                if(mCameras.contains(lNewImage->getCamID())) {
+                    lNewImage->setCameraData(mCameras.value(lNewImage->getCamID()));
                 }
                 mImages.push_back(lNewImage);
             } catch (...) {
@@ -114,11 +114,11 @@ void PSChunkData::processArrayElement(QXmlStreamReader* reader, QString elem) {
             }
         } else {
             try {
-                PSCameraData lNewCamera = PSCameraData::makeFromXML(reader);
-                if(mSensors.contains(lNewCamera.getSensorID())) {
-                    lNewCamera.setSensorData(mSensors.value(lNewCamera.getSensorID()));
+                PSCameraData* lNewCamera = PSCameraData::makeFromXML(reader);
+                if(mSensors.contains(lNewCamera->getSensorID())) {
+                    lNewCamera->setSensorData(mSensors.value(lNewCamera->getSensorID()));
                 }
-                mCameras.insert(lNewCamera.ID, lNewCamera);
+                mCameras.insert(lNewCamera->ID, lNewCamera);
             } catch (...) {
                 qWarning("Error while parsing XML to make PSCameraData.");
             }

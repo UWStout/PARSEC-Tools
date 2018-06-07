@@ -1,5 +1,7 @@
 #include "PSSensorData.h"
 
+#include <QXmlStreamReader>
+
 PSSensorData::PSSensorData(long pID, QString pLabel) : ID(pID) {
     mLabel = pLabel;
     mType = "";
@@ -13,119 +15,99 @@ PSSensorData::PSSensorData(long pID, QString pLabel) : ID(pID) {
 
     mCovarianceParams = "";
     mCovarianceCoeffs = NULL;
-
-    mBands = new QList<QString>();
 }
 
-PSSensorData::~PSSensorData(){
+PSSensorData::~PSSensorData() {}
 
-}
-
-PSSensorData PSSensorData::makeFromXML(QXMLReader &reader) { // TODO
+PSSensorData* PSSensorData::makeFromXML(QXmlStreamReader* reader) {
     // Sanity check
-    if(reader == NULL || reader.getLocalName() != "sensor") {
+    if(reader == NULL || reader->name() != "sensor") {
         return NULL;
     }
 
     // Build the basic sensor
-    PSSensorData newSensor = new PSSensorData(
-            Long.parseLong(reader.getAttributeValue(null, "id")),
-            reader.getAttributeValue(null, "label"));
-    newSensor.mType = reader.getAttributeValue(null, "type");
+    PSSensorData* newSensor = new PSSensorData(
+            reader->attributes().value("", "id").toLong(),
+            reader->attributes().value("", "label").toString());
+    newSensor->mType = reader->attributes().value("", "type").toString();
 
     // Track XML state
-    boolean lInsideCalib = false, lInsideBands = false, lInsideCovar = false;
+    bool lInsideCalib = false, lInsideBands = false, lInsideCovar = false;
 
     // Parse out internal sensor tag data
     try {
-        while(reader.hasNext()) {
-            reader.next();
-            if(reader.isStartElement()) {
-                switch(reader.getLocalName()) {
-                    case "bands": lInsideBands = true; break;
-                    case "calibration": lInsideCalib = true; break;
-                    case "covariance": lInsideCovar = true; break;
+        while(!reader->atEnd()) {
+            reader->readNext();
+            if(reader->isStartElement()) {
+                if(reader->name() == "bands") { lInsideBands = true; }
+                else if(reader->name() == "calibration") { lInsideCalib = true; }
+                else if(reader->name() == "covariance") { lInsideCovar = true; }
 
-                    case "resolution":
-                        if(!lInsideCalib) {
-                            newSensor.mWidth = Integer.parseInt(reader.getAttributeValue(null, "width"));
-                            newSensor.mHeight = Integer.parseInt(reader.getAttributeValue(null, "height"));
-                        }
-                    break;
+                else if(reader->name() == "resolution" && !lInsideCalib) {
+                    newSensor->mWidth = reader->attributes().value("", "width").toInt();
+                    newSensor->mHeight = reader->attributes().value("", "height").toInt();
+                }
 
-                    case "property":
-                        double lValue = 0;
-                        try { Double.parseDouble(reader.getAttributeValue(null, "value")); }
-                        catch(Exception e) { }
+                else if(reader->name() == "property") {
+                    QStringRef lPropName = reader->attributes().value("", "name");
+                    if (lPropName == "fixed") {
+                        newSensor->mFixed = (reader->attributes().value("", "value") == "true");
+                    } else {
+                        double lValue = reader->attributes().value("", "value").toDouble();
+                        if (lPropName == "pixel_width") { newSensor->mPixelWidth = lValue; }
+                        else if (lPropName == "pixel_height") { newSensor->mPixelHeight = lValue; }
+                        else if (lPropName == "focal_length") { newSensor->mFocalLength = lValue; }
+                    }
+                }
 
-                        switch(reader.getAttributeValue(null, "name")) {
-                            case "pixel_width": newSensor.mPixelWidth = lValue; break;
-                            case "pixel_height": newSensor.mPixelHeight = lValue; break;
-                            case "focal_length": newSensor.mFocalLength = lValue; break;
-                            case "fixed":
-                                newSensor.mFixed = (
-                                        reader.getAttributeValue(null, "value").equalsIgnoreCase("true"));
-                            break;
-                        }
-                    break;
+                else if(reader->name() == "band" && lInsideBands) {
+                    newSensor->mBands.append(reader->attributes().value("", "label").toString());
+                }
 
-                    case "band":
-                        if(lInsideBands) {
-                            newSensor.mBands.add(reader.getAttributeValue(null, "label"));
-                        }
-                    break;
+                else if(reader->name() == "fx") { newSensor->mFx = reader->readElementText().toDouble(); }
+                else if(reader->name() == "fy") { newSensor->mFy = reader->readElementText().toDouble(); }
 
-                    case "fx": newSensor.mFx = Double.parseDouble(reader.getElementText()); break;
-                    case "fy": newSensor.mFy = Double.parseDouble(reader.getElementText()); break;
+                else if(reader->name() == "cx") { newSensor->mCx = reader->readElementText().toDouble(); }
+                else if(reader->name() == "cy") { newSensor->mCy = reader->readElementText().toDouble(); }
 
-                    case "cx": newSensor.mCx = Double.parseDouble(reader.getElementText()); break;
-                    case "cy": newSensor.mCy = Double.parseDouble(reader.getElementText()); break;
+                else if(reader->name() == "b1") { newSensor->mB1 = reader->readElementText().toDouble(); }
+                else if(reader->name() == "b2") { newSensor->mB2 = reader->readElementText().toDouble(); }
 
-                    case "b1": newSensor.mB1 = Double.parseDouble(reader.getElementText()); break;
-                    case "b2": newSensor.mB2 = Double.parseDouble(reader.getElementText()); break;
+                else if(reader->name() == "skew") { newSensor->mSkew = reader->readElementText().toDouble(); }
 
-                    case "skew": newSensor.mSkew = Double.parseDouble(reader.getElementText()); break;
+                else if(reader->name() == "p1") { newSensor->mP1 = reader->readElementText().toDouble(); }
+                else if(reader->name() == "p2") { newSensor->mP2 = reader->readElementText().toDouble(); }
+                else if(reader->name() == "p3") { newSensor->mP3 = reader->readElementText().toDouble(); }
+                else if(reader->name() == "p4") { newSensor->mP4 = reader->readElementText().toDouble(); }
 
-                    case "p1": newSensor.mP1 = Double.parseDouble(reader.getElementText()); break;
-                    case "p2": newSensor.mP2 = Double.parseDouble(reader.getElementText()); break;
-                    case "p3": newSensor.mP3 = Double.parseDouble(reader.getElementText()); break;
-                    case "p4": newSensor.mP4 = Double.parseDouble(reader.getElementText()); break;
+                else if(reader->name() == "k1") { newSensor->mK1 = reader->readElementText().toDouble(); }
+                else if(reader->name() == "k2") { newSensor->mK2 = reader->readElementText().toDouble(); }
+                else if(reader->name() == "k3") { newSensor->mK3 = reader->readElementText().toDouble(); }
+                else if(reader->name() == "k4") { newSensor->mK4 = reader->readElementText().toDouble(); }
 
-                    case "k1": newSensor.mK1 = Double.parseDouble(reader.getElementText()); break;
-                    case "k2": newSensor.mK2 = Double.parseDouble(reader.getElementText()); break;
-                    case "k3": newSensor.mK3 = Double.parseDouble(reader.getElementText()); break;
-                    case "k4": newSensor.mK4 = Double.parseDouble(reader.getElementText()); break;
+                else if(reader->name() == "params" && lInsideCovar) {
+                    newSensor->mCovarianceParams = reader->readElementText().toDouble();
+                }
 
-                    case "params":
-                        if(lInsideCovar) {
-                            newSensor.mCovarianceParams = reader.getElementText();
-                        }
-                    break;
-
-                    case "coeffs":
-                        if(lInsideCovar) {
-                            QVector<QString> coeffs = reader.getElementText().split("\\s");
-                            newSensor.mCovarianceCoeffs = new double[coeffs.length];
-                            for(int i=0; i<coeffs.length; i++) {
-                                newSensor.mCovarianceCoeffs[i] = Double.parseDouble(coeffs[i]);
-                            }
-                        }
-                    break;
+                else if(reader->name() == "coeffs" && lInsideCovar) {
+                    QVector<QStringRef> coeffs = reader->readElementText().splitRef("\\s");
+                    newSensor->mCovarianceCoeffs = new double[coeffs.length()];
+                    for(int i=0; i<coeffs.length(); i++) {
+                        newSensor->mCovarianceCoeffs[i] = coeffs[i].toDouble();
+                    }
                 }
             }
 
-            // Calling getElementText advances to the end element so this should not be mutually exclusive
-            if(reader.isEndElement()) {
-                switch(reader.getLocalName()) {
-                    case "calibration": lInsideCalib = false; break;
-                    case "bands": lInsideBands = false; break;
-                    case "covariance": lInsideCovar = false; break;
-                    case "sensor": return newSensor;
-                }
+            // Calling readElementText() might advance to the end element so this should not be mutually exclusive
+            if(reader->isEndElement()) {
+                if (reader->name() == "calibration") { lInsideCalib = false; }
+                else if (reader->name() == "bands") { lInsideBands = false; }
+                else if (reader->name() == "covariance") { lInsideCovar = false; }
+                else if (reader->name() == "sensor") { return newSensor; }
             }
         }
-    } catch (XMLStreamException e) {
-        throw e;
+    } catch (...) {
+        throw new std::logic_error("Error parsing XML sensor tag to PSSensorData");
     }
 
     // Should never reach this except when XML is malformed
@@ -164,5 +146,5 @@ QString PSSensorData::getLabel() { return mLabel; }
 QString PSSensorData::getType() { return mType; }
 
 QString PSSensorData::getCovarianceParams() { return mCovarianceParams; }
-QList<QString> PSSensorData::getBands() { return mbands; }
+QList<QString> PSSensorData::getBands() { return mBands; }
 double* PSSensorData::getCovarianceCoeffs() { return mCovarianceCoeffs; }
