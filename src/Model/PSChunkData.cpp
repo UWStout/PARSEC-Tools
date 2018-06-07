@@ -3,10 +3,16 @@
 #include <QFile>
 #include <QXmlStreamReader>
 
-//#include "PSModelData.h"
+#include "PSModelData.h"
 #include "PSSensorData.h"
 #include "PSCameraData.h"
 #include "PSImageData.h"
+
+// Make the final enum definitions
+DEFINE_ENUM(ImageAlignmentDetail, IMAGE_ALIGNMENT_DETAIL_ENUM, PSChunkData)
+DEFINE_ENUM(DenseCloudDetail, DENSE_CLOUD_DETAIL_ENUM, PSChunkData)
+DEFINE_ENUM(DenseCloudFilter, DENSE_CLOUD_FILTER_ENUM, PSChunkData)
+DEFINE_ENUM(ModelGenerationDetail, MODEL_GENERATION_DETAIL_ENUM, PSChunkData)
 
 PSChunkData::PSChunkData(QFile* pSourceFile, QXmlStreamReader* reader) {
     PSChunkData(pSourceFile, reader, NULL);

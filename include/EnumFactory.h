@@ -29,8 +29,8 @@
   EnumType get##EnumType##Value(const char *string); \
 
 /// define the access function names
-#define DEFINE_ENUM(EnumType,ENUM_DEF) \
-  const char* getString(EnumType value) \
+#define DEFINE_ENUM(EnumType,ENUM_DEF,ns) \
+  const char* ns::getString(ns::EnumType value) \
   { \
     switch(value) \
     { \
@@ -38,7 +38,7 @@
       default: return ""; /* handle input error */ \
     } \
   } \
-  const char* getDescription(EnumType value) \
+  const char* ns::getDescription(ns::EnumType value) \
   { \
     switch(value) \
     { \
@@ -46,7 +46,7 @@
       default: return ""; /* handle input error */ \
     } \
   } \
-  EnumType get##EnumType##Value(const char *str) \
+  ns::EnumType ns::get##EnumType##Value(const char *str) \
   { \
     ENUM_DEF(ENUM_STRCMP) \
     return (EnumType)0; /* handle input error */ \
