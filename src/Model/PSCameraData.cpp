@@ -12,47 +12,47 @@ PSCameraData::~PSCameraData() {
 
 }
 
-PSCameraData::makeFromXML(QXMLReader reader) {
+PSCameraData PSCameraData::makeFromXML(QXMLReader &reader) {
 
     // TODO
 
-//    // Sanity check
-//    if(reader == null || reader.getLocalName() != "camera" || !reader.isStartElement()) {
-//        return null;
-//    }
+    // Sanity check
+    if(reader == NULL || reader.getLocalName() != "camera" || !reader.isStartElement()) {
+        return NULL;
+    }
 
-//    // Build the basic Camera
-//    PSCameraData newCamera = new PSCameraData(Long.parseLong(reader.getAttributeValue(null, "id")));
-//    newCamera.mLabel = reader.getAttributeValue(null, "label");
-//    newCamera.mEnabled = (reader.getAttributeValue(null, "enabled").equalsIgnoreCase("true"));
-//    try { newCamera.mSensorID = Long.parseLong(reader.getAttributeValue(null, "sensor_id")); }
-//    catch(Exception e) { newCamera.mSensorID = -1L; }
+    // Build the basic Camera
+    PSCameraData newCamera = new PSCameraData(Long.parseLong(reader.getAttributeValue(null, "id")));
+    newCamera.mLabel = reader.getAttributeValue(null, "label");
+    newCamera.mEnabled = (reader.getAttributeValue(null, "enabled").equalsIgnoreCase("true"));
+    try { newCamera.mSensorID = Long.parseLong(reader.getAttributeValue(null, "sensor_id")); }
+    catch(Exception e) { newCamera.mSensorID = -1L; }
 
-//    try {
-//        while(reader.hasNext()) {
-//            reader.next();
-//            if(reader.isStartElement()) {
-//                if(reader.getLocalName().equalsIgnoreCase("transform")) {
-//                    String[] coeffs = reader.getElementText().split("\\s");
-//                    newCamera.mTransform = new double[coeffs.length];
-//                    for(int i=0; i<coeffs.length; i++) {
-//                        newCamera.mTransform[i] = Double.parseDouble(coeffs[i]);
-//                    }
-//                }
-//            }
+    try {
+        while(reader.hasNext()) {
+            reader.next();
+            if(reader.isStartElement()) {
+                if(reader.getLocalName().equalsIgnoreCase("transform")) {
+                    QVector<QString> coeffs = reader.getElementText().split("\\s");
+                    newCamera.mTransform = new double[coeffs.length];
+                    for(int i=0; i<coeffs.length; i++) {
+                        newCamera.mTransform[i] = Double.parseDouble(coeffs[i]);
+                    }
+                }
+            }
 
-//            if(reader.isEndElement()) {
-//                if(reader.getLocalName().equalsIgnoreCase("camera")) {
-//                    return newCamera;
-//                }
-//            }
-//        }
-//    } catch (XMLStreamException e) {
-//        throw e;
-//    }
+            if(reader.isEndElement()) {
+                if(reader.getLocalName().equalsIgnoreCase("camera")) {
+                    return newCamera;
+                }
+            }
+        }
+    } catch (XMLStreamException e) {
+        throw e;
+    }
 
-//    // Should never reach this except when XML is malformed
-//    return null;
+    // Should never reach this except when XML is malformed
+    return null;
 }
 
 QString PSCameraData::getLabel() { return mLabel; }

@@ -22,7 +22,6 @@ namespace Ui {
     class PSHelperMainWindow;
 }
 
-
 class PSHelperMainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -50,7 +49,7 @@ private:
     GLModelViewer* mModelViewer;
 
     // Default search paths for im4Java
-    static const string WINDOWS_PATH, MAC_UNIX_PATH;
+    static const QString WINDOWS_PATH, MAC_UNIX_PATH;
 
     void writeSettings();
     void readSettings();
