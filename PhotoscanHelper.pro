@@ -49,6 +49,7 @@ SOURCES += \
         src/Model/PSXMLReader.cpp \
         src/Model/PSProjectFileData.cpp \
         src/Model/PSChunkData.cpp \
+        src/Model/PSModelData.cpp \
 #        src/UILogic/PSHelperMainWindow.cpp \
 
 HEADERS += \
@@ -61,6 +62,7 @@ HEADERS += \
         include/PSCameraData.h \
         include/PSImageData.h \
         include/PSSensorData.h \
+        include/PSModelData.h \
 #        include/PSHelperMainWindow.h \
 
 FORMS += \
