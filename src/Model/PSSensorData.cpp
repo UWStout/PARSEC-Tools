@@ -1,7 +1,6 @@
 #include "PSSensorData.h"
 
-PSSensorData::PSSensorData(long pID, QString pLabel) {
-    ID = pID;
+PSSensorData::PSSensorData(long pID, QString pLabel) : ID(pID) {
     mLabel = pLabel;
     mType = "";
 
@@ -16,6 +15,10 @@ PSSensorData::PSSensorData(long pID, QString pLabel) {
     mCovarianceCoeffs = NULL;
 
     mBands = new QList<QString>();
+}
+
+PSSensorData::~PSSensorData(){
+
 }
 
 PSSensorData PSSensorData::makeFromXML(QXMLReader reader) { // TODO

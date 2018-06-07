@@ -1,16 +1,12 @@
-//package edu.uwstout.berriers.PSHelper.Model;
-
-//import java.util.HashMap;
-//import java.util.Map;
-
-//import javax.xml.stream.XMLStreamException;
-//import javax.xml.stream.XMLStreamReader;
+#ifndef PS_IMAGE_DATA_H
+#define PS_IMAGE_DATA_H
 
 #include <QString>
 #include <QMap>
-// Include for QXML Reader goes here
 
+// Include for QXML Reader goes here
 #include "PSCameraData.h"
+class PSCameraData;
 
 class PSImageData {
 
@@ -18,10 +14,11 @@ class PSImageData {
         long mCamID;
         QString mFilePath;
         QMap<QString, QString> mProperties;
-        PSCameraData mCameraData;
+        PSCameraData *mCameraData;
 
     public:
         PSImageData(long pCamID);
+        ~PSImageData();
 
         void addProperty(QString key, QString value);
         void setCameraData(PSCameraData pCameraData);
@@ -33,3 +30,5 @@ class PSImageData {
 
         static PSImageData makeFromXML(QXMLStreamReader reader); // TODO
 };
+
+#endif

@@ -1,17 +1,15 @@
-//package edu.uwstout.berriers.PSHelper.Model;
-
-//import java.util.ArrayList;
-
-//import javax.xml.stream.XMLStreamException;
-//import javax.xml.stream.XMLStreamReader;
+#ifndef PS_SENSOR_DATA_H
+#define PS_SENSOR_DATA_H
 
 #include <QString>
 #include <QList>
+#include <QVector>
 
 class PSSensorData {
     public:
-        static long ID;
+        const long ID;
         PSSensorData(long pID, QString pLabel);
+        ~PSSensorData();
         static PSSensorData makeFromXML(QXMLReader reader);
 
         int getWidth();
@@ -51,5 +49,7 @@ class PSSensorData {
         QString mLabel, mType;
         QString mCovarianceParams;
         QList<QString> mBands;
-        double mCovarianceCoeffs[];
+        QVector<double> mCovarianceCoeffs;
 };
+
+#endif

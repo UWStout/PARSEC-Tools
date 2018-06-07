@@ -1,13 +1,15 @@
 #include "PSCameraData.h"
 
-PSCameraData::PSCameraData(long pID) {
-    ID = pID;
-
+PSCameraData::PSCameraData(long pID) : ID(pID) {
     mLabel = "";
     mEnabled = false;
 
     mImageData = NULL;
     mSensorData = NULL;
+}
+
+PSCameraData::~PSCameraData() {
+
 }
 
 PSCameraData::makeFromXML(QXMLReader reader) {
@@ -54,17 +56,17 @@ PSCameraData::makeFromXML(QXMLReader reader) {
 }
 
 QString PSCameraData::getLabel() { return mLabel; }
-PSImageData PSCameraData::getImageData() { return mImageData; }
+PSImageData *PSCameraData::getImageData() { return mImageData; }
 
 long PSCameraData::getSensorID() { return mSensorID; }
-PSSensorData PSCameraData::getSensorData() { return mSensorData; }
+PSSensorData *PSCameraData::getSensorData() { return mSensorData; }
 
 bool PSCameraData::isEnabled() { return mEnabled; }
-bool PSCameraData::isAligned() { return mImageData != null; }
+bool PSCameraData::isAligned() { return (mImageData != NULL); }
 
 void PSCameraData::setLabel(QString pLabel) { mLabel = pLabel; }
-void PSCameraData::setImageData(PSImageData pImageData) { mImageData = pImageData; }
+void PSCameraData::setImageData(PSImageData *pImageData) { mImageData = pImageData; }
 void PSCameraData::setIsEnabled(bool pEnabled) { mEnabled = pEnabled; }
 
 void PSCameraData::setSensoID(long pSensorID) { mSensorID = pSensorID; }
-void PSCameraData::setSensorData(PSSensorData pSensorData) { mSensorData = pSensorData; }
+void PSCameraData::setSensorData(PSSensorData *pSensorData) { mSensorData = pSensorData; }
