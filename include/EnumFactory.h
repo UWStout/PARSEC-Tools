@@ -24,13 +24,13 @@
   enum EnumType { \
     ENUM_DEF(ENUM_VALUE) \
   }; \
-  const char* GetString(EnumType dummy); \
-  const char* GetDescription(EnumType dummy); \
-  EnumType Get##EnumType##Value(const char *string); \
+  const char* getString(EnumType dummy); \
+  const char* getDescription(EnumType dummy); \
+  EnumType get##EnumType##Value(const char *string); \
 
 /// define the access function names
 #define DEFINE_ENUM(EnumType,ENUM_DEF) \
-  const char* GetString(EnumType value) \
+  const char* getString(EnumType value) \
   { \
     switch(value) \
     { \
@@ -38,7 +38,7 @@
       default: return ""; /* handle input error */ \
     } \
   } \
-  const char* GetDescription(EnumType value) \
+  const char* getDescription(EnumType value) \
   { \
     switch(value) \
     { \
@@ -46,7 +46,7 @@
       default: return ""; /* handle input error */ \
     } \
   } \
-  EnumType Get##EnumType##Value(const char *str) \
+  EnumType get##EnumType##Value(const char *str) \
   { \
     ENUM_DEF(ENUM_STRCMP) \
     return (EnumType)0; /* handle input error */ \
