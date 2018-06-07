@@ -22,51 +22,51 @@ QString PSImageData::getFilePath() { return mFilePath; }
 QString PSImageData::getProperty(QString key) { return mProperties.find(key).value(); }
 PSCameraData PSImageData::getCameraData() { return mCameraData; }
 
-PSImageData PSImageData::makeFromXML(QXMLReader reader) { // TODO
-//		// Sanity check
-//		if(reader == null || reader.getLocalName() != "camera" || !reader.isStartElement()) {
-//			return null;
-//		}
+PSImageData PSImageData::makeFromXML(QXMLReader &reader) { // TODO
+    // Sanity check
+    if(reader == NULL || reader.getLocalName() != "camera" || !reader.isStartElement()) {
+        return NULL;
+    }
 
-//		// In some older file formats, the ID is not there
-//		long camID = -1L;
-//		try {
-//			camID = Long.parseLong(reader.getAttributeValue(null, "camera_id"));
-//		} catch(Exception e) {}
+    // In some older file formats, the ID is not there
+    long camID = -1L;
+    try {
+        camID = Long.parseLong(reader.getAttributeValue(null, "camera_id"));
+    } catch(Exception e) {}
 
-//		// Make a new object
-//		PSImageData newImage = new PSImageData(camID);
+    // Make a new object
+    PSImageData newImage = new PSImageData(camID);
 
-//		// Parse the remaining XML data
-//		try {
-//			while(reader.hasNext()) {
-//			    reader.next();
-//			    if(reader.isStartElement()) {
-//			    	switch(reader.getLocalName()) {
-//			    		case "photo":
-//				    		newImage.mFilePath = reader.getAttributeValue(null, "path");
-//			    		break;
+    // Parse the remaining XML data
+    try {
+        while(reader.hasNext()) {
+            reader.next();
+            if(reader.isStartElement()) {
+                switch(reader.getLocalName()) {
+                    case "photo":
+                        newImage.mFilePath = reader.getAttributeValue(null, "path");
+                    break;
 
-//			    		case "property":
-//			    		{
-//                        	String lPropertyName = reader.getAttributeValue(null, "name");
-//                        	String lPropertyValue = reader.getAttributeValue(null, "value");
-//                        	newImage.mProperties.put(lPropertyName, lPropertyValue);
-//			    		}
-//			    		break;
-//			    	}
-//			    }
+                    case "property":
+                    {
+                        String lPropertyName = reader.getAttributeValue(null, "name");
+                        String lPropertyValue = reader.getAttributeValue(null, "value");
+                        newImage.mProperties.put(lPropertyName, lPropertyValue);
+                    }
+                    break;
+                }
+            }
 
-//			    if(reader.isEndElement()) {
-//			    	if(reader.getLocalName().equalsIgnoreCase("camera")) {
-//			    		return newImage;
-//			    	}
-//			    }
-//			}
-//		} catch (XMLStreamException e) {
-//			throw e;
-//		}
+            if(reader.isEndElement()) {
+                if(reader.getLocalName().equalsIgnoreCase("camera")) {
+                    return newImage;
+                }
+            }
+        }
+    } catch (XMLStreamException e) {
+        throw e;
+    }
 
-//		// Should never reach this except when XML is malformed
-//		return null;
+    // Should never reach this except when XML is malformed
+    return NULL;
 }

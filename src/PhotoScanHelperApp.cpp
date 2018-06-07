@@ -72,14 +72,13 @@ int main(int argc, char *argv[]) {
 
 //        lWatcher.waitForFinished();
 //        mScanner->finishDataParallel();
-//    } catch(...) {
+//    } catch(exception& e) {
 
 //        QMessageBox.critical(null, "Error Scanning Files", "Error: failed to scan '" + collectionPath + "'.");
 
 //        // Something went wrong scanning the given file/folder
 //        cerr << "Error: failed to scan '" << collectionPath << "'." << endl;
-//        cerr << "Exception: " << e.getMessage() << endl;
-//        e.printStackTrace();
+//        cerr << "Exception: " << e.what() << endl;
 //        exit(1);
 //    }
 
