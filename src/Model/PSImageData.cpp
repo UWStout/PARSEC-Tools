@@ -7,6 +7,10 @@ PSImageData::PSImageData(long pCamID) {
     mCameraData = NULL;
 }
 
+PSImageData::~PSImageData() {
+
+}
+
 void PSImageData::addProperty(QString key, QString value) {
     mProperties.insert(key, value);
 }
