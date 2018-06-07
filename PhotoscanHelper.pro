@@ -44,11 +44,17 @@ SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
         src/Model/PSXMLReader.cpp \
+        src/Model/PSProjectFileData.cpp \
+        src/Model/PSChunkData.cpp \
 #        src/UILogic/PSHelperMainWindow.cpp
 
 HEADERS += \
+        include/EnumFactory.h \
         include/CollectionSelectionDialog.h \
         include/PSXMLReader.h \
+        include/PSStatusDescribable.h \
+        include/PSProjectFileData.h \
+        include/PSChunkData.h \
 #        include/PSHelperMainWindow.h
 
 FORMS += \
