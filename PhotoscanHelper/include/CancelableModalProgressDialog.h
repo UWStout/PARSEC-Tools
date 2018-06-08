@@ -19,24 +19,24 @@
  *
  * @param <T> The type associated with the QFuture that will be used to cancel the background task.
  */
-template<typename T>
+template<class T>
 class CancelableModalProgressDialog : public QDialog {
     Q_OBJECT
 
-    public:
-        CancelableModalProgressDialog(QString pLabelText, QWidget parent);
-        setFuture(QFuture<T> pFuture);
-        wasCanceled();
+public:
+    CancelableModalProgressDialog(QString pLabelText, QWidget parent);
+    void setFuture(QFuture<T> pFuture);
+    bool wasCanceled();
 
-    private:
-        Ui_CancelableProgressDialog* mGUI;
-        const QFutureWatcher<T> mWatcher;
-        processFinished();
-        on_CancelButtonClicked();
+private:
+    Ui_CancelableProgressDialog* mGUI;
+    const QFutureWatcher<T> mWatcher;
+    void processFinished();
+    void on_CancelButtonClicked();
 
-    signals:
-        void complete();
-        void canceled();
+signals:
+    void complete();
+    void canceled();
 
 };
 
