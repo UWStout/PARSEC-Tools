@@ -33,6 +33,8 @@ SOURCES += \
         src/Model/PSChunkData.cpp \
         src/Model/PSModelData.cpp \
 #        src/UILogic/PSHelperMainWindow.cpp \
+        src/UILogic/CancelableModalProgressDialog.cpp \
+        src/UILogic/ProcessQueueProgressDialog.cpp
 
 HEADERS += \
         include/EnumFactory.h \
@@ -45,8 +47,9 @@ HEADERS += \
         include/PSImageData.h \
         include/PSSensorData.h \
         include/PSModelData.h \
-        include/CancelableModalProgressDialog.h
 #        include/PSHelperMainWindow.h \
+        include/CancelableModalProgressDialog.h \
+        include/ProcessQueueProgressDialog.h \
 
 FORMS += \
         forms/AboutDialog.ui \

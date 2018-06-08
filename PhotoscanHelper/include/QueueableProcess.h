@@ -1,10 +1,8 @@
-package edu.uwstout.berriers.PSHelper.app;
+#include <QFuture>
+#include <QString>
 
-import com.trolltech.qt.core.QFuture;
-
-public interface QueueableProcess<T> {
-	
-	String describeProcess();
-	QFuture<T> runProcess();
-
-}
+template <class T>
+class QueueableProcess<T> {
+	virtual QString describeProcess() = 0;
+	virtual QFuture<T> runProcess() = 0;
+};
