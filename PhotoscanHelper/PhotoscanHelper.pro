@@ -51,6 +51,7 @@ SOURCES += \
         src/Model/PSChunkData.cpp \
         src/Model/PSModelData.cpp \
 #        src/UILogic/PSHelperMainWindow.cpp \
+        src/UILogic/CancelableModalProgressDialog.cpp \
 
 HEADERS += \
         include/EnumFactory.h \
