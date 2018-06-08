@@ -8,17 +8,31 @@ class PSHTest_Test : public QObject
 public:
     PSHTest_Test();
 
-private Q_SLOTS:
-    void testCase1();
+private slots:
+    void toUpper_data();
+    void toUpper();
 };
 
-PSHTest_Test::PSHTest_Test()
+/******************************/
+
+PSHTest_Test::PSHTest_Test() {}
+
+void PSHTest_Test::toUpper_data()
 {
+    QTest::addColumn<QString>("string");
+    QTest::addColumn<QString>("result");
+
+    QTest::newRow("all lower") << "hello" << "HELLO";
+    QTest::newRow("mixed")     << "Hello" << "HELLO";
+    QTest::newRow("all upper") << "HELLO" << "HELLO";
 }
 
-void PSHTest_Test::testCase1()
+void PSHTest_Test::toUpper()
 {
-    QVERIFY2(true, "Failure");
+    QFETCH(QString, string);
+    QFETCH(QString, result);
+
+    QCOMPARE(string.toUpper(), result);
 }
 
 QTEST_APPLESS_MAIN(PSHTest_Test)

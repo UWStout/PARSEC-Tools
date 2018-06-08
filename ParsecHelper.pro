@@ -2,4 +2,5 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     PhotoscanHelper \
-    PSHTest
+    PSHTest \
+    PSData
