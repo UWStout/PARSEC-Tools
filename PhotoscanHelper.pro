@@ -63,6 +63,7 @@ HEADERS += \
         include/PSImageData.h \
         include/PSSensorData.h \
         include/PSModelData.h \
+        include/CancelableModalProgressDialog.h
 #        include/PSHelperMainWindow.h \
 
 FORMS += \
