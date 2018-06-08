@@ -37,6 +37,10 @@ win32 {
     LIBS += -lopengl32 -lglu32
 }
 
+# Windows and Mac OS Icons (respectively)
+RC_ICONS = resources/icons/PhotoScanHelper.ico
+ICON = resources/icons/PhotoScanHelper.icns
+
 # Add this so we don't have to append 'include' in front of every .h file
 INCLUDEPATH += include/
 
@@ -79,3 +83,8 @@ FORMS += \
         forms/PSProjectInfo.ui \
         forms/RawImageExposureDialog.ui \
         forms/StageProgressDialog.ui
+
+RESOURCES += \
+    PSHelper.qrc
+
+DISTFILES +=
