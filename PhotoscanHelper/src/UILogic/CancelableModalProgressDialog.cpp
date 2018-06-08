@@ -1,19 +1,7 @@
-//package edu.uwstout.berriers.PSHelper.UILogic;
-
-//import com.trolltech.qt.core.QFuture;
-//import com.trolltech.qt.core.QFutureWatcher;
-//import com.trolltech.qt.core.Qt.WindowFlags;
-//import com.trolltech.qt.core.Qt.WindowType;
-//import com.trolltech.qt.gui.QDialog;
-//import com.trolltech.qt.gui.QMessageBox;
-//import com.trolltech.qt.gui.QWidget;
-
-//import edu.uwstout.berriers.PSHelper.UIForms.Ui_CancelableProgressDialog;
-
 #include "CancelableModalProgressDialog.h"
 
-template<typename T>
-CancelableModalProgressDialog::CancelableModalProgressDialog(QString pLabelText, QWidget parent) : QWidget(parent) {
+template<class T>
+CancelableModalProgressDialog<T>::CancelableModalProgressDialog(QString pLabelText, QWidget parent) : QWidget(parent) {
     // Setup the GUI
     mGUI = new Ui_CancelableProgressDialog();
     mGUI->setupUi(this);
@@ -48,8 +36,8 @@ CancelableModalProgressDialog::CancelableModalProgressDialog(QString pLabelText,
  *
  * @param pFuture The future result available once the process ends.
  */
-template<typename T>
-void CancelableModalProgressDialog::setFuture(QFuture<T> pFuture) {
+template<class T>
+void CancelableModalProgressDialog<T>::setFuture(QFuture<T> pFuture) {
     mWatcher.setFuture(pFuture);
 }
 
@@ -57,7 +45,8 @@ void CancelableModalProgressDialog::setFuture(QFuture<T> pFuture) {
  * Interrogate the QFutureWatcher to see if it has been canceled.
  * @return Weather or not the process has been canceled by the user.
  */
-bool CancelableModalProgressDialog::wasCanceled() {
+template<class T>
+bool CancelableModalProgressDialog<T>::wasCanceled() {
     return mWatcher.isCanceled();
 }
 
@@ -65,7 +54,8 @@ bool CancelableModalProgressDialog::wasCanceled() {
  * This slot is triggered internally when a stage of the process is completed.
  * Checks if the user has requested the process be cancelled before proceeding.
  */
-void CancelableModalProgressDialog::processFinished() {
+template<class T>
+void CancelableModalProgressDialog<T>::processFinished() {
     if(!mWatcher.isCanceled()) {
         emit complete();
         this->accept();
@@ -80,7 +70,8 @@ void CancelableModalProgressDialog::processFinished() {
  * that the user wants to cancel the process.  This is confirmed with the user
  * before requesting the cancel.
  */
-void CancelableModalProgressDialog::on_CancelButtonClicked() {
+template<class T>
+void CancelableModalProgressDialog<T>::on_CancelButtonClicked() {
     int result = QMessageBox.question(this,
                                       "Cancel",
                                       "Are you sure you want to cancel this operation?",
