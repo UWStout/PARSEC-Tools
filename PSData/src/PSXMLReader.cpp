@@ -8,11 +8,11 @@
 // Sometimes a portion of the XML file is stripped out and placed
 // in it's own file under the .files directory. This function will
 // look for that attribute and follow it if found.
-QXmlStreamReader* PSXMLReader::explodeTag(QXmlStreamReader* reader, QStack<QFile*> currentFileStack) {
+QXmlStreamReader* PSXMLReader::explodeTag(QXmlStreamReader* reader, QStack<QFileInfo> currentFileStack) {
     // Is there a path tag we need to follow?
     if(!reader->attributes().value("", "path").isEmpty()) {
         // Construct the absolute path to the new QFile and let it become the current QFile
-        QFile* newXMLFile = checkForAndUpdatePath(reader, currentFileStack.top());
+        QFileInfo newXMLFile = checkForAndUpdatePath(reader, currentFileStack.top());
         currentFileStack.push(newXMLFile);
 
         // Turn into an input stream
@@ -26,7 +26,7 @@ QXmlStreamReader* PSXMLReader::explodeTag(QXmlStreamReader* reader, QStack<QFile
 
 // This looks for a 'path' attribute in the current element and extracts
 // a proper QFile string so it may be followed and opened.
-QFile* PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFile* currentFile) {
+QFileInfo PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFileInfo currentFile) {
     // Is there a path tag we need to follow?
     if(!reader->attributes().value("", "path").isEmpty()) {
 
@@ -40,8 +40,8 @@ QFile* PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFile* curre
         }
 
         // Make into an absolute QFile Path object
-        newFilePath = QFileInfo(currentFile->fileName()).canonicalPath() + newFilePath;
-        return new QFile(newFilePath);
+        newFilePath = QFileInfo(currentFile.fileName()).canonicalPath() + newFilePath;
+        return QFileInfo(newFilePath);
     }
 
     // Nothing to follow, so file stays the same
@@ -52,14 +52,11 @@ QFile* PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFile* curre
 // Will examine the file to find the XML data given:
 // - A psz or zip file (will look for doc.xml inside the file)
 // - OR a psx file accompanied by a .files directory
-QXmlStreamReader* PSXMLReader::getXMLStreamFromFile(QFile* pFile) {
-
-    // Sanity check
-    if(pFile == NULL) { return NULL; }
+QXmlStreamReader* PSXMLReader::getXMLStreamFromFile(QFileInfo pFile) {
 
     // The XML FileStream source
     QXmlStreamReader* lXMLFileStream = NULL;
-    QString ext = QFileInfo(pFile->fileName()).completeSuffix();
+    QString ext = QFileInfo(pFile.fileName()).completeSuffix();
 
     // Zip files with the XML inside them as doc.xml
     if(ext == "psz" || ext == "zip")
@@ -71,7 +68,8 @@ QXmlStreamReader* PSXMLReader::getXMLStreamFromFile(QFile* pFile) {
 //        }
     } else if(ext == "psx") {
         // A raw PS xml QFile (probably to be accompanied by a .files directory)
-        lXMLFileStream = new QXmlStreamReader(pFile);
+        QFile* lXMLFile = new QFile(pFile.absoluteFilePath());
+        lXMLFileStream = new QXmlStreamReader(lXMLFile);
     } else {
         // Something else that's not supported
     }

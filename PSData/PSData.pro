@@ -24,7 +24,8 @@ SOURCES += \
     src/PSSensorData.cpp \
     src/PSSessionData.cpp \
     src/PSXMLReader.cpp \
-    src/ExposureSettings.cpp
+    src/ExposureSettings.cpp \
+    src/DirLister.cpp
 
 HEADERS += \
     psdata_global.h \
@@ -39,7 +40,8 @@ HEADERS += \
     include/PSSessionData.h \
     include/PSStatusDescribable.h \
     include/PSXMLReader.h \
-    include/ExposureSettings.h
+    include/ExposureSettings.h \
+    include/DirLister.h
 
 unix {
     target.path = /usr/lib

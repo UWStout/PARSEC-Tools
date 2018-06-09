@@ -6,9 +6,9 @@
 #include <QString>
 #include <QStack>
 #include <QVector>
+#include <QFileInfo>
 
 // Qt forward declarations
-class QFile;
 class QSettings;
 class QXmlStreamReader;
 
@@ -21,36 +21,37 @@ class PSModelData;
 
 class PSDATASHARED_EXPORT PSProjectFileData : public PSXMLReader, public PSStatusDescribable {
 public:
-    PSProjectFileData(QFile*& pPSProjectFile, QSettings* settings);
+    PSProjectFileData(QFileInfo pPSProjectFile, QSettings* settings);
     ~PSProjectFileData();
 
-    QFile* getPSProjectFile();
+    QFileInfo getPSProjectFile();
     QString getPSVersion();
 
     bool parseProjectFile();
     void processArrayElement(QXmlStreamReader* reader, QString elementName);
-    unsigned int getChunkCount();
-    unsigned int getActiveChunkIndex();
-    PSChunkData* getActiveChunk();
-    PSChunkData* getChunk(unsigned int index);
-    QFile* getModelArchiveFile();
-    PSModelData* getModelData();
 
-    QString describeImageAlignPhase();
-    char getAlignPhaseStatus();
-    QString describeDenseCloudPhase();
-    int getDenseCloudDepthImages();
-    char getDenseCloudPhaseStatus();
-    QString describeModelGenPhase();
-    char getModelGenPhaseStatus();
-    long getModelFaceCount();
-    long getModelVertexCount();
-    QString describeTextureGenPhase();
-    char getTextureGenPhaseStatus();
+    unsigned int getChunkCount() const;
+    unsigned int getActiveChunkIndex() const;
+    PSChunkData* getActiveChunk() const;
+    PSChunkData* getChunk(unsigned int index) const;
+    QFileInfo getModelArchiveFile() const;
+    PSModelData* getModelData() const;
+
+    QString describeImageAlignPhase() const;
+    char getAlignPhaseStatus() const;
+    QString describeDenseCloudPhase() const;
+    int getDenseCloudDepthImages() const;
+    char getDenseCloudPhaseStatus() const;
+    QString describeModelGenPhase() const;
+    char getModelGenPhaseStatus() const;
+    long getModelFaceCount() const;
+    long getModelVertexCount() const;
+    QString describeTextureGenPhase() const;
+    char getTextureGenPhaseStatus() const;
 
 private:
-    QFile* mPSProjectFile;
-    QStack<QFile*> mPathStack;
+    QFileInfo mPSProjectFile;
+    QStack<QFileInfo> mPathStack;
     QString mPSVersion;
 
     // Project Chunks

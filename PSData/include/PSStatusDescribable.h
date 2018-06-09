@@ -13,7 +13,7 @@ public:
     // Setup an enum that supports string descriptions and string names
     #define STATUS_ENUM(Status) \
         /* Not yet initialized */ \
-        Status(PSS_UNKNOWN,,"Unknown") \
+        Status(PSS_UNKNOWN,"??","Unknown") \
         /* Automatically identified status (sequential) */ \
         Status(PSS_UNPROCESSSED,"virgin","Unprocessed") \
         Status(PSS_RAW_PROCESSING_DONE,"photos","Images Ready") \
@@ -35,20 +35,20 @@ public:
 
     // Functions for describing stages in the processing of an image set
     // These are 'abstract' pure-virtual functions that must be overridden
-    virtual QString describeImageAlignPhase() = 0;
-    virtual char getAlignPhaseStatus() = 0;
+    virtual QString describeImageAlignPhase() const = 0;
+    virtual char getAlignPhaseStatus() const = 0;
 
-    virtual QString describeDenseCloudPhase() = 0;
-    virtual char getDenseCloudPhaseStatus() = 0;
-    virtual int getDenseCloudDepthImages() = 0;
+    virtual QString describeDenseCloudPhase() const = 0;
+    virtual char getDenseCloudPhaseStatus() const = 0;
+    virtual int getDenseCloudDepthImages() const = 0;
 
-    virtual QString describeModelGenPhase() = 0;
-    virtual char getModelGenPhaseStatus() = 0;
-    virtual long getModelFaceCount() = 0;
-    virtual long getModelVertexCount() = 0;
+    virtual QString describeModelGenPhase() const = 0;
+    virtual char getModelGenPhaseStatus() const = 0;
+    virtual long getModelFaceCount() const = 0;
+    virtual long getModelVertexCount() const = 0;
 
-    virtual QString describeTextureGenPhase() = 0;
-    virtual char getTextureGenPhaseStatus() = 0;
+    virtual QString describeTextureGenPhase() const = 0;
+    virtual char getTextureGenPhaseStatus() const = 0;
 };
 
 #endif
