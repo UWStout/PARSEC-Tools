@@ -5,7 +5,10 @@
 
 #include "EnumFactory.h"
 
-class QFile;
+#include <QFileInfo>
+#include <QStack>
+#include <QMap>
+
 class PSModelData;
 class PSSensorData;
 class PSCameraData;
@@ -13,9 +16,6 @@ class PSImageData;
 
 #include "PSXMLReader.h"
 #include "PSStatusDescribable.h"
-
-#include <QStack>
-#include <QMap>
 
 class PSDATASHARED_EXPORT PSChunkData : public PSXMLReader, public PSStatusDescribable {
 public:
@@ -75,44 +75,44 @@ public:
 
     DECLARE_ENUM(ModelGenerationDetail, MODEL_GENERATION_DETAIL_ENUM)
 
-    PSChunkData(QFile* pSourceFile, QXmlStreamReader* reader);
-    PSChunkData(QFile* pSourceFile, QXmlStreamReader* reader, const QStack<QFile*>* pFileStack);
+    PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader);
+    PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader, QStack<QFileInfo> pFileStack);
     virtual ~PSChunkData();
 
     void parseXMLChunk(QXmlStreamReader* reader);
     void processArrayElement(QXmlStreamReader* reader, QString elementName);
     void parseXMLFrame(QXmlStreamReader* reader);
     void parseChunkProperty(QString pPropN, QString pPropV);
-    QString toString();
+    QString toString() const;
 
-    QString addOptimizeElement(QString pName, int pCount);
+    QString addOptimizeElement(QString pName, int pCount) const;
 
-    QString getLabel() { return mLabel; }
+    QString getLabel() const { return mLabel; }
     void addMarker() { mMarkerCount++; }
     void addScalebar() { mScalebarCount++; }
     void addDepthImage() { mDenseCloud_imagesUsed++; }
-    long getMarkerCount() { return mMarkerCount; }
-    long getScalebarCount() { return mScalebarCount; }
+    long getMarkerCount() const { return mMarkerCount; }
+    long getScalebarCount() const { return mScalebarCount; }
 
     void addImage(PSImageData* pImage) { mImages.push_back(pImage); }
-    unsigned int getImageCount() { return (unsigned int)mImages.size(); }
-    unsigned int getCameraCount() { return (unsigned int)mCameras.size(); }
+    unsigned int getImageCount() const { return (unsigned int)mImages.size(); }
+    unsigned int getCameraCount() const { return (unsigned int)mCameras.size(); }
 
     void addSensor() { mSensorCount_inChunk++; }
-    long getSensorCount() { return mSensorCount_inChunk; }
+    long getSensorCount() const { return mSensorCount_inChunk; }
 
-    bool hasMesh();
+    bool hasMesh() const;
     void setModelData(PSModelData* pModelData) { mModelData = pModelData; }
-    PSModelData* getModelData() { return mModelData; }
-    QFile* getModelArchiveFile();
+    PSModelData* getModelData() const { return mModelData; }
+    QFileInfo getModelArchiveFile() const;
 
     // Convert the optimization values to string
-    QString getOptimizeString();
+    QString getOptimizeString() const;
 
     // Enum values as descriptive strings
-    QString getImageAlignment_LevelString() { return getDescription(mImageAlignment_Level); }
-    QString getDenseCloud_levelString() { return getDescription(mDenseCloud_level); }
-    QString getDenseCloud_filterLevelString() { return getDescription(mDenseCloud_filterLevel); }
+    QString getImageAlignment_LevelString() const { return getDescription(mImageAlignment_Level); }
+    QString getDenseCloud_levelString() const { return getDescription(mDenseCloud_level); }
+    QString getDenseCloud_filterLevelString() const { return getDescription(mDenseCloud_filterLevel); }
 
     // Durations converted to human-readable strings
 //    QString getImageAlignment_durationString();
@@ -122,176 +122,176 @@ public:
 //    QString getTextureGeneration_durationString();
 
     // Summary descriptsion of the various phases
-    QString describeImageAlignPhase();
-    QString describeDenseCloudPhase();
-    QString describeModelGenPhase();
-    QString describeTextureGenPhase();
+    QString describeImageAlignPhase() const;
+    QString describeDenseCloudPhase() const;
+    QString describeModelGenPhase() const;
+    QString describeTextureGenPhase() const;
 
-    double getImageAlignment_matchDurationSeconds() { return mImageAlignment_matchDurationSeconds; }
+    double getImageAlignment_matchDurationSeconds() const { return mImageAlignment_matchDurationSeconds; }
     void setImageAlignment_matchDurationSeconds(double pImageAlignment_matchDurationSeconds) {
         mImageAlignment_matchDurationSeconds = pImageAlignment_matchDurationSeconds;
     }
 
-    double getImageAlignment_alignDurationSeconds() { return mImageAlignment_alignDurationSeconds; }
+    double getImageAlignment_alignDurationSeconds() const { return mImageAlignment_alignDurationSeconds; }
     void setImageAlignment_alignDurationSeconds(double pImageAlignment_alignDurationSeconds) {
         mImageAlignment_alignDurationSeconds = pImageAlignment_alignDurationSeconds;
     }
 
-    ImageAlignmentDetail getImageAlignment_Level() { return mImageAlignment_Level; }
+    ImageAlignmentDetail getImageAlignment_Level() const { return mImageAlignment_Level; }
     void setImageAlignment_Level(ImageAlignmentDetail pImageAlignment_Level) {
         mImageAlignment_Level = pImageAlignment_Level;
     }
 
-    bool getImageAlignment_Masked() { return mImageAlignment_Masked; }
+    bool getImageAlignment_Masked() const { return mImageAlignment_Masked; }
     void setImageAlignment_Masked(bool pImageAlignment_Masked) {
         mImageAlignment_Masked = pImageAlignment_Masked;
     }
 
-    long getImageAlignment_featureLimit() { return mImageAlignment_featureLimit; }
+    long getImageAlignment_featureLimit() const { return mImageAlignment_featureLimit; }
     void setImageAlignment_featureLimit(long pImageAlignment_featureLimit) {
         mImageAlignment_featureLimit = pImageAlignment_featureLimit;
     }
 
-    long getImageAlignment_tiePointLimit() { return mImageAlignment_tiePointLimit; }
+    long getImageAlignment_tiePointLimit() const { return mImageAlignment_tiePointLimit; }
     void setImageAlignment_tiePointLimit(long pImageAlignment_tiePointLimit) {
         mImageAlignment_tiePointLimit = pImageAlignment_tiePointLimit;
     }
 
-    double getOptimize_durationSeconds() { return mOptimize_durationSeconds; }
+    double getOptimize_durationSeconds() const { return mOptimize_durationSeconds; }
     void setOptimize_durationSeconds(double pOptimize_durationSeconds) {
         mOptimize_durationSeconds = pOptimize_durationSeconds;
     }
 
-    bool getOptimize_aspect() { return mOptimize_aspect; }
+    bool getOptimize_aspect() const { return mOptimize_aspect; }
     void setOptimize_aspect(bool pOptimize_aspect) {
         mOptimize_aspect = pOptimize_aspect;
     }
 
-    bool getOptimize_f() { return mOptimize_f; }
+    bool getOptimize_f() const { return mOptimize_f; }
     void setOptimize_f(bool pOptimize_f) { mOptimize_f = pOptimize_f; }
 
-    bool getOptimize_cx() { return mOptimize_cx; }
-    bool getOptimize_cy() { return mOptimize_cy; }
+    bool getOptimize_cx() const { return mOptimize_cx; }
+    bool getOptimize_cy() const { return mOptimize_cy; }
     void setOptimize_cx(bool pOptimize_cx) { mOptimize_cx = pOptimize_cx; }
     void setOptimize_cy(bool pOptimize_cy) { mOptimize_cy = pOptimize_cy; }
 
-    bool getOptimize_p1() { return mOptimize_p1; }
-    bool getOptimize_p2() { return mOptimize_p2; }
-    bool getOptimize_p3() { return mOptimize_p3; }
-    bool getOptimize_p4() { return mOptimize_p4; }
+    bool getOptimize_p1() const { return mOptimize_p1; }
+    bool getOptimize_p2() const { return mOptimize_p2; }
+    bool getOptimize_p3() const { return mOptimize_p3; }
+    bool getOptimize_p4() const { return mOptimize_p4; }
 
     void setOptimize_p1(bool pOptimize_p1) { mOptimize_p1 = pOptimize_p1; }
     void setOptimize_p2(bool pOptimize_p2) { mOptimize_p2 = pOptimize_p2; }
     void setOptimize_p3(bool pOptimize_p3) { mOptimize_p3 = pOptimize_p3; }
     void setOptimize_p4(bool pOptimize_p4) { mOptimize_p4 = pOptimize_p4; }
 
-    bool getOptimize_b1() { return mOptimize_b1; }
-    bool getOptimize_b2() { return mOptimize_b2; }
+    bool getOptimize_b1() const { return mOptimize_b1; }
+    bool getOptimize_b2() const { return mOptimize_b2; }
     void setOptimize_b1(bool pOptimize_b1) { mOptimize_b1 = pOptimize_b1; }
     void setOptimize_b2(bool pOptimize_b2) { mOptimize_b2 = pOptimize_b2; }
 
-    bool getOptimize_k1() { return mOptimize_k1; }
-    bool getOptimize_k2() { return mOptimize_k2; }
-    bool getOptimize_k3() { return mOptimize_k3; }
-    bool getOptimize_k4() { return mOptimize_k4; }
+    bool getOptimize_k1() const { return mOptimize_k1; }
+    bool getOptimize_k2() const { return mOptimize_k2; }
+    bool getOptimize_k3() const { return mOptimize_k3; }
+    bool getOptimize_k4() const { return mOptimize_k4; }
 
     void setOptimize_k1(bool pOptimize_k1) { mOptimize_k1 = pOptimize_k1; }
     void setOptimize_k2(bool pOptimize_k2) { mOptimize_k2 = pOptimize_k2; }
     void setOptimize_k3(bool pOptimize_k3) { mOptimize_k3 = pOptimize_k3; }
     void setOptimize_k4(bool pOptimize_k4) { mOptimize_k4 = pOptimize_k4; }
 
-    bool getOptimize_skew() { return mOptimize_skew; }
+    bool getOptimize_skew() const { return mOptimize_skew; }
     void setOptimize_skew(bool pOptimize_skew) { mOptimize_skew = pOptimize_skew; }
 
-    double getDenseCloud_durationSeconds() { return mDenseCloud_durationSeconds; }
+    double getDenseCloud_durationSeconds() const { return mDenseCloud_durationSeconds; }
     void setDenseCloud_durationSeconds(double pDenseCloud_durationSeconds) {
         mDenseCloud_durationSeconds = pDenseCloud_durationSeconds;
     }
 
-    DenseCloudDetail getDenseCloud_level() { return mDenseCloud_level; }
+    DenseCloudDetail getDenseCloud_level() const { return mDenseCloud_level; }
     void setDenseCloud_level(DenseCloudDetail pDenseCloud_level) {
         mDenseCloud_level = pDenseCloud_level;
     }
 
-    int getDenseCloud_imagesUsed() { return mDenseCloud_imagesUsed; }
+    int getDenseCloud_imagesUsed() const { return mDenseCloud_imagesUsed; }
     DenseCloudFilter getDenseCloud_filterLevel() { return mDenseCloud_filterLevel; }
     void setDenseCloud_filterLevel(DenseCloudFilter pDenseCloud_filterLevel) {
         mDenseCloud_filterLevel = pDenseCloud_filterLevel;
     }
 
-    double getModelGeneration_resolution() { return mModelGeneration_resolution; }
+    double getModelGeneration_resolution() const { return mModelGeneration_resolution; }
     void setModelGeneration_resolution(double pModelGeneration_resolution) {
         mModelGeneration_resolution = pModelGeneration_resolution;
     }
 
-    double getModelGeneration_durationSeconds() { return mModelGeneration_durationSeconds; }
+    double getModelGeneration_durationSeconds() const { return mModelGeneration_durationSeconds; }
     void setModelGeneration_durationSeconds(double pModelGeneration_durationSeconds) {
         mModelGeneration_durationSeconds = pModelGeneration_durationSeconds;
     }
 
-    long getModelGeneration_faceCount() { return mModelGeneration_faceCount; }
+    long getModelGeneration_faceCount() const { return mModelGeneration_faceCount; }
     void setModelGeneration_faceCount(long pModelGeneration_faceCount) {
         mModelGeneration_faceCount = pModelGeneration_faceCount;
     }
 
-    bool getModelGeneration_denseSource() { return mModelGeneration_denseSource; }
+    bool getModelGeneration_denseSource() const { return mModelGeneration_denseSource; }
     void setModelGeneration_denseSource(bool pModelGeneration_denseSource) {
         mModelGeneration_denseSource = pModelGeneration_denseSource;
     }
 
-    bool getModelGeneration_interpolationEnabled() { return mModelGeneration_interpolationEnabled; }
+    bool getModelGeneration_interpolationEnabled() const { return mModelGeneration_interpolationEnabled; }
     void setModelGeneration_interpolationEnabled(bool pModelGeneration_interpolationEnabled) {
         mModelGeneration_interpolationEnabled = pModelGeneration_interpolationEnabled;
     }
 
-    double getTextureGeneration_blendDuration() { return mTextureGeneration_blendDuration; }
+    double getTextureGeneration_blendDuration() const { return mTextureGeneration_blendDuration; }
     void setTextureGeneration_blendDuration(double pTextureGeneration_blendDuration) {
         mTextureGeneration_blendDuration = pTextureGeneration_blendDuration;
     }
 
-    double getTextureGeneration_uvGenDuration() { return mTextureGeneration_uvGenDuration; }
+    double getTextureGeneration_uvGenDuration() const { return mTextureGeneration_uvGenDuration; }
     void setTextureGeneration_uvGenDuration(double pTextureGeneration_uvGenDuration) {
         mTextureGeneration_uvGenDuration = pTextureGeneration_uvGenDuration;
     }
 
-    char getTextureGeneration_mappingMode() { return mTextureGeneration_mappingMode; }
+    char getTextureGeneration_mappingMode() const { return mTextureGeneration_mappingMode; }
     void setTextureGeneration_mappingMode(char pTextureGeneration_mappingMode) {
         mTextureGeneration_mappingMode = pTextureGeneration_mappingMode;
     }
 
-    char getTextureGeneration_blendMode() { return mTextureGeneration_blendMode; }
+    char getTextureGeneration_blendMode() const { return mTextureGeneration_blendMode; }
     void setTextureGeneration_blendMode(char pTextureGeneration_blendMode) {
         mTextureGeneration_blendMode = pTextureGeneration_blendMode;
     }
 
-    char getTextureGeneration_count() { return mTextureGeneration_count; }
+    char getTextureGeneration_count() const { return mTextureGeneration_count; }
     void setTextureGeneration_count(char pTextureGeneration_count) {
         mTextureGeneration_count = pTextureGeneration_count;
     }
 
-    int getTextureGeneration_width() { return mTextureGeneration_width; }
+    int getTextureGeneration_width() const { return mTextureGeneration_width; }
     void setTextureGeneration_width(int pTextureGeneration_width) {
         mTextureGeneration_width = pTextureGeneration_width;
     }
 
-    int getTextureGeneration_height() { return mTextureGeneration_height; }
+    int getTextureGeneration_height() const { return mTextureGeneration_height; }
     void setTextureGeneration_height(int pTextureGeneration_height) {
         mTextureGeneration_height = pTextureGeneration_height;
     }
 
     // Compute ratio of total images to aligned images and return status
-    char getAlignPhaseStatus();
-    int getDenseCloudDepthImages();
-    char getDenseCloudPhaseStatus();
-    long getModelFaceCount();
-    long getModelVertexCount();
-    char getModelGenPhaseStatus();
-    char getTextureGenPhaseStatus();
+    char getAlignPhaseStatus() const;
+    int getDenseCloudDepthImages() const;
+    char getDenseCloudPhaseStatus() const;
+    long getModelFaceCount() const;
+    long getModelVertexCount() const;
+    char getModelGenPhaseStatus() const;
+    char getTextureGenPhaseStatus() const;
 
 private:
     // What files was this chunk data read from
-    QFile* mSourceFile;
-    QFile* mFrameFile;
+    QFileInfo mSourceFile;
+    QFileInfo mFrameFile;
 
     // General Information (from 'chunk' tag attributes)
     long mID;
@@ -362,7 +362,9 @@ private:
     QVector<PSImageData*> mImages;
 
     // Stack used to track descending file structures
-    QStack<QFile*> mTempFileStack;
+    QStack<QFileInfo> mTempFileStack;
+
+    void init(QXmlStreamReader* reader);
 };
 
 #endif

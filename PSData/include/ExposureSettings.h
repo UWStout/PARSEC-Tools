@@ -30,10 +30,10 @@ public:
                      BrightnessMode pBrightMode, double pBrightScale);
 
     // Various accessors
-    WhiteBalanceMode getWBMode() { return mWBMode; }
-    BrightnessMode getBrightMode() { return mBrightMode; }
-    double getBrightScale() { return mBrightScale; }
-    const double* getWBCustom() { return mWBCustom; }
+    WhiteBalanceMode getWBMode() const { return mWBMode; }
+    BrightnessMode getBrightMode() const { return mBrightMode; }
+    double getBrightScale() const { return mBrightScale; }
+    const double* getWBCustom() const { return mWBCustom; }
 
     ExposureSettings* makeIndependentlyConsistent();
 	

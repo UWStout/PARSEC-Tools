@@ -6,8 +6,9 @@
 
 #include <QString>
 #include <QDate>
+#include <QDir>
+#include <QFileInfoList>
 
-class QFile;
 class QSettings;
 
 class PSProjectFileData;
@@ -45,7 +46,7 @@ public:
     static const char BASE_LENGTH;
     static const char EXTENDED_LENGTH;
 
-    PSSessionData(QString pPSProjectFolder, QSettings* settings);
+    PSSessionData(QDir pPSProjectFolder, QSettings* settings);
     virtual ~PSSessionData();
 
     static void setSortBy(Field pNewSortBy);
@@ -54,10 +55,7 @@ public:
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o);
 
-    bool examineDirectory(QFile* pDirToExamine);
-    long countFilesIn(QFile* pDir, QStringList pFilter);
-    QFile* listFilesIn(QFile* pDir, QStringList pFilter);
-    QFile* mergeArrays(QList<QFile*> pArrays);
+    bool examineDirectory(QDir pDirToExamine);
 	
     void autoSetStatus();
     void setCustomStatus(int statusIndex);
@@ -69,66 +67,66 @@ public:
 
     void setName(QString pName);
 
-    QFile* getPSProjectFile(int which);
-    QFile* getPSProjectFile();
+    QFileInfo getPSProjectFile(int which) const;
+    QFileInfo getPSProjectFile() const;
 	
-    QFile* getPSProjectFolder();
-    PSModelData* getModelData();
-    QFile* getModelArchiveFile();
+    QDir getPSProjectFolder() const;
+    PSModelData* getModelData() const;
+    QFileInfo getModelArchiveFile() const;
 
-    long getRawImageCount();
-    long getProcessedImageCount();
-    QFile* getRawFileList();
-    bool isImageExposureKnown();
-    double* getWhiteBalanceMultipliers();
-    double getBrightnessMultiplier();
+    long getRawImageCount() const;
+    long getProcessedImageCount() const;
+    QFileInfoList getRawFileList() const;
+    bool isImageExposureKnown() const;
+    const double* getWhiteBalanceMultipliers() const;
+    double getBrightnessMultiplier() const;
 
-    QDate getDateTakenStart();
-    QDate getDateTakenFinish();
-    bool areResultsApproved();
-    QString getSpecialNotes();
-    QString getName();
-    QString getNameStrict();
-    Status getStatus();
+    QDate getDateTakenStart() const;
+    QDate getDateTakenFinish() const;
+    bool areResultsApproved() const;
+    QString getSpecialNotes() const;
+    QString getName() const;
+    QString getNameStrict() const;
+    Status getStatus() const;
 
-    void writeGeneralSettings(QSettings* settings);
+    void writeGeneralSettings(QSettings* settings) const;
     void readGeneralSettings(QSettings* settings);
-    void writeExposureSettings(ExposureSettings pExpSettings, QSettings* settings);
+    void writeExposureSettings(ExposureSettings pExpSettings, QSettings* settings) const;
     ExposureSettings readExposureSettings(QSettings* settings);
 
-    QString toString();
+    QString toString() const;
 
-    int getProjectCount();
-    int getActiveProjectIndex();
-    PSProjectFileData* getActiveProject();
+    int getProjectCount() const;
+    int getActiveProjectIndex() const;
+    PSProjectFileData* getActiveProject() const;
 
-    int getChunkCount();
-    int getActiveChunkIndex();
-    PSChunkData* getChunk(int index);
-    PSChunkData* getActiveChunk();
+    int getChunkCount() const;
+    int getActiveChunkIndex() const;
+    PSChunkData* getChunk(int index) const;
+    PSChunkData* getActiveChunk() const;
 
-    QString describeImageAlignPhase();
-    char getAlignPhaseStatus();
-    QString describeDenseCloudPhase();
-    int getDenseCloudDepthImages();
-    char getDenseCloudPhaseStatus();
-    QString describeModelGenPhase();
-    char getModelGenPhaseStatus();
-    long getModelFaceCount();
-    long getModelVertexCount();
-    QString describeTextureGenPhase();
-    char getTextureGenPhaseStatus();
+    QString describeImageAlignPhase() const;
+    char getAlignPhaseStatus() const;
+    QString describeDenseCloudPhase() const;
+    int getDenseCloudDepthImages() const;
+    char getDenseCloudPhaseStatus() const;
+    QString describeModelGenPhase() const;
+    char getModelGenPhaseStatus() const;
+    long getModelFaceCount() const;
+    long getModelVertexCount() const;
+    QString describeTextureGenPhase() const;
+    char getTextureGenPhaseStatus() const;
 
 private:
     static Field mSortBy;
     static int mNextID;
 
     // Path to the project file
-    QFile* mPSProjectFolder;
+    QDir mPSProjectFolder;
 
     // Information about images and sensors
     long mImageCount_raw, mImageCount_processed;
-    QFile** mRawFileList;
+    QFileInfoList mRawFileList;
 
     // General PS Project information
     QString mID;
@@ -144,8 +142,8 @@ private:
     Status mStatus;
 
     // The list of project files in the directory
-    QFile** mPSProjectFileList;
-    PSProjectFileData** mPSProjectList;
+    QFileInfoList mPSProjectFileList;
+    QList<PSProjectFileData*> mPSProjectList;
     int mActiveProject;
 
     // QFile filter setup

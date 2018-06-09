@@ -3,6 +3,7 @@
 
 #include "psdata_global.h"
 
+#include <QFileInfo>
 #include <QString>
 #include <QMap>
 
@@ -12,10 +13,10 @@ class PSChunkData;
 
 class PSDATASHARED_EXPORT PSModelData {
 public:
-    PSModelData(QFile* pZipFile);
+    PSModelData(QFileInfo pZipFile);
     ~PSModelData();
 	
-    static PSModelData* makeFromXML(QXmlStreamReader* reader, QFile* pZipFile, PSChunkData* pParent);
+    static PSModelData* makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile, PSChunkData* pParent);
 
     void setFaceCount(long pFaceCount);
     void setVertexCount(long pVertexCount);
@@ -25,7 +26,7 @@ public:
 	
     void addTextureFile(int pId, QString pFilepath);
 
-    QFile* getArchiveFile();
+    QFileInfo getArchiveFile();
 
     long getFaceCount();
     long getVertexCount();
@@ -38,7 +39,7 @@ public:
 	
 private:
     long mFaceCount, mVertexCount;
-    QFile* mZipFile;
+    QFileInfo mZipFile;
     QString mMeshFilepath;
     bool mHasVtxColors, mHasUV;
 

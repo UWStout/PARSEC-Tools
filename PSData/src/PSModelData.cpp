@@ -5,7 +5,7 @@
 #include <QXmlStreamReader>
 #include <QFile>
 
-PSModelData::PSModelData(QFile* pZipFile) {
+PSModelData::PSModelData(QFileInfo pZipFile) {
     mZipFile = pZipFile;
 
     mFaceCount = mVertexCount = -1;
@@ -29,7 +29,7 @@ void PSModelData::addTextureFile(int pId, QString pFilepath) {
     textureFiles.insert(pId, pFilepath);
 }
 
-QFile* PSModelData::getArchiveFile() { return mZipFile; }
+QFileInfo PSModelData::getArchiveFile() { return mZipFile; }
 
 long PSModelData::getFaceCount() { return mFaceCount; }
 long PSModelData::getVertexCount() { return mVertexCount; }
@@ -40,7 +40,7 @@ bool PSModelData::hasUV() { return mHasUV; }
 QMap<int, QString> PSModelData::getTextureFiles() { return textureFiles; }
 QString PSModelData::getTextureFile(int id) { return textureFiles.value(id); }
 
-PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFile* pZipFile, PSChunkData* pParent) {
+PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile, PSChunkData* pParent) {
     // If this is a fresh XML doc, push to first tag.
     if(reader->tokenType() == QXmlStreamReader::StartDocument) {
         reader->readNextStartElement();

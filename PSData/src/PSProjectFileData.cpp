@@ -10,16 +10,13 @@ using namespace std;
 #include "PSChunkData.h"
 //#include "PSModelData.h"
 
-PSProjectFileData::PSProjectFileData(QFile*& pPSProjectFile, QSettings* settings) {
+PSProjectFileData::PSProjectFileData(QFileInfo pPSProjectFile, QSettings* settings) {
     // Clear out any old chunks by re-initializing the array
     mActiveChunk = UINT_MAX;
 
-    if(pPSProjectFile != NULL) {
-        mPSProjectFile = pPSProjectFile;
-//        mPSProjectFile = mPSProjectFile->getCanonicalFile();
-        parseProjectFile();
-        mActiveChunk = 0;
-    }
+    mPSProjectFile = pPSProjectFile;
+    parseProjectFile();
+    mActiveChunk = 0;
 }
 
 PSProjectFileData::~PSProjectFileData() {
@@ -27,19 +24,14 @@ PSProjectFileData::~PSProjectFileData() {
     for(unsigned int i=0; i < (unsigned int)mChunks.size(); i++) {
         delete mChunks[i];
     }
-
-    // Clean up the file stack
-    while(!mPathStack.empty()) {
-        delete mPathStack.pop();
-    }
 }
 
-QFile* PSProjectFileData::getPSProjectFile() { return mPSProjectFile; }
+QFileInfo PSProjectFileData::getPSProjectFile() { return mPSProjectFile; }
 QString PSProjectFileData::getPSVersion() { return mPSVersion; }
 
 bool PSProjectFileData::parseProjectFile() {
     // Sanity Checks
-    if(mPSProjectFile == NULL || !mPSProjectFile->exists()) {
+    if(!mPSProjectFile.isFile() || !mPSProjectFile.isReadable()) {
         return false;
     }
 
@@ -92,7 +84,7 @@ bool PSProjectFileData::parseProjectFile() {
 void PSProjectFileData::processArrayElement(QXmlStreamReader* reader, QString elementName) {
     if (elementName == "chunk") {
         // Process this chunk tag
-        PSChunkData* lNewChunk = new PSChunkData(mPSProjectFile, reader, &mPathStack);
+        PSChunkData* lNewChunk = new PSChunkData(mPSProjectFile, reader, mPathStack);
 
         // Save the results
         if(lNewChunk != NULL) {
@@ -103,15 +95,15 @@ void PSProjectFileData::processArrayElement(QXmlStreamReader* reader, QString el
     }
 }
 
-unsigned int PSProjectFileData::getChunkCount() {
+unsigned int PSProjectFileData::getChunkCount() const {
     return (unsigned int)mChunks.size();
 }
 
-unsigned int PSProjectFileData::getActiveChunkIndex() {
+unsigned int PSProjectFileData::getActiveChunkIndex() const {
     return mActiveChunk;
 }
 
-PSChunkData* PSProjectFileData::getActiveChunk() {
+PSChunkData* PSProjectFileData::getActiveChunk() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk];
     }
@@ -119,7 +111,7 @@ PSChunkData* PSProjectFileData::getActiveChunk() {
     return NULL;
 }
 
-PSChunkData* PSProjectFileData::getChunk(unsigned int index) {
+PSChunkData* PSProjectFileData::getChunk(unsigned int index) const {
     if(index < (unsigned int)mChunks.size()) {
         return mChunks[index];
     }
@@ -127,15 +119,15 @@ PSChunkData* PSProjectFileData::getChunk(unsigned int index) {
     return NULL;
 }
 
-QFile* PSProjectFileData::getModelArchiveFile() {
+QFileInfo PSProjectFileData::getModelArchiveFile() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelArchiveFile();
     }
 
-    return NULL;
+    return QFileInfo();
 }
 
-PSModelData* PSProjectFileData::getModelData() {
+PSModelData* PSProjectFileData::getModelData() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelData();
     }
@@ -143,7 +135,7 @@ PSModelData* PSProjectFileData::getModelData() {
     return NULL;
 }
 
-QString PSProjectFileData::describeImageAlignPhase() {
+QString PSProjectFileData::describeImageAlignPhase() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->describeImageAlignPhase();
     }
@@ -151,7 +143,7 @@ QString PSProjectFileData::describeImageAlignPhase() {
     return QString("N/A");
 }
 
-char PSProjectFileData::getAlignPhaseStatus() {
+char PSProjectFileData::getAlignPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getAlignPhaseStatus();
     }
@@ -159,7 +151,7 @@ char PSProjectFileData::getAlignPhaseStatus() {
     return 0;
 }
 
-QString PSProjectFileData::describeDenseCloudPhase() {
+QString PSProjectFileData::describeDenseCloudPhase() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->describeDenseCloudPhase();
     }
@@ -167,7 +159,7 @@ QString PSProjectFileData::describeDenseCloudPhase() {
     return QString("N/A");
 }
 
-int PSProjectFileData::getDenseCloudDepthImages() {
+int PSProjectFileData::getDenseCloudDepthImages() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getDenseCloudDepthImages();
     }
@@ -175,7 +167,7 @@ int PSProjectFileData::getDenseCloudDepthImages() {
     return 0;
 }
 
-char PSProjectFileData::getDenseCloudPhaseStatus() {
+char PSProjectFileData::getDenseCloudPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getDenseCloudPhaseStatus();
     }
@@ -183,7 +175,7 @@ char PSProjectFileData::getDenseCloudPhaseStatus() {
     return 0;
 }
 
-QString PSProjectFileData::describeModelGenPhase() {
+QString PSProjectFileData::describeModelGenPhase() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->describeModelGenPhase();
     }
@@ -191,7 +183,7 @@ QString PSProjectFileData::describeModelGenPhase() {
     return QString("N/A");
 }
 
-char PSProjectFileData::getModelGenPhaseStatus() {
+char PSProjectFileData::getModelGenPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelGenPhaseStatus();
     }
@@ -199,7 +191,7 @@ char PSProjectFileData::getModelGenPhaseStatus() {
     return 0;
 }
 
-long PSProjectFileData::getModelFaceCount() {
+long PSProjectFileData::getModelFaceCount() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelFaceCount();
     }
@@ -207,7 +199,7 @@ long PSProjectFileData::getModelFaceCount() {
     return 0;
 }
 
-long PSProjectFileData::getModelVertexCount() {
+long PSProjectFileData::getModelVertexCount() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelVertexCount();
     }
@@ -215,7 +207,7 @@ long PSProjectFileData::getModelVertexCount() {
     return 0;
 }
 
-QString PSProjectFileData::describeTextureGenPhase() {
+QString PSProjectFileData::describeTextureGenPhase() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->describeTextureGenPhase();
     }
@@ -223,7 +215,7 @@ QString PSProjectFileData::describeTextureGenPhase() {
     return QString("N/A");
 }
 
-char PSProjectFileData::getTextureGenPhaseStatus() {
+char PSProjectFileData::getTextureGenPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getTextureGenPhaseStatus();
     }

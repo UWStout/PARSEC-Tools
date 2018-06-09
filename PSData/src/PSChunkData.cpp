@@ -1,6 +1,5 @@
 #include "PSChunkData.h"
 
-#include <QFile>
 #include <QXmlStreamReader>
 
 #include "PSModelData.h"
@@ -14,16 +13,20 @@ DEFINE_ENUM(DenseCloudDetail, DENSE_CLOUD_DETAIL_ENUM, PSChunkData)
 DEFINE_ENUM(DenseCloudFilter, DENSE_CLOUD_FILTER_ENUM, PSChunkData)
 DEFINE_ENUM(ModelGenerationDetail, MODEL_GENERATION_DETAIL_ENUM, PSChunkData)
 
-PSChunkData::PSChunkData(QFile* pSourceFile, QXmlStreamReader* reader) {
-    PSChunkData(pSourceFile, reader, NULL);
+PSChunkData::PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader) {
+    mSourceFile = pSourceFile;
+    init(reader);
 }
 
-PSChunkData::PSChunkData(QFile* pSourceFile, QXmlStreamReader* reader, const QStack<QFile*>* pFileStack) {
+PSChunkData::PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader, QStack<QFileInfo> pFileStack) {
     mSourceFile = pSourceFile;
-    if (pFileStack != NULL) {
-        mTempFileStack = *pFileStack;
-    }
+    mTempFileStack = pFileStack;
+    init(reader);
+}
 
+PSChunkData::~PSChunkData() {}
+
+void PSChunkData::init(QXmlStreamReader* reader) {
     mID = 0;
     mLabel = "";
     mEnabled = false;
@@ -58,8 +61,6 @@ PSChunkData::PSChunkData(QFile* pSourceFile, QXmlStreamReader* reader, const QSt
 
     parseXMLChunk(reader);
 }
-
-PSChunkData::~PSChunkData() {}
 
 void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
 
@@ -185,7 +186,8 @@ void PSChunkData::parseXMLFrame(QXmlStreamReader* reader) {
 
                     // Return to old stream
                     if(reader != preModelReader) {
-                        delete mTempFileStack.pop();
+                        mTempFileStack.pop();
+                        delete reader->device();
                         delete reader;
                         reader = preFrameReader;
                     }
@@ -199,7 +201,7 @@ void PSChunkData::parseXMLFrame(QXmlStreamReader* reader) {
 
         // Return to old stream
         if(preFrameReader != reader) {
-            delete mTempFileStack.pop();
+            delete reader->device();
             delete reader;
             reader = preFrameReader;
         }
@@ -301,7 +303,7 @@ void PSChunkData::parseChunkProperty(QString pPropN, QString pPropV) {
     else if(pPropN == "accuracy_projections") { }
 }
 
-QString PSChunkData::toString() {
+QString PSChunkData::toString() const {
     // General details
     QString lDetails = "\tChunk ID: " + QString::number(mID) + ", Label: ";
     if(mLabel != NULL && mLabel != "") {
@@ -400,7 +402,7 @@ QString PSChunkData::toString() {
  * @param pCount How many optimizations have been added already (will break at 4)
  * @return A string to be appended to the toString() results
  */
-QString PSChunkData::addOptimizeElement(QString pName, int pCount)
+QString PSChunkData::addOptimizeElement(QString pName, int pCount) const
 {
     QString result = "";
     if(pCount%4 == 0) { result += "\n\t               "; }
@@ -430,7 +432,7 @@ QString PSChunkData::addOptimizeElement(QString pName, int pCount)
 //    return result;
 //}
 
-QString PSChunkData::getOptimizeString() {
+QString PSChunkData::getOptimizeString() const {
     QString lDesc = "";
 
     if(mOptimize_aspect) { lDesc += "aspect, "; }
@@ -453,32 +455,32 @@ QString PSChunkData::getOptimizeString() {
     return lDesc;
 }
 
-//QString PSChunkData::getOptimize_durationString() {
+//QString PSChunkData::getOptimize_durationString() const {
 //    long lMillisecs = (long)(mOptimize_durationSeconds*1000);
 //    Duration lOptimizeTime = Duration.ofMillis(lMillisecs);
 //    return formatDuration(lOptimizeTime);
 //}
 
-//QString PSChunkData::getDenseCloud_durationString() {
+//QString PSChunkData::getDenseCloud_durationString() const {
 //    long lMillisecs = (long)(mDenseCloud_durationSeconds*1000);
 //    Duration lDenseCloudTime = Duration.ofMillis(lMillisecs);
 //    return formatDuration(lDenseCloudTime);
 //}
 
-//QString PSChunkData::getModelGeneration_durationString() {
+//QString PSChunkData::getModelGeneration_durationString() const {
 //    long lMillisecs = (long)(mModelGeneration_durationSeconds*1000);
 //    Duration lModelGenTime = Duration.ofMillis(lMillisecs);
 //    return formatDuration(lModelGenTime);
 //}
 
-//QString PSChunkData::getTextureGeneration_durationString() {
+//QString PSChunkData::getTextureGeneration_durationString() const {
 //    long lMillisecs = (long)((mTextureGeneration_blendDuration+mTextureGeneration_uvGenDuration)*1000);
 //    Duration lTexGenTime = Duration.ofMillis(lMillisecs);
 //    return formatDuration(lTexGenTime);
 //}
 
 // Output string of the form ([num aligned images] - [feature limit]/[tie point limit])
-QString PSChunkData::describeImageAlignPhase() {
+QString PSChunkData::describeImageAlignPhase() const {
     QString lData = getImageAlignment_LevelString();
     long featLimit = getImageAlignment_featureLimit()/1000;
     long tieLimit = getImageAlignment_tiePointLimit()/1000;
@@ -489,7 +491,7 @@ QString PSChunkData::describeImageAlignPhase() {
 }
 
 // Compute ratio of total images to aligned images and return status
-char PSChunkData::getAlignPhaseStatus() {
+char PSChunkData::getAlignPhaseStatus() const {
     long allImages = mCameras.size();
     long alignedImages = mImages.size();
     double ratio = alignedImages/(double)allImages;
@@ -509,17 +511,17 @@ char PSChunkData::getAlignPhaseStatus() {
     }
 }
 
-QString PSChunkData::describeDenseCloudPhase() {
+QString PSChunkData::describeDenseCloudPhase() const {
     QString lData = getDenseCloud_levelString();
     lData += " (" + QString::number(getDenseCloud_imagesUsed()) + ")";
     return lData;
 }
 
-int PSChunkData::getDenseCloudDepthImages() {
+int PSChunkData::getDenseCloudDepthImages() const {
     return getDenseCloud_imagesUsed();
 }
 
-char PSChunkData::getDenseCloudPhaseStatus() {
+char PSChunkData::getDenseCloudPhaseStatus() const {
     long projectImages = mCameras.size();
     long depthImages = mDenseCloud_imagesUsed;
     double ratio = depthImages/(double)projectImages;
@@ -542,7 +544,7 @@ char PSChunkData::getDenseCloudPhaseStatus() {
     }
 }
 
-QString PSChunkData::describeModelGenPhase() {
+QString PSChunkData::describeModelGenPhase() const {
     double faces = getModelFaceCount();
     if(faces < 0) {
         if(hasMesh()) { return "?"; }
@@ -557,27 +559,27 @@ QString PSChunkData::describeModelGenPhase() {
     }
 }
 
-bool PSChunkData::hasMesh() { return mModelData != NULL; }
+bool PSChunkData::hasMesh() const { return mModelData != NULL; }
 
-QFile* PSChunkData::getModelArchiveFile() {
+QFileInfo PSChunkData::getModelArchiveFile() const {
     if(mModelData != NULL) {
         return mModelData->getArchiveFile();
     }
 
-    return NULL;
+    return QFileInfo();
 }
 
-long PSChunkData::getModelFaceCount() {
+long PSChunkData::getModelFaceCount() const {
     if(!hasMesh()) return -1L;
     return mModelData->getFaceCount();
 }
 
-long PSChunkData::getModelVertexCount() {
+long PSChunkData::getModelVertexCount() const {
     if(!hasMesh()) return -1L;
     return mModelData->getVertexCount();
 }
 
-char PSChunkData::getModelGenPhaseStatus() {
+char PSChunkData::getModelGenPhaseStatus() const {
     long faceCount = getModelFaceCount();
 
     // Examine the model resolution
@@ -596,7 +598,7 @@ char PSChunkData::getModelGenPhaseStatus() {
     }
 }
 
-QString PSChunkData::describeTextureGenPhase() {
+QString PSChunkData::describeTextureGenPhase() const {
     if(getTextureGeneration_count() != 0) {
         return QString::asprintf("%d @ (%d x %d)", getTextureGeneration_count(),
                 getTextureGeneration_width(), getTextureGeneration_height());
@@ -605,7 +607,7 @@ QString PSChunkData::describeTextureGenPhase() {
     return "N/A";
 }
 
-char PSChunkData::getTextureGenPhaseStatus() {
+char PSChunkData::getTextureGenPhaseStatus() const {
     // Examine the texture resolution
     if(getTextureGeneration_width() == 0 || getTextureGeneration_height() == 0) {
         return 5;
