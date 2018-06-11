@@ -15,19 +15,24 @@ CancelableModalProgressDialog<T>::CancelableModalProgressDialog(QString pLabelTe
     // Setup the future watcher
     mWatcher = new QFutureWatcher<T>(this);
     connect(
-        mWatcher, &QFutureWatcher::finished,
+        mWatcher, &QFutureWatcher<T>::finished,
         this, &CancelableModalProgressDialog::processFinished
     );
 
     connect(
-        mWatcher, &QFutureWatcher::progressRangeChanged,
+        mWatcher, &QFutureWatcher<T>::progressRangeChanged,
         mGui->ProgressBar, &QProgressBar::setRange
     );
 
     connect(
-        mWatcher, &QFutureWatcher::progressValueChanged,
+        mWatcher, &QFutureWatcher<T>::progressValueChanged,
         mGui->ProgressBar, &QProgressBar::setValue
     );
+}
+
+template<class T>
+CancelableModalProgressDialog<T>::~CancelableModalProgressDialog() {
+
 }
 
 /**
@@ -75,8 +80,7 @@ void CancelableModalProgressDialog<T>::on_CancelButtonClicked() {
     int result = QMessageBox.question(this,
                                       "Cancel",
                                       "Are you sure you want to cancel this operation?",
-                                      QMessageBox.standardButton(QMessageBox::Yes),
-                                      QMessageBox.standardButton(QMessageBox::No));
+                                      QMessageBox::Yes, QMessageBox::No);
 
     if(result == QMessageBox::Yes) {
         emit canceled();

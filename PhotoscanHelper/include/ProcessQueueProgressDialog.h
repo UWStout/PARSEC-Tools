@@ -10,6 +10,7 @@
 #include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QWidget>
+#include <QString>
 
 #include "ui_StageProgressDialog.h"
 #include "QueueableProcess.h"
@@ -18,25 +19,26 @@ class ProcessQueueProgressDialog : public QDialog {
     Q_OBJECT
 
 public:
-    ProcessQueueProgressDialog(QQueue<QueueableProcess<QObject*>> &pProcessQueue, QWidget parent);
+    ProcessQueueProgressDialog(const QQueue<QueueableProcess<QObject*>*>& pProcessQueue, QWidget* parent);
+    ~ProcessQueueProgressDialog();
     void startProcessQueue();
 
 private:
     Ui_StageProgressDialog* mGUI;
-    QQueue<QueueableProcess<QObject*>>* mProcessQueue;
-    QFutureWatcher<QObject>* mCurrentWatcher;
+    QQueue<QueueableProcess<QObject*>*> mProcessQueue;
+    QFutureWatcher<QObject*>* mCurrentWatcher;
 
     void startNextProcess();
     void stageFinished();
 
 private slots:
-    void on_buttonBox_clicked(QAbstractButton pButton);
+    void on_buttonBox_clicked(QAbstractButton* pButton);
 
 protected:
     void showEvent(QShowEvent pEvent);
 
 signals:
-    stageComplete();
+    void stageComplete();
 };
 
 #endif
