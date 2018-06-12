@@ -22,7 +22,7 @@ class PSModelData;
 class PSDATASHARED_EXPORT PSProjectFileData : public PSXMLReader, public PSStatusDescribable {
 public:
     PSProjectFileData(QFileInfo pPSProjectFile, QSettings* settings);
-    ~PSProjectFileData();
+    virtual ~PSProjectFileData();
 
     QFileInfo getPSProjectFile();
     QString getPSVersion();

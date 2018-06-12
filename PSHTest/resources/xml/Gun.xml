@@ -1,0 +1,1663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="1.1.0">
+  <chunks next_id="1">
+    <chunk id="0" label="Chunk 1" enabled="true">
+      <sensors next_id="1">
+        <sensor id="0" label="NEX-7 (35 mm)" type="frame">
+          <resolution width="6000" height="4000"/>
+          <property name="pixel_width" value="4.0384615384615376e-03"/>
+          <property name="pixel_height" value="4.0384615384615376e-03"/>
+          <property name="focal_length" value="3.5000000000000000e+01"/>
+          <property name="fixed" value="false"/>
+          <calibration type="frame" class="adjusted">
+            <resolution width="6000" height="4000"/>
+            <fx>9.0197125608661372e+03</fx>
+            <fy>9.0286015344273928e+03</fy>
+            <cx>2.9123942196099242e+03</cx>
+            <cy>1.9306826870411276e+03</cy>
+            <skew>7.1131437938187536e-01</skew>
+            <k1>1.2453126903681204e-01</k1>
+            <k2>6.4129126635342037e-01</k2>
+            <k3>-1.1363499220427324e+00</k3>
+            <p1>-7.7480326210287486e-03</p1>
+            <p2>-6.7937787244356914e-03</p2>
+          </calibration>
+        </sensor>
+      </sensors>
+      <cameras next_id="42" next_group_id="0">
+        <camera id="0" label="DSC02625.JPG" sensor_id="0" enabled="true">
+          <transform>-4.1943994127160683e-01 5.5795729683611239e-01 -7.1606828625027752e-01 4.5358292646160532e+00 -5.7842771962026540e-01 4.4367395621957822e-01 6.8452523236719887e-01 -3.9615341513645799e+00 6.9963669775174797e-01 7.0131096917117053e-01 1.3664338871391873e-01 5.4527220640856155e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="1" label="DSC02626.JPG" sensor_id="0" enabled="true">
+          <transform>-1.0281680064538250e-01 6.3752311491476210e-01 -7.6353977201873835e-01 4.3626743535537473e+00 -6.0289636803605695e-01 5.7060048908851380e-01 5.5761191814816913e-01 -3.0095592434075118e+00 7.9116665432384037e-01 5.1766722882690597e-01 3.2569305378637231e-01 4.2346641158588465e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="2" label="DSC02627.JPG" sensor_id="0" enabled="true">
+          <transform>3.0395135253150452e-01 6.4011054325444106e-01 -7.0560050149413389e-01 3.7732557335719741e+00 -5.8294273111345085e-01 7.1076765941094289e-01 3.9368401869707731e-01 -1.9723970934790112e+00 7.5351930800495082e-01 2.9166389346299620e-01 5.8918657971286648e-01 2.9799670852255016e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="3" label="DSC02628.JPG" sensor_id="0" enabled="true">
+          <transform>5.8412865489120347e-01 5.3143494868589569e-01 -6.1349051325200832e-01 3.1858995831280850e+00 -4.9243256007024272e-01 8.3288294444529742e-01 2.5261863477344376e-01 -1.3670094276631040e+00 6.4521615627451556e-01 1.5454092068882974e-01 7.4820666631285015e-01 2.1854484365634237e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="4" label="DSC02629.JPG" sensor_id="0" enabled="true">
+          <transform>8.4469509661086117e-01 3.5801526826064450e-01 -3.9788850379701413e-01 2.0433289434201387e+00 -3.2947279828724590e-01 9.3363455763155911e-01 1.4062072388127816e-01 -8.0779859885400163e-01 4.2182682341257005e-01 1.2311802807942279e-02 9.0659282512122208e-01 1.4556253667636867e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="5" label="DSC02630.JPG" sensor_id="0" enabled="true">
+          <transform>9.7230267683682126e-01 1.7638471836527453e-01 -1.5334906502210821e-01 1.0236994612368042e+00 -1.5890866529238545e-01 9.8001323844986543e-01 1.1967492869435839e-01 -4.4064571539561143e-01 1.7139294241871394e-01 -9.1991758273281959e-02 9.8089855525372527e-01 1.0953254668249206e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="6" label="DSC02632.JPG" sensor_id="0" enabled="true">
+          <transform>9.9997232642746159e-01 -2.0348263524825063e-03 7.1558270636840468e-03 -1.1531035174385314e-01 2.2188600439282152e-03 9.9966453745558359e-01 -2.5804829273209658e-02 1.1660725313757368e-01 -7.1009182051034207e-03 2.5819992940147793e-02 9.9964138816138215e-01 9.1648739862476708e-02 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="7" label="DSC02633.JPG" sensor_id="0" enabled="true">
+          <transform>8.7747869727600047e-01 -2.7098313577378619e-01 3.9572626391613042e-01 -2.8813189781471555e+00 3.0987264992460994e-01 9.5007643053010882e-01 -3.6520090085699203e-02 3.1239853474673218e-01 -3.6607386775828898e-01 1.5467034711725836e-01 9.1764209094129590e-01 -2.7545945661363380e-01 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="8" label="DSC02634.JPG" sensor_id="0" enabled="true">
+          <transform>7.4355652713174880e-01 -3.4962402376443791e-01 5.6998836213254100e-01 -4.4391868545352846e+00 4.1130461444560174e-01 9.1122312150793916e-01 2.2381621145092720e-02 -4.0258352771713024e-01 -5.2721172700873020e-01 2.1779684303518121e-01 8.2134787396594677e-01 6.6604014096553354e-01 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="9" label="DSC02635.JPG" sensor_id="0" enabled="true">
+          <transform>4.2985629436108258e-01 -4.7540112122249817e-01 7.6760493754179948e-01 -5.3990861665017347e+00 5.5146079440726337e-01 8.1139895949014207e-01 1.9370782320294805e-01 -1.6088675110429129e+00 -7.1492276396116261e-01 3.4003750157696760e-01 6.1095002994633330e-01 2.3178921727549375e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="10" label="DSC02636.JPG" sensor_id="0" enabled="true">
+          <transform>3.4652337542968488e-02 -6.1180380728187722e-01 7.9025016096057077e-01 -4.4902280350372861e+00 5.8914894128841100e-01 6.5122619701833306e-01 4.7833875579528795e-01 -2.7812543451374503e+00 -8.0728107898151125e-01 4.4899948965721470e-01 3.8301007533224002e-01 4.0671047775577200e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="11" label="DSC02637.JPG" sensor_id="0" enabled="true">
+          <transform>-4.3753334644852154e-01 -5.7988880561106593e-01 6.8723616310008717e-01 -3.8458483536468560e+00 5.3776618039995949e-01 4.4378811776422133e-01 7.1684003916447636e-01 -4.0741135404116795e+00 -7.2067475740697096e-01 6.8321378766698004e-01 1.1767248777068717e-01 5.8488357109841598e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="12" label="DSC02638.JPG" sensor_id="0" enabled="true">
+          <transform>-7.4371702757379954e-01 -4.5562024879978297e-01 4.8917805733742398e-01 -2.9251137042194810e+00 3.8622167251698719e-01 3.0441968888174520e-01 8.7072468249115476e-01 -4.8230741297167485e+00 -5.4563522849516721e-01 8.3650394016093266e-01 -5.0431691626014463e-02 6.8855428576229691e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="13" label="DSC02639.JPG" sensor_id="0" enabled="true">
+          <transform>-9.6003264869629901e-01 -1.9434429542892029e-01 2.0141402203274011e-01 -1.0688696484214453e+00 1.5466537787597534e-01 2.3140079514774492e-01 9.6048544647562106e-01 -5.2867448777457220e+00 -2.3327223221731797e-01 9.5324916304145157e-01 -1.9209398438556491e-01 7.4211933422512635e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="14" label="DSC02640.JPG" sensor_id="0" enabled="true">
+          <transform>-9.9970995555102837e-01 -1.4586778852467992e-02 -1.9163263158192723e-02 1.9056502614228091e-01 -2.2284492326914040e-02 2.5853646513753104e-01 9.6574442664502180e-01 -5.8568289782073615e+00 -9.1326980620549982e-03 9.6589136142575549e-01 -2.5878653703237353e-01 8.0411267973541776e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="15" label="DSC02641.JPG" sensor_id="0" enabled="true">
+          <transform>-9.5830984479284542e-01 1.7441815085175033e-01 -2.2631957499643898e-01 1.8184949545366325e+00 -1.6159727584739214e-01 3.2238989934451245e-01 9.3271167744343009e-01 -5.9180709941951584e+00 2.3564499106031203e-01 9.3039940963765200e-01 -2.8076391636763842e-01 7.9602992790206981e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="16" label="DSC02642.JPG" sensor_id="0" enabled="true">
+          <transform>-9.1272129990211848e-01 2.2672636547195130e-01 -3.3990437464802692e-01 1.6944358342740753e+00 -2.3830748475480223e-01 3.8034765873318066e-01 8.9361356368736200e-01 -6.0137898352366568e+00 3.3188758852181677e-01 8.9662189003841875e-01 -2.9312081961045777e-01 8.0028194167514677e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="17" label="DSC02643.JPG" sensor_id="0" enabled="true">
+          <transform>-8.1406875305694837e-01 3.3005886230452730e-01 -4.7786317362875569e-01 3.3259688961107927e+00 -3.4672442759061051e-01 3.8388307677129319e-01 8.5581303722283208e-01 -5.3158576225333816e+00 4.6591226277945158e-01 8.6237748740493347e-01 -1.9806774752312628e-01 7.1622768967638564e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="18" label="DSC02644.JPG" sensor_id="0" enabled="true">
+          <transform>-5.8959831472307089e-01 4.6812100885808955e-01 -6.5820707102051046e-01 4.3167710441102169e+00 -4.9269482185455998e-01 4.3729572319900289e-01 7.5234584001612226e-01 -4.6429185684096526e+00 6.4002003077514547e-01 7.6787705496228087e-01 -2.7188024368025254e-02 6.2670698072362701e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="19" label="DSC02645.JPG" sensor_id="0" enabled="true">
+          <transform>-2.4582626270334518e-01 4.1285843297457980e-01 -8.7699336536092454e-01 5.4793168496834799e+00 -5.9796457528578040e-01 6.4749339192846411e-01 4.7243060242988921e-01 -2.9783389987795403e+00 7.6289436704474500e-01 6.4054681462852203e-01 8.7703836863910645e-02 5.5952754559147735e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="20" label="DSC02646.JPG" sensor_id="0" enabled="true">
+          <transform>-3.5381525908827212e-02 4.2494778991903043e-01 -9.0452613199801712e-01 5.4379459107363051e+00 -6.3798248342047303e-01 6.8706336176577953e-01 3.4773882119739152e-01 -2.1379763893236596e+00 7.6923760859243528e-01 5.8937535812251007e-01 2.4679989620126261e-01 4.4915742111123924e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="21" label="DSC02647.JPG" sensor_id="0" enabled="true">
+          <transform>2.7316812139954166e-01 4.2680962166449093e-01 -8.6209786237158670e-01 4.6908918023304595e+00 -6.2376245236382832e-01 7.6083468839011514e-01 1.7902787482227098e-01 -1.2209838875334711e+00 7.3232477799956208e-01 4.8883956856716304e-01 4.7406359882505411e-01 3.2897733196012826e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="22" label="DSC02648.JPG" sensor_id="0" enabled="true">
+          <transform>6.0813864798431483e-01 3.4531264882757945e-01 -7.1479126980363339e-01 4.1516838647544381e+00 -4.9567904521101963e-01 8.6850311664094493e-01 -2.1495403363205046e-03 -3.1313729727733608e-01 6.2005618210489755e-01 3.5561427269535506e-01 6.9933455519433052e-01 2.1014892104569549e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="23" label="DSC02649.JPG" sensor_id="0" enabled="true">
+          <transform>8.1559926755363688e-01 2.7520596861134450e-01 -5.0897888915618361e-01 2.7114806097296626e+00 -3.6513519380691184e-01 9.2717754819122733e-01 -8.3774007745201648e-02 2.5632600070926043e-01 4.4885869158295233e-01 2.5417212469268896e-01 8.5669271388266410e-01 1.4437132300919699e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="24" label="DSC02650.JPG" sensor_id="0" enabled="true">
+          <transform>9.3496922119389747e-01 1.7669053207666963e-01 -3.0759228094108659e-01 1.6443435767080787e+00 -2.3178899656971047e-01 9.6070712286616200e-01 -1.5269474497646571e-01 6.9714694170803226e-01 2.6852637950354841e-01 2.1406139294296986e-01 9.3918651159502486e-01 8.8236942554730435e-01 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="25" label="DSC02651.JPG" sensor_id="0" enabled="true">
+          <transform>9.9845466264452498e-01 4.3293346199383617e-02 -3.4842112712465095e-02 1.6391394893781344e-01 -4.8871356239523350e-02 9.8251556421982400e-01 -1.7965176482603909e-01 7.8520075978204329e-01 2.6455191980354384e-02 1.8107692354538493e-01 9.8311305076101063e-01 7.8818887320937880e-01 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="26" label="DSC02652.JPG" sensor_id="0" enabled="true">
+          <transform>9.9337792029232375e-01 -8.5977049605816501e-03 1.1457044533870153e-01 -1.0105852445903531e+00 3.7595139943836897e-02 9.6662324252960519e-01 -2.5342871276584950e-01 1.1754098686992320e+00 -1.0856755007045579e-01 2.5605777955563641e-01 9.6054541829147055e-01 1.7158644374706838e-01 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="27" label="DSC02653.JPG" sensor_id="0" enabled="true">
+          <transform>7.9121886230824212e-01 -2.0450990916500711e-01 5.7632318101996516e-01 -3.9201571532838653e+00 3.6040986062041469e-01 9.1730356369252131e-01 -1.6928941019618982e-01 6.6916164777099951e-01 -4.9404194588640377e-01 3.4165753187998227e-01 7.9949526991374675e-01 8.2031690383886147e-01 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="28" label="DSC02654.JPG" sensor_id="0" enabled="true">
+          <transform>6.9876526180000642e-01 -3.0184638140088477e-01 6.4854905052490830e-01 -4.9132216390571299e+00 4.1836069090815170e-01 9.0784223929257535e-01 -2.8227661240285806e-02 -8.6111817095739146e-02 -5.8025980491881612e-01 2.9105193796199669e-01 7.6064928068338011e-01 1.9839024730189023e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="29" label="DSC02655.JPG" sensor_id="0" enabled="true">
+          <transform>3.7475697590610352e-01 -3.6303727427202737e-01 8.5308917851467836e-01 -5.3657083309324927e+00 5.3066548625052723e-01 8.3850425449622845e-01 1.2371239587937605e-01 -1.1480311998978159e+00 -7.6023111664296117e-01 4.0634290036970094e-01 5.0688667037803981e-01 3.3461738124994835e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="30" label="DSC02656.JPG" sensor_id="0" enabled="true">
+          <transform>-1.9837738508006408e-02 -3.9074636775643828e-01 9.2028459740236779e-01 -5.3661777195453517e+00 5.7889064837097759e-01 7.4598901219309632e-01 3.2922030756895504e-01 -2.4040869529582984e+00 -8.1516383712694040e-01 5.3927513364915924e-01 2.1140068322539637e-01 4.9926604818342435e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="31" label="DSC02657.JPG" sensor_id="0" enabled="true">
+          <transform>-2.4821261047328644e-01 -4.9209108045604455e-01 8.3440809472202471e-01 -4.9272071705519105e+00 5.6900407281170562e-01 6.2304487607495251e-01 5.3670238262973857e-01 -2.8026951406550160e+00 -7.8398014332362265e-01 6.0799790372364759e-01 1.2535423384123284e-01 5.7757933436261668e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="32" label="DSC02658.JPG" sensor_id="0" enabled="true">
+          <transform>-4.4293084971799823e-01 -4.2497110241505270e-01 7.8943766345432675e-01 -4.3187412163456003e+00 5.4952622407024754e-01 5.6704813076951988e-01 6.1357749832428621e-01 -3.4377750885074962e+00 -7.0840185730077554e-01 7.0558910103751471e-01 -1.7630345143631765e-02 6.5455406553999484e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="33" label="DSC02659.JPG" sensor_id="0" enabled="true">
+          <transform>-6.2126119747621800e-01 -3.5240485069499100e-01 6.9988952393721171e-01 -3.7233683535974773e+00 4.7144357373015205e-01 5.4534218821729186e-01 6.9306771280944734e-01 -4.0064844031284750e+00 -6.2591970834840993e-01 7.6053449557335462e-01 -1.7266093867468862e-01 7.2127735452291111e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="34" label="DSC02660.JPG" sensor_id="0" enabled="true">
+          <transform>-8.6393287163735355e-01 -2.2714658891524972e-01 4.4947126765634571e-01 -2.4026433073355036e+00 3.1445697280093243e-01 4.5382014828948969e-01 8.3376500601990877e-01 -4.6599787915228346e+00 -3.9336599441399289e-01 8.6165637010972740e-01 -3.2064231518628161e-01 8.0876137084850388e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="35" label="DSC02661.JPG" sensor_id="0" enabled="true">
+          <transform>-9.7866902528878108e-01 -8.3823938346819907e-02 1.8756461899925511e-01 -8.7333372285199118e-01 1.3496448645257852e-01 4.2600397357678832e-01 8.9459778777581345e-01 -5.0833938264963896e+00 -1.5489198280382024e-01 9.0082970746796309e-01 -4.0560363879813166e-01 8.6104847347273097e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="36" label="DSC02662.JPG" sensor_id="0" enabled="true">
+          <transform>-9.9938389080949053e-01 5.1040453433205107e-03 -3.4724451206859165e-02 4.9020146960155825e-01 -2.8650338672811138e-02 4.5284195337127953e-01 8.9113036271962864e-01 -5.2964149793403816e+00 2.0273058092390425e-02 8.9157619640051922e-01 -4.5241672065427174e-01 8.7988729106634125e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="37" label="DSC02663.JPG" sensor_id="0" enabled="true">
+          <transform>-9.9967494915647370e-01 -4.8664016246082091e-03 2.5026269482880871e-02 5.3843495855136492e-01 1.9674412526691956e-02 4.7704704377356433e-01 8.7865751889950450e-01 -5.3346724722154670e+00 -1.6214608250935646e-02 8.7886428768162572e-01 -4.7679623563650053e-01 8.8009506466024572e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="38" label="DSC02664.JPG" sensor_id="0" enabled="true">
+          <transform>-9.5620066498945422e-01 1.7102658695641715e-01 -2.3755040481498776e-01 1.7421138290622498e+00 -1.1771726846305508e-01 5.1834624194677537e-01 8.4702999838568371e-01 -5.3713281038873903e+00 2.6799800928238721e-01 8.3789443249952056e-01 -4.7551023859322289e-01 8.8173947477399857e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="39" label="DSC02665.JPG" sensor_id="0" enabled="true">
+          <transform>-8.6935052183660977e-01 2.6255974192920251e-01 -4.1867893677672030e-01 2.8142405741343310e+00 -2.4117551953610006e-01 5.1405663387863054e-01 8.2315256541048565e-01 -5.0046222398067171e+00 4.3135141005786293e-01 8.1658322238669734e-01 -3.8357242074691877e-01 8.3145847815192564e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="40" label="DSC02666.JPG" sensor_id="0" enabled="true">
+          <transform>-6.4721021524305389e-01 3.2573647637245745e-01 -6.8921309131900221e-01 4.0981326830823894e+00 -4.2056718536003718e-01 6.0149134739181176e-01 6.7921381141075077e-01 -4.4908331930055150e+00 6.3580042456998731e-01 7.2945452700853008e-01 -2.5229727137522828e-01 7.5406710669760635e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+        <camera id="41" label="DSC02667.JPG" sensor_id="0" enabled="true">
+          <transform>-3.9288930835798624e-01 3.9422583777283371e-01 -8.3079719559606768e-01 5.3751510981170529e+00 -5.0952889356521780e-01 6.5875826033703366e-01 5.5355023354699295e-01 -3.7197006698741690e+00 7.6551831983316265e-01 6.4079914424883000e-01 -5.7949622343714313e-02 6.5350154308610602e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+          <orientation>1</orientation>
+        </camera>
+      </cameras>
+      <frames next_id="1">
+        <frame id="0">
+          <cameras>
+            <camera camera_id="0">
+              <photo path="../Bank robbery gun/DSC02625.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 11:59:29"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 11:59:29"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 11:59:28"/>
+                  <property name="System/FileSize" value="5242880"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb0.png"/>
+            </camera>
+            <camera camera_id="1">
+              <photo path="../Bank robbery gun/DSC02626.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 11:59:45"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 11:59:45"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 11:59:44"/>
+                  <property name="System/FileSize" value="5308416"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb1.png"/>
+            </camera>
+            <camera camera_id="2">
+              <photo path="../Bank robbery gun/DSC02627.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:00:25"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:00:25"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:00:24"/>
+                  <property name="System/FileSize" value="5439488"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb2.png"/>
+            </camera>
+            <camera camera_id="3">
+              <photo path="../Bank robbery gun/DSC02628.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:00:42"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:00:42"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:00:42"/>
+                  <property name="System/FileSize" value="5537792"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb3.png"/>
+            </camera>
+            <camera camera_id="4">
+              <photo path="../Bank robbery gun/DSC02629.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:01:04"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:01:04"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:01:04"/>
+                  <property name="System/FileSize" value="5439488"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb4.png"/>
+            </camera>
+            <camera camera_id="5">
+              <photo path="../Bank robbery gun/DSC02630.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:01:22"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:01:22"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:01:22"/>
+                  <property name="System/FileSize" value="5505024"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb5.png"/>
+            </camera>
+            <camera camera_id="6">
+              <photo path="../Bank robbery gun/DSC02632.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:02:14"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:02:14"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:02:14"/>
+                  <property name="System/FileSize" value="5210112"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb6.png"/>
+            </camera>
+            <camera camera_id="7">
+              <photo path="../Bank robbery gun/DSC02633.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:02:29"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:02:29"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:02:28"/>
+                  <property name="System/FileSize" value="4980736"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb7.png"/>
+            </camera>
+            <camera camera_id="8">
+              <photo path="../Bank robbery gun/DSC02634.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:03:09"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:03:09"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:03:08"/>
+                  <property name="System/FileSize" value="4751360"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb8.png"/>
+            </camera>
+            <camera camera_id="9">
+              <photo path="../Bank robbery gun/DSC02635.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:03:22"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:03:22"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:03:22"/>
+                  <property name="System/FileSize" value="5046272"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb9.png"/>
+            </camera>
+            <camera camera_id="10">
+              <photo path="../Bank robbery gun/DSC02636.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:03:30"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:03:30"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:03:30"/>
+                  <property name="System/FileSize" value="5603328"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb10.png"/>
+            </camera>
+            <camera camera_id="11">
+              <photo path="../Bank robbery gun/DSC02637.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:03:55"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:03:55"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:03:54"/>
+                  <property name="System/FileSize" value="5505024"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb11.png"/>
+            </camera>
+            <camera camera_id="12">
+              <photo path="../Bank robbery gun/DSC02638.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:04:06"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:04:06"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:04:06"/>
+                  <property name="System/FileSize" value="5537792"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb12.png"/>
+            </camera>
+            <camera camera_id="13">
+              <photo path="../Bank robbery gun/DSC02639.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:04:16"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:04:16"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:04:16"/>
+                  <property name="System/FileSize" value="5406720"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb13.png"/>
+            </camera>
+            <camera camera_id="14">
+              <photo path="../Bank robbery gun/DSC02640.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:04:23"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:04:23"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:04:22"/>
+                  <property name="System/FileSize" value="5537792"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb14.png"/>
+            </camera>
+            <camera camera_id="15">
+              <photo path="../Bank robbery gun/DSC02641.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:04:43"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:04:43"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:04:42"/>
+                  <property name="System/FileSize" value="5472256"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb15.png"/>
+            </camera>
+            <camera camera_id="16">
+              <photo path="../Bank robbery gun/DSC02642.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:04:53"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:04:53"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:04:52"/>
+                  <property name="System/FileSize" value="5177344"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb16.png"/>
+            </camera>
+            <camera camera_id="17">
+              <photo path="../Bank robbery gun/DSC02643.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:05:02"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:05:02"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:05:02"/>
+                  <property name="System/FileSize" value="5210112"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb17.png"/>
+            </camera>
+            <camera camera_id="18">
+              <photo path="../Bank robbery gun/DSC02644.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:05:10"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:05:10"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:05:10"/>
+                  <property name="System/FileSize" value="5210112"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb18.png"/>
+            </camera>
+            <camera camera_id="19">
+              <photo path="../Bank robbery gun/DSC02645.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:04"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:04"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:04"/>
+                  <property name="System/FileSize" value="4882432"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb19.png"/>
+            </camera>
+            <camera camera_id="20">
+              <photo path="../Bank robbery gun/DSC02646.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:08"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:08"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:08"/>
+                  <property name="System/FileSize" value="4882432"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb20.png"/>
+            </camera>
+            <camera camera_id="21">
+              <photo path="../Bank robbery gun/DSC02647.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:14"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:14"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:14"/>
+                  <property name="System/FileSize" value="5144576"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb21.png"/>
+            </camera>
+            <camera camera_id="22">
+              <photo path="../Bank robbery gun/DSC02648.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:26"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:26"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:26"/>
+                  <property name="System/FileSize" value="5013504"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb22.png"/>
+            </camera>
+            <camera camera_id="23">
+              <photo path="../Bank robbery gun/DSC02649.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:32"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:32"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:32"/>
+                  <property name="System/FileSize" value="4915200"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb23.png"/>
+            </camera>
+            <camera camera_id="24">
+              <photo path="../Bank robbery gun/DSC02650.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:39"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:39"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:38"/>
+                  <property name="System/FileSize" value="4980736"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb24.png"/>
+            </camera>
+            <camera camera_id="25">
+              <photo path="../Bank robbery gun/DSC02651.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:44"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:44"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:44"/>
+                  <property name="System/FileSize" value="5046272"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb25.png"/>
+            </camera>
+            <camera camera_id="26">
+              <photo path="../Bank robbery gun/DSC02652.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:06:57"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:06:57"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:06:56"/>
+                  <property name="System/FileSize" value="4915200"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb26.png"/>
+            </camera>
+            <camera camera_id="27">
+              <photo path="../Bank robbery gun/DSC02653.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:07:25"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:07:25"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:07:24"/>
+                  <property name="System/FileSize" value="4849664"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb27.png"/>
+            </camera>
+            <camera camera_id="28">
+              <photo path="../Bank robbery gun/DSC02654.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:07:47"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:07:47"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:07:46"/>
+                  <property name="System/FileSize" value="4784128"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb28.png"/>
+            </camera>
+            <camera camera_id="29">
+              <photo path="../Bank robbery gun/DSC02655.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:07:57"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:07:57"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:07:56"/>
+                  <property name="System/FileSize" value="5177344"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb29.png"/>
+            </camera>
+            <camera camera_id="30">
+              <photo path="../Bank robbery gun/DSC02656.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:08:05"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:08:05"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:08:04"/>
+                  <property name="System/FileSize" value="5373952"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb30.png"/>
+            </camera>
+            <camera camera_id="31">
+              <photo path="../Bank robbery gun/DSC02657.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:08:18"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:08:18"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:08:18"/>
+                  <property name="System/FileSize" value="5013504"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb31.png"/>
+            </camera>
+            <camera camera_id="32">
+              <photo path="../Bank robbery gun/DSC02658.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:08:48"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:08:48"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:08:48"/>
+                  <property name="System/FileSize" value="5046272"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb32.png"/>
+            </camera>
+            <camera camera_id="33">
+              <photo path="../Bank robbery gun/DSC02659.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:08:56"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:08:56"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:08:56"/>
+                  <property name="System/FileSize" value="5046272"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb33.png"/>
+            </camera>
+            <camera camera_id="34">
+              <photo path="../Bank robbery gun/DSC02660.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:09:01"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:09:01"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:09:00"/>
+                  <property name="System/FileSize" value="5242880"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb34.png"/>
+            </camera>
+            <camera camera_id="35">
+              <photo path="../Bank robbery gun/DSC02661.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:09:06"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:09:06"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:09:06"/>
+                  <property name="System/FileSize" value="5439488"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb35.png"/>
+            </camera>
+            <camera camera_id="36">
+              <photo path="../Bank robbery gun/DSC02662.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:09:19"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:09:19"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:09:18"/>
+                  <property name="System/FileSize" value="5242880"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb36.png"/>
+            </camera>
+            <camera camera_id="37">
+              <photo path="../Bank robbery gun/DSC02663.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:09:25"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:09:25"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:09:24"/>
+                  <property name="System/FileSize" value="5210112"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb37.png"/>
+            </camera>
+            <camera camera_id="38">
+              <photo path="../Bank robbery gun/DSC02664.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:09:39"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:09:39"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:09:38"/>
+                  <property name="System/FileSize" value="5079040"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb38.png"/>
+            </camera>
+            <camera camera_id="39">
+              <photo path="../Bank robbery gun/DSC02665.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:09:49"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:09:49"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:09:48"/>
+                  <property name="System/FileSize" value="5144576"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb39.png"/>
+            </camera>
+            <camera camera_id="40">
+              <photo path="../Bank robbery gun/DSC02666.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:09:57"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:09:57"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:09:56"/>
+                  <property name="System/FileSize" value="4947968"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb40.png"/>
+            </camera>
+            <camera camera_id="41">
+              <photo path="../Bank robbery gun/DSC02667.JPG">
+                <meta>
+                  <property name="Exif/DateTime" value="2014:10:10 12:10:07"/>
+                  <property name="Exif/DateTimeOriginal" value="2014:10:10 12:10:07"/>
+                  <property name="Exif/ExposureTime" value="0.05"/>
+                  <property name="Exif/FNumber" value="8"/>
+                  <property name="Exif/FocalLength" value="35"/>
+                  <property name="Exif/FocalLengthIn35mmFilm" value="52"/>
+                  <property name="Exif/ISOSpeedRatings" value="1600"/>
+                  <property name="Exif/Make" value="SONY"/>
+                  <property name="Exif/Model" value="NEX-7"/>
+                  <property name="Exif/Orientation" value="1"/>
+                  <property name="Exif/Software" value="NEX-7 v1.00"/>
+                  <property name="File/ImageHeight" value="4000"/>
+                  <property name="File/ImageWidth" value="6000"/>
+                  <property name="System/FileModifyDate" value="2014:10:10 12:10:06"/>
+                  <property name="System/FileSize" value="4849664"/>
+                </meta>
+              </photo>
+              <thumbnail path="thumb41.png"/>
+            </camera>
+          </cameras>
+          <point_cloud>
+            <tracks path="tracks0.ply"/>
+            <points path="points0.ply"/>
+            <projections camera_id="0" path="projections0.ply"/>
+            <projections camera_id="1" path="projections1.ply"/>
+            <projections camera_id="2" path="projections2.ply"/>
+            <projections camera_id="3" path="projections3.ply"/>
+            <projections camera_id="4" path="projections4.ply"/>
+            <projections camera_id="5" path="projections5.ply"/>
+            <projections camera_id="6" path="projections6.ply"/>
+            <projections camera_id="7" path="projections7.ply"/>
+            <projections camera_id="8" path="projections8.ply"/>
+            <projections camera_id="9" path="projections9.ply"/>
+            <projections camera_id="10" path="projections10.ply"/>
+            <projections camera_id="11" path="projections11.ply"/>
+            <projections camera_id="12" path="projections12.ply"/>
+            <projections camera_id="13" path="projections13.ply"/>
+            <projections camera_id="14" path="projections14.ply"/>
+            <projections camera_id="15" path="projections15.ply"/>
+            <projections camera_id="16" path="projections16.ply"/>
+            <projections camera_id="17" path="projections17.ply"/>
+            <projections camera_id="18" path="projections18.ply"/>
+            <projections camera_id="19" path="projections19.ply"/>
+            <projections camera_id="20" path="projections20.ply"/>
+            <projections camera_id="21" path="projections21.ply"/>
+            <projections camera_id="22" path="projections22.ply"/>
+            <projections camera_id="23" path="projections23.ply"/>
+            <projections camera_id="24" path="projections24.ply"/>
+            <projections camera_id="25" path="projections25.ply"/>
+            <projections camera_id="26" path="projections26.ply"/>
+            <projections camera_id="27" path="projections27.ply"/>
+            <projections camera_id="28" path="projections28.ply"/>
+            <projections camera_id="29" path="projections29.ply"/>
+            <projections camera_id="30" path="projections30.ply"/>
+            <projections camera_id="31" path="projections31.ply"/>
+            <projections camera_id="32" path="projections32.ply"/>
+            <projections camera_id="33" path="projections33.ply"/>
+            <projections camera_id="34" path="projections34.ply"/>
+            <projections camera_id="35" path="projections35.ply"/>
+            <projections camera_id="36" path="projections36.ply"/>
+            <projections camera_id="37" path="projections37.ply"/>
+            <projections camera_id="38" path="projections38.ply"/>
+            <projections camera_id="39" path="projections39.ply"/>
+            <projections camera_id="40" path="projections40.ply"/>
+            <projections camera_id="41" path="projections41.ply"/>
+            <meta>
+              <property name="match/duration" value="146.016"/>
+              <property name="match/match_downscale" value="1"/>
+              <property name="match/match_filter_mask" value="0"/>
+              <property name="match/match_point_limit" value="7500"/>
+              <property name="match/match_select_pairs" value="0"/>
+              <property name="match/match_tiepoint_limit" value="1000"/>
+            </meta>
+          </point_cloud>
+          <depth_maps>
+            <depth_map camera_id="0" path="depth0.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="1" path="depth1.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="2" path="depth2.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="3" path="depth3.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="4" path="depth4.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="5" path="depth5.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="6" path="depth6.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="7" path="depth7.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="8" path="depth8.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="9" path="depth9.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="10" path="depth10.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="11" path="depth11.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="12" path="depth12.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="13" path="depth13.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="14" path="depth14.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="15" path="depth15.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="16" path="depth16.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="17" path="depth17.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="18" path="depth18.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="19" path="depth19.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="20" path="depth20.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="21" path="depth21.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="22" path="depth22.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="23" path="depth23.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="24" path="depth24.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="25" path="depth25.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="26" path="depth26.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="27" path="depth27.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="28" path="depth28.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="29" path="depth29.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="30" path="depth30.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="31" path="depth31.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="32" path="depth32.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="33" path="depth33.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="34" path="depth34.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="35" path="depth35.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="36" path="depth36.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="37" path="depth37.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="38" path="depth38.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="39" path="depth39.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="40" path="depth40.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <depth_map camera_id="41" path="depth41.exr">
+              <calibration type="frame">
+                <resolution width="1500" height="1000"/>
+                <fx>2.2549281402165343e+03</fx>
+                <fy>2.2571503836068482e+03</fy>
+                <cx>7.2809855490248106e+02</cx>
+                <cy>4.8267067176028189e+02</cy>
+                <skew>1.7782859484546884e-01</skew>
+              </calibration>
+            </depth_map>
+            <meta>
+              <property name="depth/depth_downscale" value="4"/>
+              <property name="depth/depth_filter_mode" value="1"/>
+              <property name="depth/duration" value="635.614"/>
+            </meta>
+          </depth_maps>
+          <dense_cloud>
+            <points path="dense_points0.oct"/>
+            <meta>
+              <property name="dense_cloud/density" value="100"/>
+              <property name="dense_cloud/depth_downscale" value="4"/>
+              <property name="dense_cloud/depth_filter_mode" value="1"/>
+              <property name="dense_cloud/duration" value="356.74"/>
+              <property name="dense_cloud/resolution" value="0.00257259397041652"/>
+            </meta>
+          </dense_cloud>
+          <model>
+            <mesh path="model0.ply"/>
+            <texture path="model0.png"/>
+            <meta>
+              <property name="atlas/atlas_blend_mode" value="3"/>
+              <property name="atlas/atlas_count" value="1"/>
+              <property name="atlas/atlas_height" value="4096"/>
+              <property name="atlas/atlas_mapping_mode" value="1"/>
+              <property name="atlas/atlas_width" value="4096"/>
+              <property name="atlas/duration_blend" value="186.901154"/>
+              <property name="atlas/duration_uv" value="22.689913"/>
+              <property name="model/depth_downscale" value="4"/>
+              <property name="model/depth_filter_mode" value="1"/>
+              <property name="model/duration" value="243.693046"/>
+              <property name="model/mesh_face_count" value="538153"/>
+              <property name="model/mesh_interpolation" value="1"/>
+              <property name="model/mesh_object_type" value="0"/>
+              <property name="model/mesh_source_data" value="1"/>
+              <property name="model/resolution" value="0.00257259397041652"/>
+            </meta>
+          </model>
+        </frame>
+      </frames>
+      <region>
+        <center>-4.6321074769412163e-02 -1.1708086735898071e-01 6.2484511720026026e+00</center>
+        <size>5.9964418411254883e+00 5.4012298583984375e+00 2.2830932140350342e+00</size>
+        <R>-5.7539161884834078e-01 -3.0659288643586435e-01 7.5823827847584369e-01 -7.8901148996086412e-01 4.5220953739768827e-01 -4.1589349958409522e-01 -2.1537259265938014e-01 -8.3756034783978039e-01 -5.0210288792007851e-01</R>
+      </region>
+      <settings>
+        <property name="accuracy_tiepoints" value="4.0000000000000000e+00"/>
+        <property name="accuracy_cameras" value="1.0000000000000000e+01"/>
+        <property name="accuracy_markers" value="5.0000000000000001e-03"/>
+        <property name="accuracy_scalebars" value="1.0000000000000000e-03"/>
+        <property name="accuracy_projections" value="1.0000000000000001e-01"/>
+      </settings>
+      <meta>
+        <property name="align/duration" value="2.949"/>
+        <property name="optimize/duration" value="0.655"/>
+        <property name="optimize/fit_aspect" value="1"/>
+        <property name="optimize/fit_cxcy" value="1"/>
+        <property name="optimize/fit_f" value="1"/>
+        <property name="optimize/fit_k1k2k3" value="1"/>
+        <property name="optimize/fit_p1p2" value="1"/>
+        <property name="optimize/fit_skew" value="1"/>
+      </meta>
+    </chunk>
+  </chunks>
+</document>

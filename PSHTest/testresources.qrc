@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/PSHTest">
+        <file alias="BlueBird.xml">resources/xml/BlueBird.xml</file>
+        <file alias="Chair.xml">resources/xml/Chair.xml</file>
+        <file alias="Gun.xml">resources/xml/Gun.xml</file>
+    </qresource>
+</RCC>

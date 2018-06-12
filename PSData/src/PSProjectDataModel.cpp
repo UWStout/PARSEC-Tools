@@ -1,354 +1,335 @@
-//package edu.uwstout.berriers.PSHelper.Model;
+#include "PSProjectDataModel.h"
 
-//import java.io.File;
-//import java.io.FileNotFoundException;
-//import java.io.PrintWriter;
-//import java.text.DateFormat;
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.Date;
+#include "PSSessionData.h"
 
-//import com.trolltech.qt.core.QAbstractItemModel;
-//import com.trolltech.qt.core.QModelIndex;
-//import com.trolltech.qt.core.QObject;
-//import com.trolltech.qt.core.Qt;
-//import com.trolltech.qt.core.Qt.ItemDataRole;
-//import com.trolltech.qt.core.Qt.ItemFlag;
-//import com.trolltech.qt.core.Qt.ItemFlags;
-//import com.trolltech.qt.core.Qt.SortOrder;
-//import com.trolltech.qt.gui.QBrush;
-//import com.trolltech.qt.gui.QColor;
+#include <QColor>
+#include <QBrush>
+#include <QTextStream>
 
-//import edu.uwstout.berriers.PSHelper.Model.PSSessionData.Columns;
+// Colors used for indicating status
+const QColor PSProjectDataModel::doneColor = QColor(0x99FF99);		// Light Green
+const QColor PSProjectDataModel::okColor = QColor(0xFFFF00);		// Yellow
+const QColor PSProjectDataModel::warningColor = QColor(0xFF9933);	// Orange
+const QColor PSProjectDataModel::badColor = QColor(0xFF5555);		// Red
+const QColor PSProjectDataModel::errorColor = QColor(0xCC55CC);		// Magenta
 
-//public class PSProjectDataModel extends QAbstractItemModel {
+// Make a PSProjectDataModel with the provided data
+PSProjectDataModel::PSProjectDataModel(QVector<PSSessionData*> data, QObject* parent) : QAbstractItemModel(parent) {
+    mData = data;
+    setExtendedColsEnabled(false);
+    setShowColorForStatus(false);
+}
 
-//	// Colors used for indicating status
-//	private static final QColor doneColor = new QColor(0x99FF99);		// Light Green
-//	private static final QColor okColor = new QColor(0xFFFF00);			// Yellow
-//	private static final QColor warningColor = new QColor(0xFF9933);	// Orange
-//	private static final QColor badColor = new QColor(0xFF5555);		// Red
-//	private static final QColor errorColor = new QColor(0xCC55CC);		// Magenta
+PSProjectDataModel::~PSProjectDataModel() {}
 
-//	// The actual data used by the table model
-//	private ArrayList<PSSessionData> mData;
-	
-//	// Are the extended columns visible
-//	private boolean mExtendedColsEnabled;
-	
-//	// Are the status colors enabled
-//	private boolean mShowColorForStatus;
+void PSProjectDataModel::setExtendedColsEnabled(bool pExtendedColsEnabled) {
+    emit layoutAboutToBeChanged();
+    mExtendedColsEnabled = pExtendedColsEnabled;
+    emit layoutChanged();
+}
 
-//	// Make a PSProjectDataModel with the provided data
-//	public PSProjectDataModel(ArrayList<PSSessionData> data, QObject parent) {
-//		super(parent);
-//		mData = data;
+void PSProjectDataModel::setShowColorForStatus(bool pShowColorForStatus) {
+    emit layoutAboutToBeChanged();
+    mShowColorForStatus = pShowColorForStatus;
+    emit layoutChanged();
+}
 
-//		setExtendedColsEnabled(false);
-//		setShowColorForStatus(false);
-//	}
+// Our model is not hierarchical
+QModelIndex PSProjectDataModel::parent(const QModelIndex& child) const {
+    (void)child;
+    return QModelIndex();
+}
 
-//	public void setExtendedColsEnabled(boolean pExtendedColsEnabled) {
-//		layoutAboutToBeChanged.emit();
-//		mExtendedColsEnabled = pExtendedColsEnabled;
-//		layoutChanged.emit();
-//	}
+// TODO: check out http://programmingexamples.net/wiki/Qt/Delegates/ComboBoxDelegate
 
-//	public void setShowColorForStatus(boolean pShowColorForStatus) {
-//		layoutAboutToBeChanged.emit();
-//		mShowColorForStatus = pShowColorForStatus;
-//		layoutChanged.emit();
-//	}
-	
-//	// Our model is not hierarchical
-//	@Override
-//	public QModelIndex parent(QModelIndex child) {
-//		return null;
-//	}
+Qt::ItemFlags PSProjectDataModel::flags(const QModelIndex& index) const {
+    if(index.column() == 2 || index.column() == 3) {
+        return (Qt::ItemIsEnabled | Qt::ItemIsEditable);
+    }
+    return Qt::ItemIsEnabled;
+}
 
-//	// TODO: check out http://programmingexamples.net/wiki/Qt/Delegates/ComboBoxDelegate
-	
-//	@Override
-//	public ItemFlags flags(QModelIndex index) {
-//		if(index.column() == 2 || index.column() == 3) {
-//			return new ItemFlags(ItemFlag.ItemIsEnabled, ItemFlag.ItemIsEditable);
-//		}
-//	    return new ItemFlags(ItemFlag.ItemIsEnabled);
-//	}
-	
-//	@Override
-//	public boolean setData(QModelIndex index, Object value, int role) {
-//		// Remember to emit data changed signal as appropriate
-//		return false;
-//	}
-	
-//	// To change columns edit the column headers above
-//	@Override
-//	public int columnCount(QModelIndex parent) {
-//		if(parent != null) { return 0; }
+bool PSProjectDataModel::setData(const QModelIndex& index, const QVariant& value, int role) {
+    (void)index, (void)value, (void)role;
+    // Remember to emit data changed signal as appropriate
+    return false;
+}
 
-//		if(mExtendedColsEnabled) { return PSSessionData.Columns.EXTENDED_LENGTH; }
-//		else { return PSSessionData.Columns.BASE_LENGTH; }
-//	}
+// To change columns edit the column headers above
+int PSProjectDataModel::columnCount(const QModelIndex& parent) const {
+    if(!parent.isValid()) { return 0; }
 
-//	// The array list of projects holds the rows
-//	@Override
-//	public int rowCount(QModelIndex arg0) {
-//		if(mData == null) return 0;
-//		return mData.size();
-//	}
+    if(mExtendedColsEnabled) { return PSSessionData::EXTENDED_LENGTH; }
+    else { return PSSessionData::BASE_LENGTH; }
+}
 
-//	// Only rows can be retrieved (aka, projects)
-//	public PSSessionData getDataAtIndex(int index) {
-//		if(index >= 0 && index < mData.size()) { return mData.get(index); }
-//		else { return null; }
-//	}
+// The array list of projects holds the rows
+int PSProjectDataModel::rowCount(const QModelIndex& arg0) const {
+    (void)arg0;
+    return mData.size();
+}
 
-//	// Inform the view about the data in the table
-//	@Override
-//	public Object data(QModelIndex index, int role) {
-		
-//		// Get the column and row from the index
-//		int column = index.column(), row = index.row();
-//		if(mData == null || row >= mData.size() || column >= Columns.values().length) return null;
+// Only rows can be retrieved (aka, projects)
+PSSessionData* PSProjectDataModel::getDataAtIndex(int index) {
+    if(index >= 0 && index < mData.size()) { return mData[index]; }
+    else { return NULL; }
+}
 
-//		// Get the correct data for this row
-//		PSSessionData curItem = mData.get(row);
+// Inform the view about the data in the table
+QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
 
-//		// Respond to the requested role differently for each column
-//		switch(role)
-//		{
-//			// Basic display data (usually a string)
-//			case ItemDataRole.DisplayRole: {
-//				switch(PSSessionData.Columns.values()[column]) {
-				
-//					// Basic info
-//					case PROJECT_ID: return curItem.getID();
-//					case PROJECT_NAME: return curItem.getName();
-//					case PHOTO_DATE:
-//						// A date set to the epoch is meant to be 'unknown' or 'invalid'
-//						if(curItem.getDateTakenStart().equals(new Date(0))) {
-//							return "Unknown";
-//						} else {
-//							return DateFormat.getDateInstance().format(curItem.getDateTakenStart());
-//						}
-					
-//					case ACTIVE_VERSION: return String.format("%03d", curItem.getActiveProjectIndex()+1);
-// 					case ACTIVE_CHUNK: return String.format("%d of %d", curItem.getActiveChunkIndex()+1, curItem.getChunkCount());
-//					case IMAGE_COUNT_REAL: return String.format("%d/%d", curItem.getProcessedImageCount(), curItem.getRawImageCount());
+    // Get the column and row from the index
+    int column = index.column(), row = index.row();
+    if(row >= mData.size() || column >= PSSessionData::F_FIELD_COUNT) {
+        return QVariant();
+    }
 
-//					// Detailed processing info (extended info)
-//					case PROJECT_STATUS: return curItem.getStatus();
-//					case IMAGE_ALIGN_LEVEL: return curItem.describeImageAlignPhase();
-//					case DENSE_CLOUD_LEVEL: return curItem.describeDenseCloudPhase();
-//					case MODEL_GEN_LEVEL: return curItem.describeModelGenPhase();
-//					case TEXTURE_GEN_LEVEL: return curItem.describeTextureGenPhase();
-					
-//					// Optional columns only used for CSV file
-//					case PROJECT_FOLDER: return curItem.getPSProjectFolder();
-//					case PROJECT_NOTE: return curItem.getSpecialNotes();
-					
-//					// Other columns should never happen
-//					default: return null;
-//				}
-//			}
+    // Get the correct data for this row
+    PSSessionData* curItem = mData[row];
 
-//			// Tooltips come from the column or the name of the project
-//			case ItemDataRole.ToolTipRole: {
-//				if(column == PSSessionData.Columns.PROJECT_NAME.ordinal())
-//					{ return curItem.getPSProjectFolder().getName(); }
-//				else { return PSSessionData.Columns.values()[column].tooltip; }
-//			}
+    // Respond to the requested role differently for each column
+    switch(role)
+    {
+        // Basic display data (usually a string)
+        case Qt::DisplayRole: {
+            switch(column) {
 
-//			// Background colors indicate the quality of the project
-//			case ItemDataRole.BackgroundRole:
-//			if(mShowColorForStatus) {
-				
-//				switch(PSSessionData.Columns.values()[column])
-//				{
-//					// Status column
-//					case PROJECT_STATUS:
-//					{
-//						switch(curItem.getStatus())
-//						{
-//							// These indicate an error of some sort
-//							case UNKNOWN: case UNPROCESSSED:
-//								return new QBrush(errorColor);
+                // Basic info
+                case PSSessionData::F_PROJECT_ID: return curItem->getID();
+                case PSSessionData::F_PROJECT_NAME: return curItem->getName();
+                case PSSessionData::F_PHOTO_DATE:
+                    if(!curItem->getDateTakenStart().isValid()) {
+                        return "Unknown";
+                    } else {
+                        return curItem->getDateTakenStart().toString("MM/dd/yyyy hh:mm:ss ap");
+                    }
 
-//							// This means processing is done but it's not yet approved
-//							case TEXTURE_GEN_DONE:
-//								return new QBrush(okColor);
+                case PSSessionData::F_ACTIVE_VERSION: return QString::asprintf("%03d", curItem->getActiveProjectIndex()+1);
+                case PSSessionData::F_ACTIVE_CHUNK: return QString::asprintf("%d of %d", curItem->getActiveChunkIndex()+1, curItem->getChunkCount());
+                case PSSessionData::F_IMAGE_COUNT_REAL: return QString::asprintf("%ld/%ld", curItem->getProcessedImageCount(), curItem->getRawImageCount());
 
-//							// This indicates it is done and approved
-//							case FINAL_APPROVAL:
-//								return new QBrush(doneColor);
-	
-//							// These indicate something is wrong
-//							case NEEDS_EXPOSURE_REDO: case NEEDS_ALLIGNMENT_REDO:
-//							case NEEDS_MODEL_GEN_REDO: case NEEDS_POINT_CLOUD_REDO:
-//							case NEEDS_TEXTURE_GEN_REDO: case NEEDS_GEOMETRY_TOUCHUP:
-//							case NEEDS_TEXTURE_TOUCHUP:
-//								return new QBrush(badColor);
+                // Detailed processing info (extended info)
+                case PSSessionData::F_PROJECT_STATUS: return curItem->getStatus();
+                case PSSessionData::F_IMAGE_ALIGN_LEVEL: return curItem->describeImageAlignPhase();
+                case PSSessionData::F_DENSE_CLOUD_LEVEL: return curItem->describeDenseCloudPhase();
+                case PSSessionData::F_MODEL_GEN_LEVEL: return curItem->describeModelGenPhase();
+                case PSSessionData::F_TEXTURE_GEN_LEVEL: return curItem->describeTextureGenPhase();
 
-//							// All other statuses are mid-processing statuses
-//							default: return new QBrush(warningColor);
-//						}
-//					}
+                // Optional columns only used for CSV file
+                case PSSessionData::F_PROJECT_FOLDER: return curItem->getPSProjectFolder().dirName();
+                case PSSessionData::F_PROJECT_NOTE: return curItem->getSpecialNotes();
 
-//					// Processing phases
-//					case IMAGE_ALIGN_LEVEL:
-//						switch(curItem.getAlignPhaseStatus())
-//						{
-//							case 0: return new QBrush(doneColor);
-//							case 1: return new QBrush(okColor);
-//							case 2: return new QBrush(warningColor);
-//							case 3: return new QBrush(badColor);
-//							default: return new QBrush(errorColor);
-//						}
-					
-//					case DENSE_CLOUD_LEVEL:
-//						switch(curItem.getDenseCloudPhaseStatus())
-//						{
-//							case 0: return new QBrush(doneColor);
-//							case 1: return new QBrush(okColor);
-//							case 2: return new QBrush(warningColor);
-//							case 3: return new QBrush(badColor);
-//							default: return new QBrush(errorColor);
-//						}
-					
-//					case MODEL_GEN_LEVEL:
-//						switch(curItem.getModelGenPhaseStatus())
-//						{
-//							case 0: return new QBrush(doneColor);
-//							case 1: return new QBrush(okColor);
-//							case 2: return new QBrush(warningColor);
-//							case 3: return new QBrush(badColor);
-//							default: return new QBrush(errorColor);
-//						}
-					
-//					case TEXTURE_GEN_LEVEL:
-//						switch(curItem.getTextureGenPhaseStatus())
-//						{
-//							case 0: return new QBrush(doneColor);
-//							case 1: return new QBrush(okColor);
-//							case 2: return new QBrush(warningColor);
-//							case 3: return new QBrush(badColor);
-//							default: return new QBrush(errorColor);
-//						}
-					
-//					// Ignore all other columns
-//					default: return null;
-				
-//				}
-//			} else {
-//				return null;
-//			}
-			
-//			// Other roles we do not support
-//			default: return null;
-//		}
-//	}
+                // Other columns should never happen
+                default: return QVariant();
+            }
+        }
 
-//	@Override
-//	public void sort(int column, Qt.SortOrder order) {
-//		PSSessionData.setSortBy(Columns.values()[column]);
-//		mData.sort(order==SortOrder.AscendingOrder?Collections.reverseOrder():null);
-//		layoutChanged.emit();
-//	}
-	
-//	@Override
-//	public Object headerData(int section, Qt.Orientation orientation, int role) {
+        // Tooltips come from the column or the name of the project
+        case Qt::ToolTipRole: {
+            if(column == PSSessionData::F_PROJECT_NAME)
+                { return curItem->getPSProjectFolder().dirName(); }
+            else { return curItem->getDescription((PSSessionData::Field)column); }
+        }
 
-//		if(orientation == Qt.Orientation.Horizontal) {
-//			if(section < 0 || section >= Columns.values().length) return null;
-			
-//			switch(role) {
-//				case ItemDataRole.DisplayRole: return Columns.values()[section].name;
-//				case ItemDataRole.ToolTipRole: return Columns.values()[section].tooltip;
-//			}
-//		}
+        // Background colors indicate the quality of the project
+        case Qt::BackgroundRole:
+            if(mShowColorForStatus) {
 
-//		if(orientation == Qt.Orientation.Vertical && role == ItemDataRole.DisplayRole) {
-//			return String.format("%03d", (section+1));
-//		}
-		
-//		return null;
-//	}
-	
-//	@Override
-//	public QModelIndex index(int row, int column, QModelIndex parent) {
-//		if(parent != null) return null;
-//		return createIndex(row, column);
-//	}
+                switch(column)
+                {
+                    // Status column
+                    case PSSessionData::F_PROJECT_STATUS:
+                    {
+                        switch(curItem->getStatus())
+                        {
+                            // These indicate an error of some sort
+                            case PSSessionData::PSS_UNKNOWN: case PSSessionData::PSS_UNPROCESSSED:
+                                return QBrush(errorColor);
 
-//	// Prepare string values to be written to an RFC 4180 CSV standard file
-//	private String encodeForCSV(String input) {
-//		// Replace all double-quote characters with two double-quotes in a row
-//		String encoded = input.replaceAll("\"", "\"\"");
-		
-//		// Add a double quote to the start and end of the string
-//		encoded = "\"" + encoded + "\"";
-		
-//		return encoded;
-//	}
-	
-//	public boolean outputToCSVFile(String destFilename) {
-		
-//		// Try to open the file
-//		File outputFile = new File(destFilename);
-//		PrintWriter fout = null;
-//		try {
-//			fout = new PrintWriter(outputFile);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
+                            // This means processing is done but it's not yet approved
+                            case PSSessionData::PSS_TEXTURE_GEN_DONE:
+                                return QBrush(okColor);
 
-//		// Output a header row with column titles
-//		int colCount = Columns.values().length;
-//		for(int col=0; col<colCount; col++) {
-//			// Skip the project folder column
-//			if(col == Columns.PROJECT_FOLDER.ordinal()) {
-//				continue;
-//			}
-			
-//			// Retrieve the header value for this row (as a displayable string)
-//			Object headerVal = headerData(col, Qt.Orientation.Horizontal, ItemDataRole.DisplayRole);
+                            // This indicates it is done and approved
+                            case PSSessionData::PSS_FINAL_APPROVAL:
+                                return QBrush(doneColor);
 
-//			// Output the value followed by a comma or a newline
-//			fout.print(encodeForCSV(headerVal.toString()));
-//			if(col < colCount-1) {
-//				fout.print(",");
-//			} else {
-//				// The CRLF line ending is dictated by the RFC 4180 CSV standard
-//				fout.print("\r\n");
-//			}
-//		}
-		
-//		// Loop over the rows and columns and grab the model data
-//		for(int row=0; row<rowCount(); row++) {
-//			for(int col=0; col<colCount; col++) {
-//				// Skip the project folder column
-//				if(col == Columns.PROJECT_FOLDER.ordinal()) {
-//					continue;
-//				}
+                            // These indicate something is wrong
+                            case PSSessionData::PSS_NEEDS_EXPOSURE_REDO:
+                            case PSSessionData::PSS_NEEDS_ALLIGNMENT_REDO:
+                            case PSSessionData::PSS_NEEDS_MODEL_GEN_REDO:
+                            case PSSessionData::PSS_NEEDS_POINT_CLOUD_REDO:
+                            case PSSessionData::PSS_NEEDS_TEXTURE_GEN_REDO:
+                            case PSSessionData::PSS_NEEDS_GEOMETRY_TOUCHUP:
+                            case PSSessionData::PSS_NEEDS_TEXTURE_TOUCHUP:
+                                return QBrush(badColor);
 
-//				// Retrieve the data for this row as a displayable string
-//				Object dataVal = data(index(row, col), ItemDataRole.DisplayRole);
-				
-//				// Output the value followed by a comma or a newline
-//				fout.print(encodeForCSV(dataVal.toString()));
-//				if(col < colCount-1) {
-//					fout.print(",");
-//				} else {
-//					// The CRLF line ending is dictated by the RFC 4180 CSV standard
-//					fout.print("\r\n");
-//				}
-//			}
-//		}
+                            // All other statuses are mid-processing statuses
+                            default: return QBrush(warningColor);
+                        }
+                    }
 
-//		// Finish the file and close it
-//		fout.close();
-//		return true;
-//	}
-//}
+                    // Processing phases
+                    case PSSessionData::F_IMAGE_ALIGN_LEVEL:
+                        switch(curItem->getAlignPhaseStatus())
+                        {
+                            case 0: return QBrush(doneColor);
+                            case 1: return QBrush(okColor);
+                            case 2: return QBrush(warningColor);
+                            case 3: return QBrush(badColor);
+                            default: return QBrush(errorColor);
+                        }
+
+                    case PSSessionData::F_DENSE_CLOUD_LEVEL:
+                        switch(curItem->getDenseCloudPhaseStatus())
+                        {
+                            case 0: return QBrush(doneColor);
+                            case 1: return QBrush(okColor);
+                            case 2: return QBrush(warningColor);
+                            case 3: return QBrush(badColor);
+                            default: return QBrush(errorColor);
+                        }
+
+                    case PSSessionData::F_MODEL_GEN_LEVEL:
+                        switch(curItem->getModelGenPhaseStatus())
+                        {
+                            case 0: return QBrush(doneColor);
+                            case 1: return QBrush(okColor);
+                            case 2: return QBrush(warningColor);
+                            case 3: return QBrush(badColor);
+                            default: return QBrush(errorColor);
+                        }
+
+                    case PSSessionData::F_TEXTURE_GEN_LEVEL:
+                        switch(curItem->getTextureGenPhaseStatus())
+                        {
+                            case 0: return QBrush(doneColor);
+                            case 1: return QBrush(okColor);
+                            case 2: return QBrush(warningColor);
+                            case 3: return QBrush(badColor);
+                            default: return QBrush(errorColor);
+                        }
+
+                    // Ignore all other columns
+                    default: return QVariant();
+                }
+            } else {
+                return QVariant();
+            }
+
+        // Other roles we do not support
+        default: return QVariant();
+    }
+}
+
+bool greaterThanPSSD(PSSessionData* A, PSSessionData* B) {
+    return (A->compareTo(B) > 0);
+}
+
+void PSProjectDataModel::sort(int column, Qt::SortOrder order) {
+    PSSessionData::setSortBy((PSSessionData::Field)column);
+    if (order == Qt::AscendingOrder) {
+        std::sort(mData.begin(), mData.end(), greaterThanPSSD);
+    } else {
+        std::sort(mData.rbegin(), mData.rend(), greaterThanPSSD);
+    }
+    emit layoutChanged();
+}
+
+QVariant PSProjectDataModel::headerData(int section, Qt::Orientation orientation, int role) const {
+
+    if(orientation == Qt::Horizontal) {
+        if(section < 0 || section >= PSSessionData::F_FIELD_COUNT) {
+            return QVariant();
+        }
+
+        switch(role) {
+            case Qt::DisplayRole:
+                return PSSessionData::getShortName((PSSessionData::Field)section);
+            case Qt::ToolTipRole:
+                return PSSessionData::getDescription((PSSessionData::Field)section);
+        }
+    }
+
+    if(orientation == Qt::Vertical && role == Qt::DisplayRole) {
+        return QString::number(section + 1);
+    }
+
+    return QVariant();
+}
+
+QModelIndex PSProjectDataModel::index(int row, int column, const QModelIndex& parent) const {
+    if(parent.isValid()) return QModelIndex();
+    return createIndex(row, column);
+}
+
+// Prepare string values to be written to an RFC 4180 CSV standard file
+QString PSProjectDataModel::encodeForCSV(QString input) {
+    // Replace all double-quote characters with two double-quotes in a row
+    QString encoded = input.replace("\"", "\"\"");
+
+    // Add a double quote to the start and end of the string
+    encoded = "\"" + encoded + "\"";
+
+    return encoded;
+}
+
+bool PSProjectDataModel::outputToCSVFile(QString destFilename) {
+    // Try to open the file
+    QFile outFile(destFilename);
+    outFile.open(QIODevice::ReadOnly);
+    if (!outFile.isOpen()) {
+        return false;
+    }
+
+    // Wrap with a text stream
+    QTextStream fout(&outFile);
+
+    // Output a header row with column titles
+    int colCount = PSSessionData::F_FIELD_COUNT;
+    for(int col=0; col<colCount; col++) {
+        // Skip the project folder column
+        if(col == PSSessionData::F_PROJECT_FOLDER) {
+            continue;
+        }
+
+        // Retrieve the header value for this row (as a displayable string)
+        QVariant headerVal = headerData(col, Qt::Horizontal, Qt::DisplayRole);
+
+        // Output the value followed by a comma or a newline
+        fout << encodeForCSV(headerVal.toString());
+        if(col < colCount-1) {
+            fout << ",";
+        } else {
+            // The CRLF line ending is dictated by the RFC 4180 CSV standard
+            fout << "\r\n";
+        }
+    }
+
+    // Loop over the rows and columns and grab the model data
+    for(int row=0; row<rowCount(); row++) {
+        for(int col=0; col<colCount; col++) {
+            // Skip the project folder column
+            if(col == PSSessionData::F_PROJECT_FOLDER) {
+                continue;
+            }
+
+            // Retrieve the data for this row as a displayable string
+            QVariant dataVal = data(index(row, col), Qt::DisplayRole);
+
+            // Output the value followed by a comma or a newline
+            fout << encodeForCSV(dataVal.toString());
+            if(col < colCount-1) {
+                fout << ",";
+            } else {
+                // The CRLF line ending is dictated by the RFC 4180 CSV standard
+                fout << "\r\n";
+            }
+        }
+    }
+
+    // Finish the file and close it
+    outFile.close();
+    return true;
+}
+

@@ -5,7 +5,7 @@
 #include "ExposureSettings.h"
 
 #include <QString>
-#include <QDate>
+#include <QDateTime>
 #include <QDir>
 #include <QFileInfoList>
 
@@ -39,6 +39,7 @@ public:
         /* Other */ \
         Field(F_PROJECT_FOLDER,"Folder", "The folder that holds the data for this project") \
         Field(F_PROJECT_NOTE,"Note", "A custom note for this project") \
+        Field(F_FIELD_COUNT,"!!!!", "Do not use, for internal sizing") \
 
     DECLARE_ENUM(Field, FIELDS_ENUM)
 
@@ -53,7 +54,7 @@ public:
 
     void examineProjects(QSettings* settings);
     void extractInfoFromFolderName(QString pFolderName);
-    int compareTo(const PSSessionData* o);
+    int compareTo(const PSSessionData* o) const;
 
     bool examineDirectory(QDir pDirToExamine);
 	
@@ -81,8 +82,8 @@ public:
     const double* getWhiteBalanceMultipliers() const;
     double getBrightnessMultiplier() const;
 
-    QDate getDateTakenStart() const;
-    QDate getDateTakenFinish() const;
+    QDateTime getDateTakenStart() const;
+    QDateTime getDateTakenFinish() const;
     bool areResultsApproved() const;
     QString getSpecialNotes() const;
     QString getName() const;
@@ -133,7 +134,7 @@ private:
 
     // Image exposure with dcraw
     ExposureSettings mExposure;
-    QDate mDateTakenStart, mDateTakenFinish;
+    QDateTime mDateTakenStart, mDateTakenFinish;
 
     // Custom data for this project
     bool mResultsApproved;
@@ -145,47 +146,6 @@ private:
     QFileInfoList mPSProjectFileList;
     QList<PSProjectFileData*> mPSProjectList;
     int mActiveProject;
-
-    // QFile filter setup
-//    static const ExtensionFileFilter mDirectoryFilter = new ExtensionFileFilter(true);
-
-//    static const QString* mPSProjectFileExtensions = { ".psz", ".psx" };
-//    static const ExtensionFileFilter mPSProjectFilter =
-//            new ExtensionFileFilter(mPSProjectFileExtensions);
-
-//    // Most of the image types supported by PhotoScan (we leave out ones we can't support)
-//    static const QString* mPSImageFileExtensions = {
-//        ".jpg", ".jpeg", ".tif", ".tiff", ".pgm", ".ppm",
-//        ".png", ".bmp", ".exr"
-//    };
-
-//    static const ExtensionFileFilter mPSImageFileFilter =
-//            new ExtensionFileFilter(mPSImageFileExtensions);
-
-//    // Extension list from https://en.wikipedia.org/wiki/Raw_image_format
-//    static const QString* mRawFileExtensions = {
-//            ".3fr",
-//            ".ari",".arw",
-//            ".bay",
-//            ".crw",".cr2",
-//            ".cap",
-//            ".dcs",".dcr",".dng",
-//            ".drf",
-//            ".eip",".erf",
-//            ".fff",
-//            ".iiq",
-//            ".k25",".kdc",
-//            ".mdc",".mef",".mos",".mrw",
-//            ".nef",".nrw",
-//            ".obm",".orf",
-//            ".pef",".ptx",".pxn",
-//            ".r3d",".raf",".raw",".rwl",".rw2",".rwz",
-//            ".sr2",".srf",".srw",
-//            ".x3f"
-//        };
-
-//    static const ExtensionFileFilter mRawFileFilter =
-//            new ExtensionFileFilter(mRawFileExtensions);
 };
 
 #endif

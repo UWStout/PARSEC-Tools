@@ -137,7 +137,7 @@ void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
 //                mDateTakenStart = dateFormatter.parse(parts[0]);
 //                mDateTakenFinish = mDateTakenStart;
 //            } catch (...) {
-//                mDateTakenStart = mDateTakenFinish = QDate();
+//                mDateTakenStart = mDateTakenFinish = QDateTime();
 //            }
 
 //            // Build description
@@ -151,7 +151,7 @@ void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
     }
 }
 
-int PSSessionData::compareTo(const PSSessionData* o) {
+int PSSessionData::compareTo(const PSSessionData* o) const {
     switch(mSortBy) {
         default:
         case F_PROJECT_FOLDER:
@@ -197,7 +197,7 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
 
     // Clear old data
     mRawFileList = mPSProjectFileList = QFileInfoList();
-    mDateTakenStart = mDateTakenFinish = QDate();
+    mDateTakenStart = mDateTakenFinish = QDateTime();
     mImageCount_raw = mImageCount_processed = 0;
 
     // Build listers for the three types of files
@@ -220,10 +220,10 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
 //            mDateTakenFinish = ImageProcessorIM4J.getDateFromMetadata(mRawFileList[mRawFileList.length-1]);
         } catch (...) {
             qWarning("Error: failed to extract dates from raw images\n");
-            mDateTakenStart = mDateTakenFinish = QDate();
+            mDateTakenStart = mDateTakenFinish = QDateTime();
         }
     } else {
-        mDateTakenStart = mDateTakenFinish = QDate();
+        mDateTakenStart = mDateTakenFinish = QDateTime();
     }
 
     // Return success
@@ -314,8 +314,8 @@ bool PSSessionData::isImageExposureKnown() const { return true; }
 
 const double* PSSessionData::getWhiteBalanceMultipliers() const { return mExposure.getWBCustom(); }
 double PSSessionData::getBrightnessMultiplier() const { return mExposure.getBrightScale(); }
-QDate PSSessionData::getDateTakenStart() const { return mDateTakenStart; }
-QDate PSSessionData::getDateTakenFinish() const { return mDateTakenFinish; }
+QDateTime PSSessionData::getDateTakenStart() const { return mDateTakenStart; }
+QDateTime PSSessionData::getDateTakenFinish() const { return mDateTakenFinish; }
 bool PSSessionData::areResultsApproved() const { return mResultsApproved; }
 QString PSSessionData::getSpecialNotes() const { return mSpecialNotes; }
 

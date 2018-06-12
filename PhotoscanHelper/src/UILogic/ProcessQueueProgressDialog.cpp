@@ -16,41 +16,41 @@
 
 #include "ProcessQueueProgressDialog.h"
 
-ProcessQueueProgressDialog::ProcessQueueProgressDialog(QQueue<QueueableProcess<QObject*>> &pProcessQueue, QWidget parent) : QDialog(parent)
-{
-    // Copy provided queue or make an empty one
-    if(pProcessQueue == NULL) {
-        mProcessQueue = new QQueue<QueueableProcess<QObject*>>();
-    } else {
-        mProcessQueue = pProcessQueue;
-    }
+//ProcessQueueProgressDialog::ProcessQueueProgressDialog(QQueue<QueueableProcess<QObject*>> &pProcessQueue, QWidget parent) : QDialog(parent)
+//{
+//    // Copy provided queue or make an empty one
+//    if(pProcessQueue == NULL) {
+//        mProcessQueue = new QQueue<QueueableProcess<QObject*>>();
+//    } else {
+//        mProcessQueue = pProcessQueue;
+//    }
 
-    // Setup the GUI
-    mGUI = new Ui_StageProgressDialog();
-    mGUI->setupUi(this);
+//    // Setup the GUI
+//    mGUI = new Ui_StageProgressDialog();
+//    mGUI->setupUi(this);
 
-    mGUI->TotalProgressBar->reset();
-    mGUI->StageProgressBar->reset();
-    mGUI->StageDescriptionLabel->setText("");
-    mGUI->TotalDescriptionLabel->setText("");
+//    mGUI->TotalProgressBar->reset();
+//    mGUI->StageProgressBar->reset();
+//    mGUI->StageDescriptionLabel->setText("");
+//    mGUI->TotalDescriptionLabel->setText("");
 
-    // Setup the future watcher
-    mCurrentWatcher = new QFutureWatcher<QObject>(this);
-    connect(
-        mCurrentWatcher, &QFutureWatcher::finished,
-        this, &ProcessQueueProgressDialog::stageFinished
-    );
+//    // Setup the future watcher
+//    mCurrentWatcher = new QFutureWatcher<QObject>(this);
+//    connect(
+//        mCurrentWatcher, &QFutureWatcher::finished,
+//        this, &ProcessQueueProgressDialog::stageFinished
+//    );
 
-    connect(
-        mCurrentWatcher, &QFutureWatcher::progressRangeChanged,
-        mGUI->StageProgressBar, &ProgressBar::setRange
-    );
+//    connect(
+//        mCurrentWatcher, &QFutureWatcher::progressRangeChanged,
+//        mGUI->StageProgressBar, &ProgressBar::setRange
+//    );
 
-    connect(
-        mCurrentWatcher, &QFutureWatcher::progressValueChanged,
-        this, &ProgressBar::setValue
-    );
-}
+//    connect(
+//        mCurrentWatcher, &QFutureWatcher::progressValueChanged,
+//        this, &ProgressBar::setValue
+//    );
+//}
 
 //public class ProcessQueueProgressDialog extends QDialog {
 
