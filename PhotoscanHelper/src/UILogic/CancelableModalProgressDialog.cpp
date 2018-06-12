@@ -12,34 +12,39 @@
 //                                   windowType().WindowTitleHint,
 //                                   windowType().CustomizeWindowHint));
 
-//    // Setup the future watcher
-//    mWatcher = new QFutureWatcher<T>(this);
-//    connect(
-//        mWatcher, &QFutureWatcher::finished,
-//        this, &CancelableModalProgressDialog::processFinished
-//    );
+    // Setup the future watcher
+    mWatcher = new QFutureWatcher<T>(this);
+    connect(
+        mWatcher, &QFutureWatcher<T>::finished,
+        this, &CancelableModalProgressDialog::processFinished
+    );
 
-//    connect(
-//        mWatcher, &QFutureWatcher::progressRangeChanged,
-//        mGui->ProgressBar, &QProgressBar::setRange
-//    );
+    connect(
+        mWatcher, &QFutureWatcher<T>::progressRangeChanged,
+        mGui->ProgressBar, &QProgressBar::setRange
+    );
 
-//    connect(
-//        mWatcher, &QFutureWatcher::progressValueChanged,
-//        mGui->ProgressBar, &QProgressBar::setValue
-//    );
-//}
+    connect(
+        mWatcher, &QFutureWatcher<T>::progressValueChanged,
+        mGui->ProgressBar, &QProgressBar::setValue
+    );
+}
 
-///**
-// * Set the QFuture for this process which will determine when the process is complete
-// * and will enable canceling of the process.
-// *
-// * @param pFuture The future result available once the process ends.
-// */
-//template<class T>
-//void CancelableModalProgressDialog<T>::setFuture(QFuture<T> pFuture) {
-//    mWatcher.setFuture(pFuture);
-//}
+template<class T>
+CancelableModalProgressDialog<T>::~CancelableModalProgressDialog() {
+
+}
+
+/**
+ * Set the QFuture for this process which will determine when the process is complete
+ * and will enable canceling of the process.
+ *
+ * @param pFuture The future result available once the process ends.
+ */
+template<class T>
+void CancelableModalProgressDialog<T>::setFuture(QFuture<T> pFuture) {
+    mWatcher.setFuture(pFuture);
+}
 
 ///**
 // * Interrogate the QFutureWatcher to see if it has been canceled.
@@ -64,19 +69,18 @@
 //    }
 //}
 
-//// Respond to cancel button
-///**
-// * This slot will respond to the cancel button letting the QFutureWatcher know
-// * that the user wants to cancel the process.  This is confirmed with the user
-// * before requesting the cancel.
-// */
-//template<class T>
-//void CancelableModalProgressDialog<T>::on_CancelButtonClicked() {
-//    int result = QMessageBox.question(this,
-//                                      "Cancel",
-//                                      "Are you sure you want to cancel this operation?",
-//                                      QMessageBox.standardButton(QMessageBox::Yes),
-//                                      QMessageBox.standardButton(QMessageBox::No));
+// Respond to cancel button
+/**
+ * This slot will respond to the cancel button letting the QFutureWatcher know
+ * that the user wants to cancel the process.  This is confirmed with the user
+ * before requesting the cancel.
+ */
+template<class T>
+void CancelableModalProgressDialog<T>::on_CancelButtonClicked() {
+    int result = QMessageBox.question(this,
+                                      "Cancel",
+                                      "Are you sure you want to cancel this operation?",
+                                      QMessageBox::Yes, QMessageBox::No);
 
 //    if(result == QMessageBox::Yes) {
 //        emit canceled();
