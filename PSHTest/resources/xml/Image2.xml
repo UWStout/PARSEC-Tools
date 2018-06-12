@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="1.1.0">
+  <camera camera_id="2">
+    <photo path="DSCF4914.tiff">
+      <meta>
+        <property name="Exif/Artist" value=""/>
+        <property name="Exif/DateTime" value="2015:02:28 23:24:36"/>
+        <property name="Exif/ExposureTime" value="6.49802"/>
+        <property name="Exif/FNumber" value="21.8566"/>
+        <property name="Exif/FocalLength" value="50"/>
+        <property name="Exif/ISOSpeedRatings" value="400"/>
+        <property name="Exif/Make" value="Fujifilm"/>
+        <property name="Exif/Model" value="X-M1"/>
+        <property name="Exif/Software" value="dcraw v9.23"/>
+        <property name="File/ImageHeight" value="4952"/>
+        <property name="File/ImageWidth" value="3288"/>
+        <property name="System/FileModifyDate" value="2015:03:02 16:14:40"/>
+        <property name="System/FileSize" value="48848380"/>
+      </meta>
+    </photo>
+    <thumbnail path="thumb2.png"/>
+  </camera>
+</document>

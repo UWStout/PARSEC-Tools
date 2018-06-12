@@ -63,6 +63,12 @@ void PSChunkData::init(QXmlStreamReader* reader) {
 }
 
 void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
+    // If this is a fresh XML doc, push to first non-document tag.
+    while(reader->tokenType() == QXmlStreamReader::NoToken ||
+          reader->tokenType() == QXmlStreamReader::StartDocument ||
+          reader->name() == "document") {
+        reader->readNextStartElement();
+    }
 
     // Sanity checks
     if(reader == NULL || reader->name() != "chunk") {

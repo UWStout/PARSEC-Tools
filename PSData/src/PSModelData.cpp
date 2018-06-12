@@ -41,8 +41,10 @@ QMap<int, QString> PSModelData::getTextureFiles() { return textureFiles; }
 QString PSModelData::getTextureFile(int id) { return textureFiles.value(id); }
 
 PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile, PSChunkData* pParent) {
-    // If this is a fresh XML doc, push to first tag.
-    if(reader->tokenType() == QXmlStreamReader::StartDocument) {
+    // If this is a fresh XML doc, push to first non-document tag.
+    while(reader->tokenType() == QXmlStreamReader::NoToken ||
+          reader->tokenType() == QXmlStreamReader::StartDocument ||
+          reader->name() == "document") {
         reader->readNextStartElement();
     }
 

@@ -19,19 +19,22 @@ public:
 
     static PSCameraData* makeFromXML(QXmlStreamReader* reader);
 
-    QString getLabel();
+    QString getLabel() const;
+    long getSensorID() const;
     PSImageData *getImageData();
-    long getSensorID();
     PSSensorData *getSensorData();
-
-    bool isEnabled();
-    bool isAligned();
+    bool isEnabled() const;
+    bool isAligned() const;
 
     void setLabel(QString pLabel);
-    void setImageData(PSImageData *pImageData);
     void setIsEnabled(bool pEnabled);
+
     void setSensoID(long pSensorID);
+    void setImageData(PSImageData *pImageData);
     void setSensorData(PSSensorData *pSensorData);
+
+    void setTransform(const double pTransform[16]);
+    const double* getTransform() const;
 
 private:
     QString mLabel;
