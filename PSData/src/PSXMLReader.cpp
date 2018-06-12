@@ -66,12 +66,16 @@ QXmlStreamReader* PSXMLReader::getXMLStreamFromFile(QFileInfo pFile) {
 //            lXMLFileStream = new QXmlStreamReader(lInsideFile);
 //            lInsideFile.setParent(lXMLFileStream);
 //        }
-    } else if(ext == "psx") {
+    } else if(ext == "psx" || ext == "xml") {
         // A raw PS xml QFile (probably to be accompanied by a .files directory)
+        // Note: This also happens during testing
         QFile* lXMLFile = new QFile(pFile.absoluteFilePath());
+        lXMLFile->open(QIODevice::ReadOnly);
         lXMLFileStream = new QXmlStreamReader(lXMLFile);
     } else {
         // Something else that's not supported
+        qWarning("Unsupported file type pased to PSXMLReader: '%s'\n",
+                 pFile.filePath().toLocal8Bit().data());
     }
 
     // Might be NULL

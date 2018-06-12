@@ -17,4 +17,15 @@ TEMPLATE = app
 include(../config.pri)
 
 SOURCES += \
-        tst_pshtest_test.cpp
+    tst_pshtest_test.cpp
+
+RESOURCES += \
+    testresources.qrc
+
+# Add in the PSData library
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PSData/release/ -lpsdata
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../PSData/debug/ -lpsdata
+else:unix: LIBS += -L$$OUT_PWD/../PSData/ -lpsdata
+
+INCLUDEPATH += $$PWD/../PSData/ $$PWD/../PSData/include
+DEPENDPATH += $$PWD/../PSData/include

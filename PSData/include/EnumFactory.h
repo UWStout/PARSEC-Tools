@@ -27,14 +27,15 @@
   enum EnumType { \
     ENUM_DEF(ENUM_VALUE) \
   }; \
-  const char* getString(EnumType dummy) const; \
-  const char* getShortName(EnumType dummy) const; \
-  const char* getDescription(EnumType dummy) const; \
-  EnumType get##EnumType##Value(const char *string) const; \
+public: \
+  static const char* getString(EnumType dummy); \
+  static const char* getShortName(EnumType dummy); \
+  static const char* getDescription(EnumType dummy); \
+  static EnumType get##EnumType##Value(const char *string); \
 
 /// define the access function names
 #define DEFINE_ENUM(EnumType,ENUM_DEF,ns) \
-  const char* ns::getString(ns::EnumType value) const \
+  const char* ns::getString(ns::EnumType value) \
   { \
     switch(value) \
     { \
@@ -42,7 +43,7 @@
       default: return ""; /* handle input error */ \
     } \
   } \
-  const char* ns::getShortName(ns::EnumType value) const \
+  const char* ns::getShortName(ns::EnumType value) \
   { \
     switch(value) \
     { \
@@ -50,7 +51,7 @@
       default: return ""; /* handle input error */ \
     } \
   } \
-  const char* ns::getDescription(ns::EnumType value) const \
+  const char* ns::getDescription(ns::EnumType value) \
   { \
     switch(value) \
     { \
@@ -58,7 +59,7 @@
       default: return ""; /* handle input error */ \
     } \
   } \
-  ns::EnumType ns::get##EnumType##Value(const char *str) const \
+  ns::EnumType ns::get##EnumType##Value(const char *str) \
   { \
     ENUM_DEF(ENUM_STRCMP) \
     return (EnumType)0; /* handle input error */ \

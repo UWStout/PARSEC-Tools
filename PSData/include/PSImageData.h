@@ -10,26 +10,25 @@ class QXmlStreamReader;
 class PSCameraData;
 
 class PSDATASHARED_EXPORT PSImageData {
+public:
+    PSImageData(long pCamID);
+    ~PSImageData();
 
-    private:
-        long mCamID;
-        QString mFilePath;
-        QMap<QString, QString> mProperties;
-        PSCameraData* mCameraData;
+    static PSImageData* makeFromXML(QXmlStreamReader* reader);
 
-    public:
-        PSImageData(long pCamID);
-        ~PSImageData();
+    void addProperty(QString key, QString value);
+    void setCameraData(PSCameraData* pCameraData);
 
-        void addProperty(QString key, QString value);
-        void setCameraData(PSCameraData* pCameraData);
+    long getCamID();
+    QString getFilePath();
+    QString getProperty(QString key);
+    PSCameraData* getCameraData();
 
-        long getCamID();
-        QString getFilePath();
-        QString getProperty(QString key);
-        PSCameraData* getCameraData();
-
-        static PSImageData* makeFromXML(QXmlStreamReader* reader);
+private:
+    long mCamID;
+    QString mFilePath;
+    QMap<QString, QString> mProperties;
+    PSCameraData* mCameraData;
 };
 
 #endif

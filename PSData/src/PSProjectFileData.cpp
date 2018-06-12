@@ -42,6 +42,10 @@ bool PSProjectFileData::parseProjectFile() {
     try {
         // Get the starting XML stream
         reader = getXMLStreamFromFile(mPSProjectFile);
+        if (reader == NULL) {
+            qWarning("NULL QXmlStreamReader, cannot proceed.\n");
+            return false;
+        }
 
         // Loop over all element tags
         while (!reader->atEnd()) {
