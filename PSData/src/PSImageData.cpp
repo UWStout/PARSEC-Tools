@@ -25,6 +25,13 @@ QString PSImageData::getProperty(QString key) { return mProperties.value(key); }
 PSCameraData* PSImageData::getCameraData() { return mCameraData; }
 
 PSImageData* PSImageData::makeFromXML(QXmlStreamReader* reader) {
+    // If this is a fresh XML doc, push to first non-document tag.
+    while(reader->tokenType() == QXmlStreamReader::NoToken ||
+          reader->tokenType() == QXmlStreamReader::StartDocument ||
+          reader->name() == "document") {
+        reader->readNextStartElement();
+    }
+
     // Sanity check
     if(reader == NULL || reader->name() != "camera" || !reader->isStartElement()) {
         return NULL;

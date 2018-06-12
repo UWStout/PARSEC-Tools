@@ -3,5 +3,12 @@
         <file alias="BlueBird.xml">resources/xml/BlueBird.xml</file>
         <file alias="Chair.xml">resources/xml/Chair.xml</file>
         <file alias="Gun.xml">resources/xml/Gun.xml</file>
+        <file alias="Sensor0.xml">resources/xml/Sensor0.xml</file>
+        <file alias="Camera0.xml">resources/xml/Camera0.xml</file>
+        <file alias="Camera1.xml">resources/xml/Camera1.xml</file>
+        <file alias="Camera2.xml">resources/xml/Camera2.xml</file>
+        <file alias="Camera3.xml">resources/xml/Camera3.xml</file>
+        <file alias="Camera4.xml">resources/xml/Camera4.xml</file>
+        <file alias="Camera5.xml">resources/xml/Camera5.xml</file>
     </qresource>
 </RCC>

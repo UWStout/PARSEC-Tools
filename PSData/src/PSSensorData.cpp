@@ -20,6 +20,13 @@ PSSensorData::PSSensorData(long pID, QString pLabel) : ID(pID) {
 PSSensorData::~PSSensorData() {}
 
 PSSensorData* PSSensorData::makeFromXML(QXmlStreamReader* reader) {
+    // If this is a fresh XML doc, push to first non-document tag.
+    while(reader->tokenType() == QXmlStreamReader::NoToken ||
+          reader->tokenType() == QXmlStreamReader::StartDocument ||
+          reader->name() == "document") {
+        reader->readNextStartElement();
+    }
+
     // Sanity check
     if(reader == NULL || reader->name() != "sensor") {
         return NULL;
