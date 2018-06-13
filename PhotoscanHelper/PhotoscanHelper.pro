@@ -18,6 +18,14 @@ win32 {
     LIBS += -lopengl32 -lglu32
 }
 
+# Add in the PSData library
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PSData/release/ -lpsdata
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../PSData/debug/ -lpsdata
+else:unix: LIBS += -L$$OUT_PWD/../PSData/ -lpsdata
+
+INCLUDEPATH += $$PWD/../PSData/ $$PWD/../PSData/include
+DEPENDPATH += $$PWD/../PSData/include
+
 # Windows and Mac OS Icons (respectively)
 RC_ICONS = resources/icons/PhotoScanHelper.ico
 ICON = resources/icons/PhotoScanHelper.icns
@@ -25,13 +33,6 @@ ICON = resources/icons/PhotoScanHelper.icns
 SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
-        src/Model/PSCameraData.cpp \
-        src/Model/PSImageData.cpp \
-        src/Model/PSSensorData.cpp \
-        src/Model/PSXMLReader.cpp \
-        src/Model/PSProjectFileData.cpp \
-        src/Model/PSChunkData.cpp \
-        src/Model/PSModelData.cpp \
 #        src/UILogic/PSHelperMainWindow.cpp \
         src/UILogic/CancelableModalProgressDialog.cpp \
         src/UILogic/ProcessQueueProgressDialog.cpp \
@@ -40,16 +41,7 @@ SOURCES += \
         src/UILogic/PSProjectInfoDialog.cpp
 
 HEADERS += \
-        include/EnumFactory.h \
         include/CollectionSelectionDialog.h \
-        include/PSXMLReader.h \
-        include/PSStatusDescribable.h \
-        include/PSProjectFileData.h \
-        include/PSChunkData.h \
-        include/PSCameraData.h \
-        include/PSImageData.h \
-        include/PSSensorData.h \
-        include/PSModelData.h \
 #        include/PSHelperMainWindow.h \
         include/CancelableModalProgressDialog.h \
         include/ProcessQueueProgressDialog.h \
@@ -74,5 +66,3 @@ FORMS += \
 
 RESOURCES += \
     PSHelper.qrc
-
-DISTFILES +=
