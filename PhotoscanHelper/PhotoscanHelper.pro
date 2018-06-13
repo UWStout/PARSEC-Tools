@@ -35,7 +35,9 @@ SOURCES += \
 #        src/UILogic/PSHelperMainWindow.cpp \
         src/UILogic/CancelableModalProgressDialog.cpp \
         src/UILogic/ProcessQueueProgressDialog.cpp \
-        src/UILogic/ProgramPreferencesDialog.cpp
+        src/UILogic/ProgramPreferencesDialog.cpp \
+        src/UILogic/GeneralSettingsDialog.cpp \
+        src/UILogic/PSProjectInfoDialog.cpp
 
 HEADERS += \
         include/EnumFactory.h \
@@ -52,7 +54,10 @@ HEADERS += \
         include/CancelableModalProgressDialog.h \
         include/ProcessQueueProgressDialog.h \
         include/QueueableProcess.h \
-        include/ProgramPreferencesDialog.h
+        include/ProgramPreferencesDialog.h \
+        include/ImageProcessorIM4J.h \
+        include/GeneralSettingsDialog.h \
+        include/PSProjectInfoDialog.h \
 
 FORMS += \
         forms/AboutDialog.ui \
