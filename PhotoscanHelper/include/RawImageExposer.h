@@ -13,7 +13,7 @@ import com.trolltech.qt.core.QtConcurrent;
 
 import edu.uwstout.berriers.PSHelper.Model.PSSessionData;
 
-public class RawImageExposer implements QtConcurrent.MappedFunctor<File, File>, QueueableProcess<File> {
+public class RawImageExposer implements QtConcurrent.MappedFunctor<File, File>, QueueableProcess<QFile*> {
 
 	final private File mDestination;
 	final private ExposureSettings mSettings;
