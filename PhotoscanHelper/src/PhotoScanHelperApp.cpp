@@ -4,14 +4,14 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QFutureWatcher>
+#include <QMessageBox>
+#include <QProgressDialog>
 
 #include <string>
 #include <iostream>
 using namespace std;
 
 #include "PSandPhotoScanner.h"
-
-PSandPhotoScanner* mScanner;
 
 int main(int argc, char *argv[]) {
     // Prepare the Qt GUI system
@@ -48,46 +48,53 @@ int main(int argc, char *argv[]) {
 //        exit(-1);
 //    }
 
-//    // Prepare a progress dialog
-//    QProgressDialog myProgressDiag("Scanning Files/Folders", "Cancel", 0, 0);
-//    myProgressDiag.setWindowModality(WindowModality.WindowModal);
-//    myProgressDiag.setWindowFlags(new WindowFlags(WindowType.Window, WindowType.WindowTitleHint, WindowType.CustomizeWindowHint));
+    // Prepare a progress dialog
+    QProgressDialog* myProgressDiag = new QProgressDialog("Scanning Files/Folders", "Cancel", 0, 0);
+    myProgressDiag->setWindowModality(Qt::WindowModal);
+    myProgressDiag->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
-//    // Scan the given directory for PSZ files and images
-//    try {
-//        // Use a future watcher to signal the progress dialog to close
-//        QFutureWatcher<void> lWatcher;
-//        lWatcher.progressRangeChanged.connect(myProgressDiag, "setRange(int, int)");
-//        lWatcher.progressValueChanged.connect(myProgressDiag, "setValue(int)");
-//        myProgressDiag.canceled.connect(lWatcher, "cancel()");
-//        lWatcher.finished.connect(myProgressDiag, "reset()");
+    // Scan the given directory for PSZ files and images
+    try {
+        // Use a future watcher to signal the progress dialog to close
+        QFutureWatcher<PSSessionData*>* lWatcher = new QFutureWatcher<PSSessionData*>();
+        QObject::connect(lWatcher, &QFutureWatcher<PSSessionData*>::progressRangeChanged,
+                myProgressDiag, &QProgressDialog::setRange);
+        QObject::connect(lWatcher, &QFutureWatcher<PSSessionData*>::progressValueChanged,
+                myProgressDiag, &QProgressDialog::setValue);
+        QObject::connect(lWatcher, &QFutureWatcher<PSSessionData*>::finished,
+                myProgressDiag, &QProgressDialog::reset);
+        QObject::connect(myProgressDiag, &QProgressDialog::canceled,
+                lWatcher, &QFutureWatcher<PSSessionData*>::cancel);
 
-//        // Do the scanning in a separate thread with a future signal
-//        mScanner = new PSandPhotoScanner(collectionPath, 1);
-//        lWatcher.setFuture(mScanner.startScanParallel());
+        // Do the scanning in a separate thread with a future signal
+        PSandPhotoScanner* mScanner = new PSandPhotoScanner(collectionPath, 1);
+        lWatcher->setFuture(mScanner->startScanParallel());
 
-//        // Run dialog in a locally blocking event loop
-//        myProgressDiag.exec();
-//        if(lWatcher.isCanceled()) {
-//            exit(1);
-//        }
+        // Run dialog in a locally blocking event loop
+        myProgressDiag->exec();
+        if(lWatcher->isCanceled()) {
+            exit(1);
+        }
 
-//        lWatcher.waitForFinished();
-//        mScanner->finishDataParallel();
-//    } catch(exception& e) {
+        lWatcher->waitForFinished();
+        mScanner->finishDataParallel();
 
-//        QMessageBox.critical(null, "Error Scanning Files", "Error: failed to scan '" + collectionPath + "'.");
+        delete lWatcher;
+        delete myProgressDiag;
+    } catch(const exception& e) {
 
-//        // Something went wrong scanning the given file/folder
-//        cerr << "Error: failed to scan '" << collectionPath << "'." << endl;
-//        cerr << "Exception: " << e.what() << endl;
-//        exit(1);
-//    }
+        QMessageBox::critical(NULL, "Error Scanning Files", "Error: failed to scan '" + collectionPath + "'.");
+
+        // Something went wrong scanning the given file/folder
+        qWarning("Error: failed to scan '%s'.", collectionPath.toLocal8Bit().data());
+        qWarning("Exception: %s", e.what());
+        exit(1);
+    }
 
 //    // Setup the main GUI window
 //    myWindow.setModelData(mScanner);
 //    myWindow.show();
 
     // Start the main Qt event loop
-    return app.exec();
+//    return app.exec();
 }
