@@ -8,6 +8,8 @@
 *.so
 *.dll
 *.dylib
+!3rdParty/lib/mac-x64/*
+!3rdParty/lib/win32-x64/*
 
 # Qt-es
 object_script.*.Release
