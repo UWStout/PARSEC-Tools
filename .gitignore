@@ -9,11 +9,13 @@
 *.dll
 *.dylib
 
+# Ignore zlib windows build Directories
+zlib-1.2.3
+
 # Explicitly include 3rd party dependencies
 !3rdParty/lib/mac-x64/*
 !3rdParty/lib/win32-x64/*
-!3rdParty/bin/mac-x64/*
-!3rdParty/bin/win32-x64/*
+!3rdParty/bin/*
 
 # Qt-es
 object_script.*.Release

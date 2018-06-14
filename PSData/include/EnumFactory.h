@@ -31,7 +31,7 @@ public: \
   static const char* getString(EnumType dummy); \
   static const char* getShortName(EnumType dummy); \
   static const char* getDescription(EnumType dummy); \
-  static EnumType get##EnumType##Value(const char *string); \
+  static EnumType get##EnumType##Value(const char *string);
 
 /// define the access function names
 #define DEFINE_ENUM(EnumType,ENUM_DEF,ns) \
@@ -63,4 +63,4 @@ public: \
   { \
     ENUM_DEF(ENUM_STRCMP) \
     return (EnumType)0; /* handle input error */ \
-  } \
+  }

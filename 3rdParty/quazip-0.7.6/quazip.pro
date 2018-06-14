@@ -78,6 +78,15 @@ win32 {
     QMAKE_PKGCONFIG_DESTDIR = ../lib/pkgconfig
     # workaround for qdatetime.h macro bug
     DEFINES += NOMINMAX
+
+    INCLUDEPATH += ../include
+    LIBS += -L../lib/win32-x64
+
+    CONFIG(debug, debug|release) {
+        LIBS += -lzlibd
+    } else {
+        LIBS += -lzlib
+    }
 }
 
 macos {
