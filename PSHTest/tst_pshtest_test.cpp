@@ -3,11 +3,20 @@
 #include <QXmlStreamReader>
 #include <QtTest>
 
-#include "PSProjectFileData.h"
-#include "PSSensorData.h"
-#include "PSCameraData.h"
+#include <PSProjectFileData.h>
 
+#include <PSSensorData.h>
+#include <PSCameraData.h>
+#include <PSImageData.h>
+#include <PSModelData.h>
+#include <PSChunkData.h>
+
+// So we can put these in as data rows
+Q_DECLARE_METATYPE(PSSensorData*)
 Q_DECLARE_METATYPE(PSCameraData*)
+Q_DECLARE_METATYPE(PSImageData*)
+Q_DECLARE_METATYPE(PSChunkData*)
+Q_DECLARE_METATYPE(PSModelData*)
 
 class PSHTest_Test : public QObject
 {
@@ -17,64 +26,187 @@ public:
     PSHTest_Test();
 
 private slots:
-    void sensorD_data();
-    void sensorD();
+    void initTestCase();
 
-    void cameraD_data();
-    void cameraD();
+    void sensorDataParsing_data();
+    void sensorDataParsing();
+
+    void imageDataParsing_data();
+    void imageDataParsing();
+
+    void cameraDataParsing_data();
+    void cameraDataParsing();
+
+    void modelDataParsing_data();
+    void modelDataParsing();
+
+    void chunkParsing_data();
+    void chunkParsing();
 
     void fullXMLParsing_data();
     void fullXMLParsing();
+
+    void cleanupTestCase();
+
+private:
+    PSSensorData *s0, *s1, *s2;
+    PSImageData *i0, *i1, *i2, *i3, *i4, *i5;
+    PSCameraData *c0, *c1, *c2, *c3, *c4, *c5;
+    PSModelData *m0, *m1, *m2;
+    PSChunkData *k0;
 };
 
 /******************************/
-
 PSHTest_Test::PSHTest_Test() {}
 
-void PSHTest_Test::sensorD_data()
-{
-    QTest::addColumn<QFileInfo>("file");
-    QTest::newRow("Sensor 0") << QFileInfo(":/PSHTest/Sensor0.xml");
-}
+void PSHTest_Test::initTestCase() {
+    // Build the test sensors
+    s0 = new PSSensorData(0L, "X-M1 (50 mm)");
+    s0->setType("frame");
+    s0->setWidth(3288);
+    s0->setHeight(4952);
+    s0->setFocalLength(50);
+    s0->setFixed(false);
+    s0->setFx(1.0403074608966994e+04);
+    s0->setFy(1.0402965711360808e+04);
+    s0->setCx(1.5766459960826696e+03);
+    s0->setCy(2.5143645976626149e+03);
+    s0->setK1(6.5455032109959954e-02);
+    s0->setK2(-2.1264260096368184e+00);
+    s0->setK3(2.7737688902037522e+01);
+    s0->setP1(7.0870343682217255e-03);
+    s0->setP2(-2.2149281014183105e-03);
 
-void PSHTest_Test::sensorD()
-{
-    QFETCH(QFileInfo, file);
-    QFile* lXMLFile = new QFile(file.absoluteFilePath());
-    lXMLFile->open(QIODevice::ReadOnly);
-    QXmlStreamReader* lXMLFileStream = new QXmlStreamReader(lXMLFile);
+    s1 = new PSSensorData(1L, "NEX-7 (35 mm)");
+    s1->setType("frame");
+    s1->setWidth(6000);
+    s1->setHeight(4000);
+    s1->setPixelWidth(4.0384615384615376e-03);
+    s1->setPixelHeight(4.0384615384615376e-03);
+    s1->setFocalLength(35);
+    s1->setFixed(true);
+    s1->setFx(9.0197125608661372e+03);
+    s1->setFy(9.0286015344273928e+03);
+    s1->setCx(2.9123942196099242e+03);
+    s1->setCy(1.9306826870411276e+03);
+    s1->setSkew(7.1131437938187536e-01);
+    s1->setK1(1.2453126903681204e-01);
+    s1->setK2(6.4129126635342037e-01);
+    s1->setK3(-1.1363499220427324e+00);
+    s1->setP1(-7.7480326210287486e-03);
+    s1->setP2(-6.7937787244356914e-03);
 
-    PSSensorData* data = PSSensorData::makeFromXML(lXMLFileStream);
-    Q_ASSERT(data != NULL);
-    QCOMPARE(data->ID, 0);
-    QCOMPARE(data->getLabel(), "X-M1 (50 mm)");
-    QCOMPARE(data->getType(), "frame");
-    QCOMPARE(data->getWidth(), 3288);
-    QCOMPARE(data->getHeight(), 4952);
-    QVERIFY(qFuzzyCompare(data->getFocalLength(), 5.0000000000000000e+01));
-    QVERIFY(!data->isFixed());
-    QVERIFY(qFuzzyCompare(data->getFx(), 1.0403074608966994e+04));
-    QVERIFY(qFuzzyCompare(data->getFy(), 1.0402965711360808e+04));
-    QVERIFY(qFuzzyCompare(data->getCx(), 1.5766459960826696e+03));
-    QVERIFY(qFuzzyCompare(data->getCy(), 2.5143645976626149e+03));
-    QVERIFY(qFuzzyCompare(data->getK1(), 6.5455032109959954e-02));
-    QVERIFY(qFuzzyCompare(data->getK2(), -2.1264260096368184e+00));
-    QVERIFY(qFuzzyCompare(data->getK3(), 2.7737688902037522e+01));
-    QVERIFY(qFuzzyCompare(data->getP1(), 7.0870343682217255e-03));
-    QVERIFY(qFuzzyCompare(data->getP2(), -2.2149281014183105e-03));
+    s2 = new PSSensorData(2L, "Canon EOS REBEL T3i (30 mm)");
+    s2->setType("frame");
+    s2->setWidth(5202);
+    s2->setHeight(3465);
+    s2->setPixelWidth(4.4035976380886795e-03);
+    s2->setPixelHeight(4.4035976380886795e-03);
+    s2->setFocalLength(30);
+    s2->setFixed(false);
+    s2->setFx(6.9602386774158076e+03);
+    s2->setFy(6.9660209910539470e+03);
+    s2->setCx(2.6108641630594730e+03);
+    s2->setCy(1.8422692572272131e+03);
+    s2->setK1(-8.7675575545409945e-02);
+    s2->setK2(2.4327078427185639e-01);
+    s2->setK3(-2.7655927308161071e-01);
+    s2->setP1(2.7942111913686661e-03);
+    s2->setP2(1.2707599251386176e-03);
 
-    delete data;
-    delete lXMLFileStream;
-    lXMLFile->close();
-    delete lXMLFile;
-}
+    // Build the test images
+    i0 = new PSImageData(0L, "DSCF4912.tiff");
+    i0->addProperty("Exif/Artist", "");
+    i0->addProperty("Exif/DateTime", "2015:02:28 23:23:56");
+    i0->addProperty("Exif/ExposureTime", "6.49802");
+    i0->addProperty("Exif/FNumber", "21.8566");
+    i0->addProperty("Exif/FocalLength", "50");
+    i0->addProperty("Exif/ISOSpeedRatings", "400");
+    i0->addProperty("Exif/Make", "Fujifilm");
+    i0->addProperty("Exif/Model", "X-M1");
+    i0->addProperty("Exif/Software", "dcraw v9.23");
+    i0->addProperty("File/ImageHeight", "4952");
+    i0->addProperty("File/ImageWidth", "3288");
+    i0->addProperty("System/FileModifyDate", "2015:03:02 16:14:13");
+    i0->addProperty("System/FileSize", "48848380");
 
-void PSHTest_Test::cameraD_data()
-{
-    QTest::addColumn<QFileInfo>("file");
-    QTest::addColumn<PSCameraData*>("result");
+    i1 = new PSImageData(1L, "DSCF4913.tiff");
+    i1->addProperty("Exif/Artist", "");
+    i1->addProperty("Exif/DateTime", "2015:02:28 23:24:17");
+    i1->addProperty("Exif/ExposureTime", "6.49802");
+    i1->addProperty("Exif/FNumber", "21.8566");
+    i1->addProperty("Exif/FocalLength", "50");
+    i1->addProperty("Exif/ISOSpeedRatings", "400");
+    i1->addProperty("Exif/Make", "Fujifilm");
+    i1->addProperty("Exif/Model", "X-M1");
+    i1->addProperty("Exif/Software", "dcraw v9.23");
+    i1->addProperty("File/ImageHeight", "4952");
+    i1->addProperty("File/ImageWidth", "3288");
+    i1->addProperty("System/FileModifyDate", "2015:03:02 16:14:27");
+    i1->addProperty("System/FileSize", "48848380");
 
-    PSCameraData* c0 = new PSCameraData(0L);
+    i2 = new PSImageData(2L, "DSCF4914.tiff");
+    i2->addProperty("Exif/Artist", "");
+    i2->addProperty("Exif/DateTime", "2015:02:28 23:24:36");
+    i2->addProperty("Exif/ExposureTime", "6.49802");
+    i2->addProperty("Exif/FNumber", "21.8566");
+    i2->addProperty("Exif/FocalLength", "50");
+    i2->addProperty("Exif/ISOSpeedRatings", "400");
+    i2->addProperty("Exif/Make", "Fujifilm");
+    i2->addProperty("Exif/Model", "X-M1");
+    i2->addProperty("Exif/Software", "dcraw v9.23");
+    i2->addProperty("File/ImageHeight", "4952");
+    i2->addProperty("File/ImageWidth", "3288");
+    i2->addProperty("System/FileModifyDate", "2015:03:02 16:14:40");
+    i2->addProperty("System/FileSize", "48848380");
+
+    i3 = new PSImageData(3L, "DSCF4915.tiff");
+    i3->addProperty("Exif/Artist", "");
+    i3->addProperty("Exif/DateTime", "2015:02:28 23:25:37");
+    i3->addProperty("Exif/ExposureTime", "6.49802");
+    i3->addProperty("Exif/FNumber", "21.8566");
+    i3->addProperty("Exif/FocalLength", "50");
+    i3->addProperty("Exif/ISOSpeedRatings", "400");
+    i3->addProperty("Exif/Make", "Fujifilm");
+    i3->addProperty("Exif/Model", "X-M1");
+    i3->addProperty("Exif/Software", "dcraw v9.23");
+    i3->addProperty("File/ImageHeight", "4952");
+    i3->addProperty("File/ImageWidth", "3288");
+    i3->addProperty("System/FileModifyDate", "2015:03:02 16:14:54");
+    i3->addProperty("System/FileSize", "48848380");
+
+    i4 = new PSImageData(4L, "DSCF4916.tiff");
+    i4->addProperty("Exif/Artist", "");
+    i4->addProperty("Exif/DateTime", "2015:02:28 23:26:06");
+    i4->addProperty("Exif/ExposureTime", "6.49802");
+    i4->addProperty("Exif/FNumber", "21.8566");
+    i4->addProperty("Exif/FocalLength", "50");
+    i4->addProperty("Exif/ISOSpeedRatings", "400");
+    i4->addProperty("Exif/Make", "Fujifilm");
+    i4->addProperty("Exif/Model", "X-M1");
+    i4->addProperty("Exif/Software", "dcraw v9.23");
+    i4->addProperty("File/ImageHeight", "4952");
+    i4->addProperty("File/ImageWidth", "3288");
+    i4->addProperty("System/FileModifyDate", "2015:03:02 16:15:07");
+    i4->addProperty("System/FileSize", "48848380");
+
+    i5 = new PSImageData(5L, "DSCF4917.tiff");
+    i5->addProperty("Exif/Artist", "");
+    i5->addProperty("Exif/DateTime", "2015:02:28 23:26:45");
+    i5->addProperty("Exif/ExposureTime", "6.49802");
+    i5->addProperty("Exif/FNumber", "21.8566");
+    i5->addProperty("Exif/FocalLength", "50");
+    i5->addProperty("Exif/ISOSpeedRatings", "400");
+    i5->addProperty("Exif/Make", "Fujifilm");
+    i5->addProperty("Exif/Model", "X-M1");
+    i5->addProperty("Exif/Software", "dcraw v9.23");
+    i5->addProperty("File/ImageHeight", "4952");
+    i5->addProperty("File/ImageWidth", "3288");
+    i5->addProperty("System/FileModifyDate", "2015:03:02 16:15:20");
+    i5->addProperty("System/FileSize", "48848380");
+
+    // Build test camera data
+    c0 = new PSCameraData(0L);
     c0->setLabel("DSCF4912.tiff");
     c0->setSensoID(0);
     c0->setIsEnabled(true);
@@ -86,7 +218,7 @@ void PSHTest_Test::cameraD_data()
     };
     c0->setTransform(trans);
 
-    PSCameraData* c1 = new PSCameraData(1L);
+    c1 = new PSCameraData(1L);
     c1->setLabel("DSCF4913.tiff");
     c1->setSensoID(0);
     c1->setIsEnabled(true);
@@ -98,7 +230,7 @@ void PSHTest_Test::cameraD_data()
     };
     c1->setTransform(trans1);
 
-    PSCameraData* c2 = new PSCameraData(2L);
+    c2 = new PSCameraData(2L);
     c2->setLabel("DSCF4914.tiff");
     c2->setSensoID(0);
     c2->setIsEnabled(true);
@@ -110,7 +242,7 @@ void PSHTest_Test::cameraD_data()
     };
     c2->setTransform(trans2);
 
-    PSCameraData* c3 = new PSCameraData(3L);
+    c3 = new PSCameraData(3L);
     c3->setLabel("DSCF4915.tiff");
     c3->setSensoID(0);
     c3->setIsEnabled(true);
@@ -122,7 +254,7 @@ void PSHTest_Test::cameraD_data()
     };
     c3->setTransform(trans3);
 
-    PSCameraData* c4 = new PSCameraData(4L);
+    c4 = new PSCameraData(4L);
     c4->setLabel("DSCF4916.tiff");
     c4->setSensoID(0);
     c4->setIsEnabled(true);
@@ -134,7 +266,7 @@ void PSHTest_Test::cameraD_data()
     };
     c4->setTransform(trans4);
 
-    PSCameraData* c5 = new PSCameraData(5L);
+    c5 = new PSCameraData(5L);
     c5->setLabel("DSCF4917.tiff");
     c5->setSensoID(0);
     c5->setIsEnabled(true);
@@ -146,6 +278,185 @@ void PSHTest_Test::cameraD_data()
     };
     c5->setTransform(trans5);
 
+    // Build test models
+    m0 = new PSModelData(QFileInfo(":/PSHTest/Model0.xml"));
+    m0->setFaceCount(4194268);
+    m0->setMeshFilename("model0.ply");
+    m0->addTextureFile(0, "model0.png");
+
+    m1 = new PSModelData(QFileInfo(":/PSHTest/Model1.xml"));
+    m1->setMeshFilename("model0.ply");
+    m1->addTextureFile(0, "model0.png");
+
+    m2 = new PSModelData(QFileInfo(":/PSHTest/Model2.xml"));
+    m2->setFaceCount(538153);
+    m2->setMeshFilename("model0.ply");
+    m2->addTextureFile(0, "model0.png");
+
+    // Build test chunk
+    k0 = new PSChunkData(QFileInfo(":/PSHTest/Chunk0.xml"));
+    k0->setLabel("Chunk 1");
+    k0->setEnabled(true);
+
+    k0->addSensor(s0);
+    k0->addSensor(s1);
+    k0->addSensor(s2);
+
+    k0->addCamera(c0);
+    k0->addCamera(c1);
+    k0->addCamera(c2);
+
+    k0->addImage(i0);
+    k0->addImage(i1);
+    k0->addImage(i2);
+
+    k0->setModelData(m0);
+
+    k0->setImageAlignment_matchDurationSeconds(1806.955144);
+    k0->setImageAlignment_alignDurationSeconds(31.753054);
+    k0->setImageAlignment_featureLimit(40000);
+    k0->setImageAlignment_Level((PSChunkData::ImageAlignmentDetail)1);
+    k0->setImageAlignment_Masked(false);
+    k0->setImageAlignment_tiePointLimit(40000);
+
+    k0->setOptimize_durationSeconds(1.840383);
+    k0->setOptimize_aspect(true);
+    k0->setOptimize_f(true);
+    k0->setOptimize_cx(true);
+    k0->setOptimize_cy(true);
+    k0->setOptimize_k1(true);
+    k0->setOptimize_k2(true);
+    k0->setOptimize_k3(true);
+    k0->setOptimize_p1(true);
+    k0->setOptimize_p2(true);
+
+    k0->setDenseCloud_depthDurationSeconds(48029.322018);
+    k0->setDenseCloud_cloudDurationSeconds(22383.277803);
+    k0->setDenseCloud_level((PSChunkData::DenseCloudDetail)1);
+    k0->setDenseCloud_filterLevel((PSChunkData::DenseCloudFilter)1);
+    k0->setDenseCloud_imagesUsed(3);
+
+    k0->setModelGeneration_resolution(0.00143795560157094);
+    k0->setModelGeneration_faceCount(4194268);
+    k0->setModelGeneration_denseSource(true);
+    k0->setModelGeneration_durationSeconds(2247.986924);
+    k0->setModelGeneration_interpolationEnabled(true);
+
+    k0->setTextureGeneration_blendDuration(241.538444);
+    k0->setTextureGeneration_blendMode(3);
+    k0->setTextureGeneration_count(1);
+    k0->setTextureGeneration_height(4096);
+    k0->setTextureGeneration_mappingMode(1);
+    k0->setTextureGeneration_uvGenDuration(45.409368);
+    k0->setTextureGeneration_width(4096);
+}
+
+void PSHTest_Test::sensorDataParsing_data()
+{
+    QTest::addColumn<QFileInfo>("file");
+    QTest::addColumn<PSSensorData*>("result");
+
+    QTest::newRow("Sensor 0") << QFileInfo(":/PSHTest/Sensor0.xml") << s0;
+    QTest::newRow("Sensor 1") << QFileInfo(":/PSHTest/Sensor1.xml") << s1;
+    QTest::newRow("Sensor 2") << QFileInfo(":/PSHTest/Sensor2.xml") << s2;
+}
+
+void PSHTest_Test::sensorDataParsing()
+{
+    QFETCH(QFileInfo, file);
+    QFile* lXMLFile = new QFile(file.absoluteFilePath());
+    lXMLFile->open(QIODevice::ReadOnly);
+    QXmlStreamReader* lXMLFileStream = new QXmlStreamReader(lXMLFile);
+
+    PSSensorData* data = PSSensorData::makeFromXML(lXMLFileStream);
+
+    // Free file resources
+    delete lXMLFileStream;
+    lXMLFile->close();
+    delete lXMLFile;
+
+    Q_ASSERT(data != NULL);
+    QFETCH(PSSensorData*, result);
+
+    QCOMPARE(data->ID, result->ID);
+    QCOMPARE(data->getLabel(), result->getLabel());
+    QCOMPARE(data->getType(), result->getType());
+    QCOMPARE(data->getWidth(), result->getWidth());
+    QCOMPARE(data->getHeight(), result->getHeight());
+    QVERIFY(qFuzzyCompare(data->getPixelWidth(), result->getPixelWidth()));
+    QVERIFY(qFuzzyCompare(data->getPixelHeight(), result->getPixelHeight()));
+    QVERIFY(qFuzzyCompare(data->getFocalLength(), result->getFocalLength()));
+    QCOMPARE(data->isFixed(), result->isFixed());
+
+    QVERIFY(qFuzzyCompare(data->getFx(), result->getFx()));
+    QVERIFY(qFuzzyCompare(data->getFy(), result->getFy()));
+    QVERIFY(qFuzzyCompare(data->getCx(), result->getCx()));
+    QVERIFY(qFuzzyCompare(data->getCy(), result->getCy()));
+    QVERIFY(qFuzzyCompare(data->getSkew(), result->getSkew()));
+    QVERIFY(qFuzzyCompare(data->getB1(), result->getB1()));
+    QVERIFY(qFuzzyCompare(data->getB2(), result->getB2()));
+    QVERIFY(qFuzzyCompare(data->getK1(), result->getK1()));
+    QVERIFY(qFuzzyCompare(data->getK2(), result->getK2()));
+    QVERIFY(qFuzzyCompare(data->getK3(), result->getK3()));
+    QVERIFY(qFuzzyCompare(data->getK4(), result->getK4()));
+    QVERIFY(qFuzzyCompare(data->getP1(), result->getP1()));
+    QVERIFY(qFuzzyCompare(data->getP2(), result->getP2()));
+    QVERIFY(qFuzzyCompare(data->getP3(), result->getP3()));
+    QVERIFY(qFuzzyCompare(data->getP4(), result->getP4()));
+
+    QCOMPARE(data->getCovarianceParams(), result->getCovarianceParams());
+
+    // Free dynamic memory
+    delete data;
+}
+
+void PSHTest_Test::imageDataParsing_data()
+{
+    QTest::addColumn<QFileInfo>("file");
+    QTest::addColumn<PSImageData*>("result");
+
+    QTest::newRow("Image 0") << QFileInfo(":/PSHTest/Image0.xml") << i0;
+    QTest::newRow("Image 1") << QFileInfo(":/PSHTest/Image1.xml") << i1;
+    QTest::newRow("Image 2") << QFileInfo(":/PSHTest/Image2.xml") << i2;
+    QTest::newRow("Image 3") << QFileInfo(":/PSHTest/Image3.xml") << i3;
+    QTest::newRow("Image 4") << QFileInfo(":/PSHTest/Image4.xml") << i4;
+    QTest::newRow("Image 5") << QFileInfo(":/PSHTest/Image5.xml") << i5;
+}
+
+void PSHTest_Test::imageDataParsing()
+{
+    // Fetch file info and read it
+    QFETCH(QFileInfo, file);
+    QFile* lXMLFile = new QFile(file.absoluteFilePath());
+    lXMLFile->open(QIODevice::ReadOnly);
+    QXmlStreamReader* lXMLFileStream = new QXmlStreamReader(lXMLFile);
+
+    PSImageData* data = PSImageData::makeFromXML(lXMLFileStream);
+
+    // Free file resources
+    delete lXMLFileStream;
+    lXMLFile->close();
+    delete lXMLFile;
+
+    // Compare everything
+    Q_ASSERT(data != NULL);
+    QFETCH(PSImageData*, result);
+    QCOMPARE(data->getCamID(), result->getCamID());
+    QCOMPARE(data->getPropertyCount(), result->getPropertyCount());
+    QStringList keys = data->getPropertyKeys();
+    for(QString key : keys) {
+        QCOMPARE(data->getProperty(key), result->getProperty(key));
+    }
+
+    // Free dynamic memory
+    delete data;
+}
+
+void PSHTest_Test::cameraDataParsing_data()
+{
+    QTest::addColumn<QFileInfo>("file");
+    QTest::addColumn<PSCameraData*>("result");
+
     QTest::newRow("Camera 0") << QFileInfo(":/PSHTest/Camera0.xml") << c0;
     QTest::newRow("Camera 1") << QFileInfo(":/PSHTest/Camera1.xml") << c1;
     QTest::newRow("Camera 2") << QFileInfo(":/PSHTest/Camera2.xml") << c2;
@@ -154,7 +465,7 @@ void PSHTest_Test::cameraD_data()
     QTest::newRow("Camera 5") << QFileInfo(":/PSHTest/Camera5.xml") << c5;
 }
 
-void PSHTest_Test::cameraD()
+void PSHTest_Test::cameraDataParsing()
 {
     // Fetch file info and read it
     QFETCH(QFileInfo, file);
@@ -182,7 +493,149 @@ void PSHTest_Test::cameraD()
     }
 
     // Free dynamic memory
-    delete result;
+    delete data;
+}
+
+void PSHTest_Test::modelDataParsing_data()
+{
+    QTest::addColumn<QFileInfo>("file");
+    QTest::addColumn<PSModelData*>("result");
+
+    QTest::newRow("Model 0") << QFileInfo(":/PSHTest/Model0.xml") << m0;
+    QTest::newRow("Model 1") << QFileInfo(":/PSHTest/Model1.xml") << m1;
+    QTest::newRow("Model 2") << QFileInfo(":/PSHTest/Model2.xml") << m2;
+}
+
+void PSHTest_Test::modelDataParsing()
+{
+    // Fetch file info and read it
+    QFETCH(QFileInfo, file);
+    QFile* lXMLFile = new QFile(file.absoluteFilePath());
+    lXMLFile->open(QIODevice::ReadOnly);
+    QXmlStreamReader* lXMLFileStream = new QXmlStreamReader(lXMLFile);
+
+    PSModelData* data = PSModelData::makeFromXML(lXMLFileStream, file);
+
+    // Free file resources
+    delete lXMLFileStream;
+    lXMLFile->close();
+    delete lXMLFile;
+
+    // Compare everything
+    Q_ASSERT(data != NULL);
+    QFETCH(PSModelData*, result);
+    QCOMPARE(data->getArchiveFile().filePath(), result->getArchiveFile().filePath());
+    QCOMPARE(data->getFaceCount(), result->getFaceCount());
+    QCOMPARE(data->getVertexCount(), result->getVertexCount());
+    QCOMPARE(data->getMeshFilename(), result->getMeshFilename());
+    QCOMPARE(data->hasVtxColors(), result->hasVtxColors());
+    QCOMPARE(data->hasUV(), result->hasUV());
+
+    QList<int> texKeys = data->getTextureFiles().keys();
+    QCOMPARE(texKeys.length(), result->getTextureFiles().keys().length());
+    for (int key : texKeys) {
+        QCOMPARE(data->getTextureFile(key), result->getTextureFile(key));
+    }
+
+    // Free dynamic memory
+    delete data;
+}
+
+void PSHTest_Test::chunkParsing_data()
+{
+    QTest::addColumn<QFileInfo>("file");
+    QTest::addColumn<PSChunkData*>("result");
+
+    m0->setArchiveFile(QFileInfo(":/PSHTest/Chunk0.xml"));
+    QTest::newRow("Chunk 0") << QFileInfo(":/PSHTest/Chunk0.xml") << k0;
+}
+
+void PSHTest_Test::chunkParsing()
+{
+    // Fetch file info and read it
+    QFETCH(QFileInfo, file);
+    QFile* lXMLFile = new QFile(file.absoluteFilePath());
+    lXMLFile->open(QIODevice::ReadOnly);
+    QXmlStreamReader* lXMLFileStream = new QXmlStreamReader(lXMLFile);
+
+    PSChunkData* data = new PSChunkData(file, lXMLFileStream);
+
+    // Free file resources
+    delete lXMLFileStream;
+    lXMLFile->close();
+    delete lXMLFile;
+
+    // Compare everything
+    Q_ASSERT(data != NULL);
+    QFETCH(PSChunkData*, result);
+
+    QCOMPARE(data->getLabel(), result->getLabel());
+    QCOMPARE(data->isEnabled(), result->isEnabled());
+    QCOMPARE(data->getMarkerCount(), result->getMarkerCount());
+    QCOMPARE(data->getScalebarCount(), result->getScalebarCount());
+    QCOMPARE(data->getImageCount(), result->getImageCount());
+    QCOMPARE(data->getCameraCount(), result->getCameraCount());
+    QCOMPARE(data->getSensorCount(), result->getSensorCount());
+    QCOMPARE(data->getModelArchiveFile().filePath(), result->getModelArchiveFile().filePath());
+    QCOMPARE(data->getOptimizeString(), result->getOptimizeString());
+    QCOMPARE(data->getImageAlignment_LevelString(), result->getImageAlignment_LevelString());
+    QCOMPARE(data->getDenseCloud_levelString(), result->getDenseCloud_levelString());
+    QCOMPARE(data->getDenseCloud_filterLevelString(), result->getDenseCloud_filterLevelString());
+    QCOMPARE(data->describeImageAlignPhase(), result->describeImageAlignPhase());
+    QCOMPARE(data->describeDenseCloudPhase(), result->describeDenseCloudPhase());
+    QCOMPARE(data->describeModelGenPhase(), result->describeModelGenPhase());
+    QCOMPARE(data->describeTextureGenPhase(), result->describeTextureGenPhase());
+
+    QVERIFY(qFuzzyCompare(data->getImageAlignment_matchDurationSeconds(), result->getImageAlignment_matchDurationSeconds()));
+    QVERIFY(qFuzzyCompare(data->getImageAlignment_alignDurationSeconds(), result->getImageAlignment_alignDurationSeconds()));
+    QCOMPARE(data->getImageAlignment_Level(), result->getImageAlignment_Level());
+    QCOMPARE(data->getImageAlignment_Masked(), result->getImageAlignment_Masked());
+    QCOMPARE(data->getImageAlignment_featureLimit(), result->getImageAlignment_featureLimit());
+    QCOMPARE(data->getImageAlignment_tiePointLimit(), result->getImageAlignment_tiePointLimit());
+    QVERIFY(qFuzzyCompare(data->getOptimize_durationSeconds(), result->getOptimize_durationSeconds()));
+    QCOMPARE(data->getOptimize_aspect(), result->getOptimize_aspect());
+    QCOMPARE(data->getOptimize_f(), result->getOptimize_f());
+    QCOMPARE(data->getOptimize_cx(), result->getOptimize_cx());
+    QCOMPARE(data->getOptimize_cy(), result->getOptimize_cy());
+    QCOMPARE(data->getOptimize_p1(), result->getOptimize_p1());
+    QCOMPARE(data->getOptimize_p2(), result->getOptimize_p2());
+    QCOMPARE(data->getOptimize_p3(), result->getOptimize_p3());
+    QCOMPARE(data->getOptimize_p4(), result->getOptimize_p4());
+    QCOMPARE(data->getOptimize_b1(), result->getOptimize_b1());
+    QCOMPARE(data->getOptimize_b2(), result->getOptimize_b2());
+    QCOMPARE(data->getOptimize_k1(), result->getOptimize_k1());
+    QCOMPARE(data->getOptimize_k2(), result->getOptimize_k2());
+    QCOMPARE(data->getOptimize_k3(), result->getOptimize_k3());
+    QCOMPARE(data->getOptimize_k4(), result->getOptimize_k4());
+    QCOMPARE(data->getOptimize_skew(), result->getOptimize_skew());
+
+    QVERIFY(qFuzzyCompare(data->getDenseCloud_durationSeconds(), result->getDenseCloud_durationSeconds()));
+    QVERIFY(qFuzzyCompare(data->getDenseCloud_depthDurationSeconds(), result->getDenseCloud_depthDurationSeconds()));
+    QVERIFY(qFuzzyCompare(data->getDenseCloud_cloudDurationSeconds(), result->getDenseCloud_cloudDurationSeconds()));
+    QCOMPARE(data->getDenseCloud_level(), result->getDenseCloud_level());
+    QCOMPARE(data->getDenseCloud_imagesUsed(), result->getDenseCloud_imagesUsed());
+    QCOMPARE(data->getDenseCloud_filterLevel(), result->getDenseCloud_filterLevel());
+    QVERIFY(qFuzzyCompare(data->getModelGeneration_resolution(), result->getModelGeneration_resolution()));
+    QVERIFY(qFuzzyCompare(data->getModelGeneration_durationSeconds(), result->getModelGeneration_durationSeconds()));
+    QCOMPARE(data->getModelGeneration_faceCount(), result->getModelGeneration_faceCount());
+    QCOMPARE(data->getModelGeneration_denseSource(), result->getModelGeneration_denseSource());
+    QCOMPARE(data->getModelGeneration_interpolationEnabled(), result->getModelGeneration_interpolationEnabled());
+    QVERIFY(qFuzzyCompare(data->getTextureGeneration_blendDuration(), result->getTextureGeneration_blendDuration()));
+    QVERIFY(qFuzzyCompare(data->getTextureGeneration_uvGenDuration(), result->getTextureGeneration_uvGenDuration()));
+    QCOMPARE(data->getTextureGeneration_mappingMode(), result->getTextureGeneration_mappingMode());
+    QCOMPARE(data->getTextureGeneration_blendMode(), result->getTextureGeneration_blendMode());
+    QCOMPARE(data->getTextureGeneration_count(), result->getTextureGeneration_count());
+    QCOMPARE(data->getTextureGeneration_width(), result->getTextureGeneration_width());
+    QCOMPARE(data->getTextureGeneration_height(), result->getTextureGeneration_height());
+    QCOMPARE(data->getAlignPhaseStatus(), result->getAlignPhaseStatus());
+    QCOMPARE(data->getDenseCloudDepthImages(), result->getDenseCloudDepthImages());
+    QCOMPARE(data->getDenseCloudPhaseStatus(), result->getDenseCloudPhaseStatus());
+    QCOMPARE(data->getModelFaceCount(), result->getModelFaceCount());
+    QCOMPARE(data->getModelVertexCount(), result->getModelVertexCount());
+    QCOMPARE(data->getModelGenPhaseStatus(), result->getModelGenPhaseStatus());
+    QCOMPARE(data->getTextureGenPhaseStatus(), result->getTextureGenPhaseStatus());
+
+    // Free dynamic memory
     delete data;
 }
 
@@ -201,6 +654,28 @@ void PSHTest_Test::fullXMLParsing()
     PSProjectFileData* data = new PSProjectFileData(file, NULL);
     Q_ASSERT(data != NULL);
     delete data;
+}
+
+void PSHTest_Test::cleanupTestCase() {
+    delete s0;
+    delete s1;
+    delete s2;
+
+    delete i0;
+    delete i1;
+    delete i2;
+    delete i3;
+    delete i4;
+    delete i5;
+
+    delete c0;
+    delete c1;
+    delete c2;
+    delete c3;
+    delete c4;
+    delete c5;
+
+    delete k0;
 }
 
 QTEST_APPLESS_MAIN(PSHTest_Test)

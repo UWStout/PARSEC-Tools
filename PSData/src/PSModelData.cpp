@@ -6,8 +6,7 @@
 #include <QFile>
 
 PSModelData::PSModelData(QFileInfo pZipFile) {
-    mZipFile = pZipFile;
-
+    setArchiveFile(pZipFile);
     mFaceCount = mVertexCount = -1;
     mHasVtxColors = mHasUV = false;
     mMeshFilepath = "";
@@ -20,6 +19,14 @@ void PSModelData::setVertexCount(long pVertexCount) { mVertexCount = pVertexCoun
 void PSModelData::setHasVertexColors(bool pHasVtxColors) { mHasVtxColors = pHasVtxColors; }
 void PSModelData::setHasUV(bool pHasUV) { mHasUV = pHasUV; }
 void PSModelData::setMeshFilename(QString pMeshFilepath) { mMeshFilepath = pMeshFilepath; }
+
+void PSModelData::setArchiveFile(QFileInfo pArchiveFile) {
+    if (pArchiveFile.suffix() == ".zip" || pArchiveFile.suffix() == ".psz") {
+        mZipFile = pArchiveFile;
+    } else {
+        mZipFile = QFileInfo();
+    }
+}
 
 void PSModelData::addTextureFile(int pId, QString pFilepath) {
     if(textureFiles.contains(pId)) {
@@ -93,7 +100,10 @@ PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFi
                         newModel->mFaceCount = lPropertyValue.toLong();
                     }
 
-                    pParent->parseChunkProperty(lPropertyName, lPropertyValue);
+                    // Pass property up to parent for parsing if one exists
+                    if (pParent != NULL) {
+                        pParent->parseProperty(lPropertyName, lPropertyValue);
+                    }
                 }
             }
 

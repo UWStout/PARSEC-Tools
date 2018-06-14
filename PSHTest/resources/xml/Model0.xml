@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="1.1.0">
+  <model>
+    <mesh path="model0.ply"/>
+    <texture path="model0.png"/>
+    <meta>
+      <property name="atlas/atlas_blend_mode" value="3"/>
+      <property name="atlas/atlas_count" value="1"/>
+      <property name="atlas/atlas_height" value="4096"/>
+      <property name="atlas/atlas_mapping_mode" value="1"/>
+      <property name="atlas/atlas_width" value="4096"/>
+      <property name="atlas/duration_blend" value="241.538444"/>
+      <property name="atlas/duration_uv" value="45.409368"/>
+      <property name="model/depth_downscale" value="1"/>
+      <property name="model/depth_filter_mode" value="1"/>
+      <property name="model/duration" value="2247.986924"/>
+      <property name="model/mesh_face_count" value="4194268"/>
+      <property name="model/mesh_interpolation" value="1"/>
+      <property name="model/mesh_object_type" value="0"/>
+      <property name="model/mesh_source_data" value="1"/>
+      <property name="model/resolution" value="0.00143795560157094"/>
+    </meta>
+  </model>
+</document>

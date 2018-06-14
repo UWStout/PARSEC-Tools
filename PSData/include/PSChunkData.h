@@ -75,26 +75,35 @@ public:
 
     DECLARE_ENUM(ModelGenerationDetail, MODEL_GENERATION_DETAIL_ENUM)
 
-    PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader);
+    PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader = NULL);
     PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader, QStack<QFileInfo> pFileStack);
     virtual ~PSChunkData();
 
     void parseXMLChunk(QXmlStreamReader* reader);
     void processArrayElement(QXmlStreamReader* reader, QString elementName);
     void parseXMLFrame(QXmlStreamReader* reader);
-    void parseChunkProperty(QString pPropN, QString pPropV);
+    void parseProperty(const QString& pPropN, const QString& pPropV);
     QString toString() const;
 
     QString addOptimizeElement(QString pName, int pCount) const;
 
     QString getLabel() const { return mLabel; }
+    bool isEnabled() const { return mEnabled; }
+
+    void setLabel(QString pLabel) { mLabel = pLabel; }
+    void setEnabled(bool pEnabled) { mEnabled = pEnabled; }
+
     void addMarker() { mMarkerCount++; }
     void addScalebar() { mScalebarCount++; }
     void addDepthImage() { mDenseCloud_imagesUsed++; }
     long getMarkerCount() const { return mMarkerCount; }
     long getScalebarCount() const { return mScalebarCount; }
 
-    void addImage(PSImageData* pImage) { mImages.push_back(pImage); }
+    // In genral, add sensors before cameras and cameras before images
+    void addSensor(PSSensorData* pNewSensor);
+    void addCamera(PSCameraData* pNewCamera);
+    void addImage(PSImageData* pNewImage);
+
     unsigned int getImageCount() const { return (unsigned int)mImages.size(); }
     unsigned int getCameraCount() const { return (unsigned int)mCameras.size(); }
 
@@ -203,9 +212,23 @@ public:
     bool getOptimize_skew() const { return mOptimize_skew; }
     void setOptimize_skew(bool pOptimize_skew) { mOptimize_skew = pOptimize_skew; }
 
-    double getDenseCloud_durationSeconds() const { return mDenseCloud_durationSeconds; }
+    double getDenseCloud_durationSeconds() const {
+        return mDenseCloud_depthDurationSeconds + mDenseCloud_cloudDurationSeconds;
+    }
+
+    double getDenseCloud_depthDurationSeconds() const { return mDenseCloud_depthDurationSeconds; }
+    void setDenseCloud_depthDurationSeconds(double pDenseCloud_depthDurationSeconds) {
+        mDenseCloud_depthDurationSeconds = pDenseCloud_depthDurationSeconds;
+    }
+
+    double getDenseCloud_cloudDurationSeconds() const { return mDenseCloud_cloudDurationSeconds; }
+    void setDenseCloud_cloudDurationSeconds(double pDenseCloud_cloudDurationSeconds) {
+        mDenseCloud_cloudDurationSeconds = pDenseCloud_cloudDurationSeconds;
+    }
+
+    // For legacy support
     void setDenseCloud_durationSeconds(double pDenseCloud_durationSeconds) {
-        mDenseCloud_durationSeconds = pDenseCloud_durationSeconds;
+        mDenseCloud_cloudDurationSeconds = pDenseCloud_durationSeconds;
     }
 
     DenseCloudDetail getDenseCloud_level() const { return mDenseCloud_level; }
@@ -214,6 +237,10 @@ public:
     }
 
     int getDenseCloud_imagesUsed() const { return mDenseCloud_imagesUsed; }
+    void setDenseCloud_imagesUsed(int pDenseCloud_imagesUsed) {
+        mDenseCloud_imagesUsed = pDenseCloud_imagesUsed;
+    }
+
     DenseCloudFilter getDenseCloud_filterLevel() { return mDenseCloud_filterLevel; }
     void setDenseCloud_filterLevel(DenseCloudFilter pDenseCloud_filterLevel) {
         mDenseCloud_filterLevel = pDenseCloud_filterLevel;
@@ -335,7 +362,8 @@ private:
     bool mOptimize_skew;
 
     // Dense cloud generation phase
-    double mDenseCloud_durationSeconds;
+    double mDenseCloud_depthDurationSeconds;
+    double mDenseCloud_cloudDurationSeconds;
     DenseCloudDetail mDenseCloud_level;
     DenseCloudFilter mDenseCloud_filterLevel;
     char mDenseCloud_imagesUsed;

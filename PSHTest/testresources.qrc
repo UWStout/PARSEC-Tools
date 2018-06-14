@@ -4,11 +4,23 @@
         <file alias="Chair.xml">resources/xml/Chair.xml</file>
         <file alias="Gun.xml">resources/xml/Gun.xml</file>
         <file alias="Sensor0.xml">resources/xml/Sensor0.xml</file>
+        <file alias="Sensor1.xml">resources/xml/Sensor1.xml</file>
+        <file alias="Sensor2.xml">resources/xml/Sensor2.xml</file>
         <file alias="Camera0.xml">resources/xml/Camera0.xml</file>
         <file alias="Camera1.xml">resources/xml/Camera1.xml</file>
         <file alias="Camera2.xml">resources/xml/Camera2.xml</file>
         <file alias="Camera3.xml">resources/xml/Camera3.xml</file>
         <file alias="Camera4.xml">resources/xml/Camera4.xml</file>
         <file alias="Camera5.xml">resources/xml/Camera5.xml</file>
+        <file alias="Image0.xml">resources/xml/Image0.xml</file>
+        <file alias="Image1.xml">resources/xml/Image1.xml</file>
+        <file alias="Image2.xml">resources/xml/Image2.xml</file>
+        <file alias="Image3.xml">resources/xml/Image3.xml</file>
+        <file alias="Image4.xml">resources/xml/Image4.xml</file>
+        <file alias="Image5.xml">resources/xml/Image5.xml</file>
+        <file alias="Chunk0.xml">resources/xml/Chunk0.xml</file>
+        <file alias="Model0.xml">resources/xml/Model0.xml</file>
+        <file alias="Model1.xml">resources/xml/Model1.xml</file>
+        <file alias="Model2.xml">resources/xml/Model2.xml</file>
     </qresource>
 </RCC>

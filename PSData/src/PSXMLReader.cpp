@@ -97,11 +97,23 @@ void PSXMLReader::readElementArray(QXmlStreamReader* reader, QString arrayName, 
             reader = oldReader;
         }
 
+        // Parse property tags inside of arrays (happens with depth maps)
+        else if (reader->isStartElement() && reader->name() == "property") {
+            QString lPropertyName = reader->attributes().value(NULL, "name").toString();
+            QString lPropertyValue = reader->attributes().value(NULL, "value").toString();
+            parseProperty(lPropertyName, lPropertyValue);
+        }
+
         // Check for end of array
         else if(reader->isEndElement() && reader->name() == arrayName) {
             readingElements = false;
         }
     }
+}
+
+void PSXMLReader::parseProperty(const QString& pPropN, const QString& pPropV) {
+    (void)pPropV;
+    qWarning("Request to process property '%s' not handled.\n", pPropN.toLocal8Bit().data());
 }
 
 void PSXMLReader::processArrayElement(QXmlStreamReader* reader, QString elementName) {

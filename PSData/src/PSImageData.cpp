@@ -5,9 +5,9 @@
 
 #include <QXmlStreamReader>
 
-PSImageData::PSImageData(long pCamID) {
+PSImageData::PSImageData(long pCamID, QString pFilePath) {
     mCamID = pCamID;
-    mFilePath = "";
+    mFilePath = pFilePath;
     mCameraData = NULL;
 }
 
@@ -21,8 +21,11 @@ void PSImageData::setCameraData(PSCameraData* pCameraData) { mCameraData = pCame
 
 long PSImageData::getCamID() { return mCamID; }
 QString PSImageData::getFilePath() { return mFilePath; }
-QString PSImageData::getProperty(QString key) { return mProperties.value(key); }
 PSCameraData* PSImageData::getCameraData() { return mCameraData; }
+
+QString PSImageData::getProperty(QString key) { return mProperties.value(key); }
+QStringList PSImageData::getPropertyKeys() const { return mProperties.keys(); }
+int PSImageData::getPropertyCount() const { return mProperties.size(); }
 
 PSImageData* PSImageData::makeFromXML(QXmlStreamReader* reader) {
     // If this is a fresh XML doc, push to first non-document tag.
@@ -40,7 +43,7 @@ PSImageData* PSImageData::makeFromXML(QXmlStreamReader* reader) {
     // Note, in some older file formats, the ID is not there
     long camID = -1L;
     if (reader->attributes().hasAttribute("", "camera_id")) {
-        reader->attributes().value("", "camera_id").toLong();
+        camID = reader->attributes().value("", "camera_id").toLong();
     }
 
     // Make a new object
