@@ -5,10 +5,10 @@
 #include <QWidget>
 #include <QString>
 
-#include "PSChunkData.h"
-#include "PSSessionData.h"
 #include "ui_PSChunkInfo.h"
 #include "ui_PSProjectInfo.h"
+
+class PSSessionData;
 
 class PSProjectInfoDialog : public QDialog {
     Q_OBJECT

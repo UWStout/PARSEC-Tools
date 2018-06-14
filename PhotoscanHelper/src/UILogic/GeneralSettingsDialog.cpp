@@ -1,12 +1,3 @@
-//package edu.uwstout.berriers.PSHelper.UILogic;
-
-//import com.trolltech.qt.gui.QAbstractButton;
-//import com.trolltech.qt.gui.QDialog;
-//import com.trolltech.qt.gui.QWidget;
-
-//import edu.uwstout.berriers.PSHelper.Model.PSSessionData;
-//import edu.uwstout.berriers.PSHelper.UIForms.Ui_GeneralSettingsDialog;
-
 #include "GeneralSettingsDialog.h"
 
 GeneralSettingsDialog::GeneralSettingsDialog(PSSessionData pData, QWidget *parent) : QDialog(parent), mProjectData(pData) {
@@ -21,34 +12,34 @@ GeneralSettingsDialog::~GeneralSettingsDialog() {
 }
 
 void GeneralSettingsDialog::restoreSettings() {
-    QString mainHeader = (mProjectData.getPSProjectFile()==NULL ? mProjectData.getPSProjectFolder().getName() :
-                                                                 mProjectData.getPSProjectFile().getname());
+    QString mainHeader = (mProjectData.getPSProjectFile()== QFileInfo() ? mProjectData.getPSProjectFolder().dirName() :
+                                                                          mProjectData.getPSProjectFile().fileName());
     mGUI->mainHeadingLabel->setText(mainHeader);
 
-    int status = mProjectData.getStatus().ordinal() - PSSessionData.Status.TEXTURE_GEN_DONE.ordinal();
+    int status = (int)mProjectData.getStatus() - (int)PSSessionData::PSS_TEXTURE_GEN_DONE;
     if(status > 0) {
         mGUI->statusComboBox->setCurrentIndex(status);
     }
 
-    if(mProjectData.getID().equals("-1")) {
+    if(mProjectData.getID() == "-1") {
         QString str;
         mGUI->IDLineEdit->setText(str.sprintf("%05d", PSSessionData::getNextID()));
     } else {
         mGUI->IDLineEdit->setText(mProjectData.getID());
     }
 
-    mGUI->DescriptionLineEdit->setText(mProjectData::getNameStrict());
-    mGUI->SpecialNotesTextEdit->setPlainText(mProjectData::getSpecialNotes());
+    mGUI->DescriptionLineEdit->setText(mProjectData.getNameStrict());
+    mGUI->SpecialNotesTextEdit->setPlainText(mProjectData.getSpecialNotes());
 }
 
 void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
+    int statusIndex = mGUI->statusComboBox->currentIndex();
     switch(mGUI->buttonBox->standardButton(pButton)) {
         case mGUI->buttonBox->RestoreDefaults:
             restoreSettings();
         break;
 
         case mGUI->buttonBox->Ok:
-            int statusIndex = mGUI->statusComboBox->currentIndex();
             mProjectData.setCustomStatus(statusIndex);
 
             mProjectData.setID(mGUI->IDLineEdit->text());
@@ -63,62 +54,3 @@ void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
         default: break;
     }
 }
-
-//public class GeneralSettingsDialog extends QDialog {
-
-//	private Ui_GeneralSettingsDialog mGUI;
-//	final private PSSessionData mProjectData;
-	
-//	public GeneralSettingsDialog(PSSessionData pData, QWidget parent) {
-//		super(parent);
-		
-//		mProjectData = pData;
-//		mGUI = new Ui_GeneralSettingsDialog();
-//		mGUI.setupUi(this);
-		
-//		restoreSettings();
-//	}
-	
-//	private void restoreSettings() {
-		
-//		String mainHeader = (mProjectData.getPSProjectFile()==null?
-//				mProjectData.getPSProjectFolder().getName():mProjectData.getPSProjectFile().getName());
-//		mGUI.mainHeadingLabel.setText(mainHeader);
-		
-//		int status = mProjectData.getStatus().ordinal() - PSSessionData.Status.TEXTURE_GEN_DONE.ordinal();
-//		if(status > 0) {
-//			mGUI.statusComboBox.setCurrentIndex(status);
-//		}
-		
-//		if(mProjectData.getID().equals("-1")) {
-//			mGUI.IDLineEdit.setText(String.format("%05d", PSSessionData.getNextID()));
-//		} else {
-//			mGUI.IDLineEdit.setText(mProjectData.getID());
-//		}
-		
-//		mGUI.DescriptionLineEdit.setText(mProjectData.getNameStrict());
-//		mGUI.SpecialNotesTextEdit.setPlainText(mProjectData.getSpecialNotes());
-//	}
-	
-//	public void on_buttonBox_clicked(QAbstractButton pButton) {
-//		switch(mGUI.buttonBox.standardButton(pButton)) {
-//			case RestoreDefaults:
-//				restoreSettings();
-//			break;
-			
-//			case Ok:
-//				int statusIndex = mGUI.statusComboBox.currentIndex();
-//				mProjectData.setCustomStatus(statusIndex);
-				
-//				mProjectData.setID(mGUI.IDLineEdit.text());
-//				mProjectData.setName(mGUI.DescriptionLineEdit.text());
-//				mProjectData.setSpecialNotes(mGUI.SpecialNotesTextEdit.toPlainText());
-//			break;
-			
-//			case Cancel: this.reject();
-//			break;
-				
-//			default: break;
-//		}
-//	}
-//}

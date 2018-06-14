@@ -18,12 +18,12 @@ public:
 
 private:
     Ui_GeneralSettingsDialog* mGUI;
-    const PSSessionData mProjectData;
+    PSSessionData mProjectData;
 
     void restoreSettings();
 
 public slots:
-    void on_buttonBox_clicked(QAbstractButton pButton);
+    void on_buttonBox_clicked(QAbstractButton* pButton);
 };
 
 #endif

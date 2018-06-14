@@ -9,7 +9,9 @@
 #include <iostream>
 using namespace std;
 
-//PSandPhotoScanner* mScanner;
+#include "PSandPhotoScanner.h"
+
+PSandPhotoScanner* mScanner;
 
 int main(int argc, char *argv[]) {
     // Prepare the Qt GUI system
