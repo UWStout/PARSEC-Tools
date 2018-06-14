@@ -16,13 +16,15 @@ public:
     PSModelData(QFileInfo pZipFile);
     ~PSModelData();
 	
-    static PSModelData* makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile, PSChunkData* pParent);
+    static PSModelData* makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile,
+                                    PSChunkData* pParent = NULL);
 
     void setFaceCount(long pFaceCount);
     void setVertexCount(long pVertexCount);
     void setHasVertexColors(bool pHasVtxColors);
     void setHasUV(bool pHasUV);
     void setMeshFilename(QString pMeshFilepath);
+    void setArchiveFile(QFileInfo pArchiveFile);
 	
     void addTextureFile(int pId, QString pFilepath);
 

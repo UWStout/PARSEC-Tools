@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="1.1.0">
+  <chunk id="0" label="Chunk 1" enabled="true">
+    <sensors next_id="3">
+      <sensor id="0" label="X-M1 (50 mm)" type="frame">
+        <resolution width="3288" height="4952"/>
+        <property name="focal_length" value="5.0000000000000000e+01"/>
+        <property name="fixed" value="false"/>
+        <calibration type="frame" class="adjusted">
+          <resolution width="3288" height="4952"/>
+          <fx>1.0403074608966994e+04</fx>
+          <fy>1.0402965711360808e+04</fy>
+          <cx>1.5766459960826696e+03</cx>
+          <cy>2.5143645976626149e+03</cy>
+          <k1>6.5455032109959954e-02</k1>
+          <k2>-2.1264260096368184e+00</k2>
+          <k3>2.7737688902037522e+01</k3>
+          <p1>7.0870343682217255e-03</p1>
+          <p2>-2.2149281014183105e-03</p2>
+        </calibration>
+      </sensor>
+      <sensor id="1" label="NEX-7 (35 mm)" type="frame">
+        <resolution width="6000" height="4000"/>
+        <property name="pixel_width" value="4.0384615384615376e-03"/>
+        <property name="pixel_height" value="4.0384615384615376e-03"/>
+        <property name="focal_length" value="3.5000000000000000e+01"/>
+        <property name="fixed" value="true"/>
+        <calibration type="frame" class="adjusted">
+          <resolution width="6000" height="4000"/>
+          <fx>9.0197125608661372e+03</fx>
+          <fy>9.0286015344273928e+03</fy>
+          <cx>2.9123942196099242e+03</cx>
+          <cy>1.9306826870411276e+03</cy>
+          <skew>7.1131437938187536e-01</skew>
+          <k1>1.2453126903681204e-01</k1>
+          <k2>6.4129126635342037e-01</k2>
+          <k3>-1.1363499220427324e+00</k3>
+          <p1>-7.7480326210287486e-03</p1>
+          <p2>-6.7937787244356914e-03</p2>
+        </calibration>
+      </sensor>
+      <sensor id="2" label="Canon EOS REBEL T3i (30 mm)" type="frame">
+        <resolution width="5202" height="3465"/>
+        <property name="pixel_width" value="4.4035976380886795e-03"/>
+        <property name="pixel_height" value="4.4035976380886795e-03"/>
+        <property name="focal_length" value="3.0000000000000000e+01"/>
+        <property name="fixed" value="false"/>
+        <calibration type="frame" class="adjusted">
+          <resolution width="5202" height="3465"/>
+          <fx>6.9602386774158076e+03</fx>
+          <fy>6.9660209910539470e+03</fy>
+          <cx>2.6108641630594730e+03</cx>
+          <cy>1.8422692572272131e+03</cy>
+          <k1>-8.7675575545409945e-02</k1>
+          <k2>2.4327078427185639e-01</k2>
+          <k3>-2.7655927308161071e-01</k3>
+          <p1>2.7942111913686661e-03</p1>
+          <p2>1.2707599251386176e-03</p2>
+        </calibration>
+      </sensor>
+    </sensors>
+    <cameras next_id="3" next_group_id="0">
+      <camera id="0" label="DSCF4912.tiff" sensor_id="0" enabled="true">
+        <transform>-8.0239344571999230e-02 7.4885843668942398e-01 -6.5785461112751042e-01 1.3600633351819457e+01 -2.5441794677868296e-01 6.2273584815027827e-01 7.3991321909091001e-01 -1.8150333897639527e+01 9.6375990575431969e-01 2.2674017118196288e-01 1.4055510959335121e-01 1.2300903360233244e+01 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+      </camera>
+      <camera id="1" label="DSCF4913.tiff" sensor_id="0" enabled="true">
+        <transform>5.2480715041327675e-01 6.0802100096347400e-01 -5.9572469922143689e-01 1.3296461699719668e+01 -2.2648874138345818e-01 7.7436174560542326e-01 5.9081870059220276e-01 -1.5312462040338817e+01 8.2053659571138771e-01 -1.7514094133096642e-01 5.4410049234316049e-01 3.5501997344686425e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+      </camera>
+      <camera id="2" label="DSCF4914.tiff" sensor_id="0" enabled="true">
+        <transform>8.8766968356074594e-01 3.1260354177047422e-01 -3.3811471213143107e-01 7.1769034885782705e+00 -1.0247214611005659e-01 8.4995281526526656e-01 5.1679751459759060e-01 -1.3521445549041344e+01 4.4893428490010023e-01 -4.2409814606433155e-01 7.8651050237490949e-01 -1.7722972946925779e+00 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00 1.0000000000000000e+00</transform>
+      </camera>
+    </cameras>
+    <frames next_id="1">
+      <frame id="0">
+        <cameras>
+          <camera camera_id="0">
+            <photo path="DSCF4912.tiff">
+              <meta>
+                <property name="Exif/Artist" value=""/>
+                <property name="Exif/DateTime" value="2015:02:28 23:23:56"/>
+                <property name="Exif/ExposureTime" value="6.49802"/>
+                <property name="Exif/FNumber" value="21.8566"/>
+                <property name="Exif/FocalLength" value="50"/>
+                <property name="Exif/ISOSpeedRatings" value="400"/>
+                <property name="Exif/Make" value="Fujifilm"/>
+                <property name="Exif/Model" value="X-M1"/>
+                <property name="Exif/Software" value="dcraw v9.23"/>
+                <property name="File/ImageHeight" value="4952"/>
+                <property name="File/ImageWidth" value="3288"/>
+                <property name="System/FileModifyDate" value="2015:03:02 16:14:13"/>
+                <property name="System/FileSize" value="48848380"/>
+              </meta>
+            </photo>
+            <thumbnail path="thumb0.png"/>
+          </camera>
+          <camera camera_id="1">
+            <photo path="DSCF4913.tiff">
+              <meta>
+                <property name="Exif/Artist" value=""/>
+                <property name="Exif/DateTime" value="2015:02:28 23:24:17"/>
+                <property name="Exif/ExposureTime" value="6.49802"/>
+                <property name="Exif/FNumber" value="21.8566"/>
+                <property name="Exif/FocalLength" value="50"/>
+                <property name="Exif/ISOSpeedRatings" value="400"/>
+                <property name="Exif/Make" value="Fujifilm"/>
+                <property name="Exif/Model" value="X-M1"/>
+                <property name="Exif/Software" value="dcraw v9.23"/>
+                <property name="File/ImageHeight" value="4952"/>
+                <property name="File/ImageWidth" value="3288"/>
+                <property name="System/FileModifyDate" value="2015:03:02 16:14:27"/>
+                <property name="System/FileSize" value="48848380"/>
+              </meta>
+            </photo>
+            <thumbnail path="thumb1.png"/>
+          </camera>
+          <camera camera_id="2">
+            <photo path="DSCF4914.tiff">
+              <meta>
+                <property name="Exif/Artist" value=""/>
+                <property name="Exif/DateTime" value="2015:02:28 23:24:36"/>
+                <property name="Exif/ExposureTime" value="6.49802"/>
+                <property name="Exif/FNumber" value="21.8566"/>
+                <property name="Exif/FocalLength" value="50"/>
+                <property name="Exif/ISOSpeedRatings" value="400"/>
+                <property name="Exif/Make" value="Fujifilm"/>
+                <property name="Exif/Model" value="X-M1"/>
+                <property name="Exif/Software" value="dcraw v9.23"/>
+                <property name="File/ImageHeight" value="4952"/>
+                <property name="File/ImageWidth" value="3288"/>
+                <property name="System/FileModifyDate" value="2015:03:02 16:14:40"/>
+                <property name="System/FileSize" value="48848380"/>
+              </meta>
+            </photo>
+            <thumbnail path="thumb2.png"/>
+          </camera>
+        </cameras>
+        <point_cloud>
+          <tracks path="tracks0.ply"/>
+          <points path="points0.ply"/>
+          <projections camera_id="0" path="projections0.ply"/>
+          <projections camera_id="1" path="projections1.ply"/>
+          <projections camera_id="2" path="projections2.ply"/>
+          <meta>
+            <property name="match/duration" value="1806.955144"/>
+            <property name="match/match_downscale" value="1"/>
+            <property name="match/match_filter_mask" value="0"/>
+            <property name="match/match_point_limit" value="40000"/>
+            <property name="match/match_select_pairs" value="0"/>
+            <property name="match/match_tiepoint_limit" value="40000"/>
+          </meta>
+        </point_cloud>
+        <depth_maps>
+          <depth_map camera_id="0" path="depth0.exr">
+            <calibration type="frame">
+              <resolution width="3288" height="4952"/>
+              <fx>1.0403074608966994e+04</fx>
+              <fy>1.0402965711360808e+04</fy>
+              <cx>1.5766459960826696e+03</cx>
+              <cy>2.5143645976626149e+03</cy>
+            </calibration>
+          </depth_map>
+          <depth_map camera_id="1" path="depth1.exr">
+            <calibration type="frame">
+              <resolution width="3288" height="4952"/>
+              <fx>1.0403074608966994e+04</fx>
+              <fy>1.0402965711360808e+04</fy>
+              <cx>1.5766459960826696e+03</cx>
+              <cy>2.5143645976626149e+03</cy>
+            </calibration>
+          </depth_map>
+          <depth_map camera_id="2" path="depth2.exr">
+            <calibration type="frame">
+              <resolution width="3288" height="4952"/>
+              <fx>1.0403074608966994e+04</fx>
+              <fy>1.0402965711360808e+04</fy>
+              <cx>1.5766459960826696e+03</cx>
+              <cy>2.5143645976626149e+03</cy>
+            </calibration>
+          </depth_map>
+          <meta>
+            <property name="depth/depth_downscale" value="1"/>
+            <property name="depth/depth_filter_mode" value="1"/>
+            <property name="depth/duration" value="48029.322018"/>
+          </meta>
+        </depth_maps>
+        <dense_cloud>
+          <points path="dense_points0.oct"/>
+          <meta>
+            <property name="dense_cloud/density" value="100"/>
+            <property name="dense_cloud/depth_downscale" value="1"/>
+            <property name="dense_cloud/depth_filter_mode" value="1"/>
+            <property name="dense_cloud/duration" value="22383.277803"/>
+            <property name="dense_cloud/resolution" value="0.00143795560157094"/>
+          </meta>
+        </dense_cloud>
+        <model>
+          <mesh path="model0.ply"/>
+          <texture path="model0.png"/>
+          <meta>
+            <property name="atlas/atlas_blend_mode" value="3"/>
+            <property name="atlas/atlas_count" value="1"/>
+            <property name="atlas/atlas_height" value="4096"/>
+            <property name="atlas/atlas_mapping_mode" value="1"/>
+            <property name="atlas/atlas_width" value="4096"/>
+            <property name="atlas/duration_blend" value="241.538444"/>
+            <property name="atlas/duration_uv" value="45.409368"/>
+            <property name="model/depth_downscale" value="1"/>
+            <property name="model/depth_filter_mode" value="1"/>
+            <property name="model/duration" value="2247.986924"/>
+            <property name="model/mesh_face_count" value="4194268"/>
+            <property name="model/mesh_interpolation" value="1"/>
+            <property name="model/mesh_object_type" value="0"/>
+            <property name="model/mesh_source_data" value="1"/>
+            <property name="model/resolution" value="0.00143795560157094"/>
+          </meta>
+        </model>
+      </frame>
+    </frames>
+    <transform>
+      <rotation>9.9095523268532271e-02 -3.4010407991376379e-01 9.3515201550023308e-01 2.3856698170400006e-02 -9.3869553571744380e-01 -3.4392084725492850e-01 9.9479190548603791e-01 5.6390655698914639e-02 -8.4906764920730890e-02</rotation>
+    </transform>
+    <region>
+      <center>2.9591631095290793e-01 -2.1317896000623255e+00 1.5490466862407066e+01</center>
+      <size>4.4671752647635081e+00 2.2018004993274340e+00 4.1222936286224021e+00</size>
+      <R>-9.9503225555322794e-01 -5.6056775928158928e-02 8.2270579681902614e-02 9.6502592020079617e-02 -3.4011360503732263e-01 9.3541968410009535e-01 -2.4455268186266012e-02 9.3871208234530379e-01 3.4383363174198311e-01</R>
+    </region>
+    <settings>
+      <property name="accuracy_tiepoints" value="4.0000000000000000e+00"/>
+      <property name="accuracy_cameras" value="1.0000000000000000e+01"/>
+      <property name="accuracy_markers" value="5.0000000000000001e-03"/>
+      <property name="accuracy_scalebars" value="1.0000000000000000e-03"/>
+      <property name="accuracy_projections" value="1.0000000000000001e-01"/>
+    </settings>
+    <meta>
+      <property name="align/duration" value="31.753054"/>
+      <property name="optimize/duration" value="1.840383"/>
+      <property name="optimize/fit_aspect" value="1"/>
+      <property name="optimize/fit_cxcy" value="1"/>
+      <property name="optimize/fit_f" value="1"/>
+      <property name="optimize/fit_k1k2k3" value="1"/>
+      <property name="optimize/fit_p1p2" value="1"/>
+    </meta>
+  </chunk>
+</document>

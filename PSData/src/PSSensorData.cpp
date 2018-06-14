@@ -121,37 +121,79 @@ PSSensorData* PSSensorData::makeFromXML(QXmlStreamReader* reader) {
     return NULL;
 }
 
-int PSSensorData::getWidth() { return mWidth; }
-int PSSensorData::getHeight() { return mHeight; }
+QString PSSensorData::getLabel() const { return mLabel; }
+QString PSSensorData::getType() const { return mType; }
 
-double PSSensorData::getPixelWidth() { return mPixelWidth; }
-double PSSensorData::getPixelHeight() { return mPixelHeight; }
-double PSSensorData::getFocalLength() { return mFocalLength; }
+int PSSensorData::getWidth() const { return mWidth; }
+int PSSensorData::getHeight() const { return mHeight; }
 
-bool PSSensorData::isFixed() { return mFixed; }
+double PSSensorData::getPixelWidth() const { return mPixelWidth; }
+double PSSensorData::getPixelHeight() const { return mPixelHeight; }
 
-double PSSensorData::getFx() { return mFx; }
-double PSSensorData::getFy() { return mFy; }
-double PSSensorData::getCx() { return mCx; }
-double PSSensorData::getCy() { return mCy; }
-double PSSensorData::getB1() { return mB1; }
-double PSSensorData::getB2() { return mB2; }
+double PSSensorData::getFocalLength() const { return mFocalLength; }
+bool PSSensorData::isFixed() const { return mFixed; }
 
-double PSSensorData::getSkew() { return mSkew; }
+double PSSensorData::getFx() const { return mFx; }
+double PSSensorData::getFy() const { return mFy; }
+double PSSensorData::getCx() const { return mCx; }
+double PSSensorData::getCy() const { return mCy; }
+double PSSensorData::getB1() const { return mB1; }
+double PSSensorData::getB2() const { return mB2; }
 
-double PSSensorData::getK1() { return mK1; }
-double PSSensorData::getK2() { return mK2; }
-double PSSensorData::getK3() { return mK3; }
-double PSSensorData::getK4() { return mK4; }
+double PSSensorData::getSkew() const { return mSkew; }
 
-double PSSensorData::getP1() { return mP1; }
-double PSSensorData::getP2() { return mP2; }
-double PSSensorData::getP3() { return mP3; }
-double PSSensorData::getP4() { return mP4; }
+double PSSensorData::getK1() const { return mK1; }
+double PSSensorData::getK2() const { return mK2; }
+double PSSensorData::getK3() const { return mK3; }
+double PSSensorData::getK4() const { return mK4; }
 
-QString PSSensorData::getLabel() { return mLabel; }
-QString PSSensorData::getType() { return mType; }
+double PSSensorData::getP1() const { return mP1; }
+double PSSensorData::getP2() const { return mP2; }
+double PSSensorData::getP3() const { return mP3; }
+double PSSensorData::getP4() const { return mP4; }
 
-QString PSSensorData::getCovarianceParams() { return mCovarianceParams; }
-QList<QString> PSSensorData::getBands() { return mBands; }
-double* PSSensorData::getCovarianceCoeffs() { return mCovarianceCoeffs; }
+QString PSSensorData::getCovarianceParams() const { return mCovarianceParams; }
+QList<QString> PSSensorData::getBands() const { return mBands; }
+const double* PSSensorData::getCovarianceCoeffs() const { return mCovarianceCoeffs; }
+
+void PSSensorData::setLabel(QString pLabel) { mLabel = pLabel; }
+void PSSensorData::setType(QString pType) { mType = pType; }
+
+void PSSensorData::setWidth(int pWidth) { mWidth = pWidth; }
+void PSSensorData::setHeight(int pHeight) { mHeight = pHeight; }
+
+void PSSensorData::setPixelWidth(double pPixelWidth) { mPixelWidth = pPixelWidth; }
+void PSSensorData::setPixelHeight(double pPixelHeight) { mPixelHeight = pPixelHeight; }
+
+void PSSensorData::setFocalLength(double pFocalLength) { mFocalLength = pFocalLength; }
+void PSSensorData::setFixed(bool pFixed) { mFixed = pFixed; }
+
+void PSSensorData::setFx(double pFx) { mFx = pFx; }
+void PSSensorData::setFy(double pFy) { mFy = pFy; }
+
+void PSSensorData::setCx(double pCx) { mCx = pCx; }
+void PSSensorData::setCy(double pCy) { mCy = pCy; }
+
+void PSSensorData::setB1(double pB1) { mB1 = pB1; }
+void PSSensorData::setB2(double pB2) { mB2 = pB2; }
+
+void PSSensorData::setSkew(double pSkew) { mSkew = pSkew; }
+
+void PSSensorData::setK1(double pK1) { mK1 = pK1; }
+void PSSensorData::setK2(double pK2) { mK2 = pK2; }
+void PSSensorData::setK3(double pK3) { mK3 = pK3; }
+void PSSensorData::setK4(double pK4) { mK4 = pK4; }
+
+void PSSensorData::setP1(double pP1) { mP1 = pP1; }
+void PSSensorData::setP2(double pP2) { mP2 = pP2; }
+void PSSensorData::setP3(double pP3) { mP3 = pP3; }
+void PSSensorData::setP4(double pP4) { mP4 = pP4; }
+
+void PSSensorData::setCovarianceParams(QString pParams) { mCovarianceParams = pParams; }
+void PSSensorData::setCovarianceCoeffs(const double* pCoeffs, int length) {
+    delete mCovarianceCoeffs;
+    mCovarianceCoeffs = new double[length];
+    for(int i=0; i<length; i++) {
+        mCovarianceCoeffs[i] = pCoeffs[i];
+    }
+}

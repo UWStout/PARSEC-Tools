@@ -18,6 +18,7 @@ public:
 
     void readElementArray(QXmlStreamReader* reader, QString arrayName, QString elementName);
     virtual void processArrayElement(QXmlStreamReader* reader, QString elementName);
+    virtual void parseProperty(const QString& pPropN, const QString& pPropV);
 };
 
 #endif

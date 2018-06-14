@@ -34,6 +34,7 @@ void PSChunkData::init(QXmlStreamReader* reader) {
 
     mModelData = NULL;
     mMarkerCount = mScalebarCount = 0;
+    mSensorCount_inChunk = 0;
 
     mOptimize_aspect = mOptimize_f = mOptimize_cx = mOptimize_cy = mOptimize_b1 = mOptimize_b2 = false;
     mOptimize_p1 = mOptimize_p2 = mOptimize_k1 = mOptimize_k2 = mOptimize_k3 = false;
@@ -56,10 +57,13 @@ void PSChunkData::init(QXmlStreamReader* reader) {
     mTextureGeneration_width = mTextureGeneration_height = 0;
 
     mImageAlignment_matchDurationSeconds = mImageAlignment_alignDurationSeconds = 0;
-    mOptimize_durationSeconds = mDenseCloud_durationSeconds = 0;
+    mDenseCloud_depthDurationSeconds = mDenseCloud_cloudDurationSeconds = 0;
+    mOptimize_durationSeconds = 0;
     mModelGeneration_durationSeconds = 0;
 
-    parseXMLChunk(reader);
+    if (reader != NULL) {
+        parseXMLChunk(reader);
+    }
 }
 
 void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
@@ -84,6 +88,19 @@ void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
         qWarning("Error exploding chunk tag");
     }
 
+    // Grab attributes from the chunk tag
+    if (reader->attributes().hasAttribute("", "label")) {
+        mLabel = reader->attributes().value("", "label").toString();
+    } else {
+        mLabel = "";
+    }
+
+    if (reader->attributes().hasAttribute("", "enabled")) {
+        mEnabled = (reader->attributes().value("", "enabled") == "true");
+    } else {
+        mEnabled = false;
+    }
+
     try {
         while(!reader->atEnd()) {
             reader->readNext();
@@ -97,7 +114,7 @@ void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
                 else if (elem == "property") {
                     QString lPropertyName = reader->attributes().value(NULL, "name").toString();
                     QString lPropertyValue = reader->attributes().value(NULL, "value").toString();
-                    parseChunkProperty(lPropertyName, lPropertyValue);
+                    parseProperty(lPropertyName, lPropertyValue);
                 }
             }
         }
@@ -110,7 +127,8 @@ void PSChunkData::processArrayElement(QXmlStreamReader* reader, QString elem) {
     if (elem == "sensor") {
         try {
             PSSensorData* lNewSensor = PSSensorData::makeFromXML(reader);
-            mSensors.insert(lNewSensor->ID, lNewSensor);
+            addSensor(lNewSensor);
+//            mSensors.insert(lNewSensor->ID, lNewSensor);
         } catch (...) {
             qWarning("Error while parsing XML to make PSSensorData.");
         }
@@ -118,20 +136,22 @@ void PSChunkData::processArrayElement(QXmlStreamReader* reader, QString elem) {
         if(mInsideFrame) {
             try {
                 PSImageData* lNewImage = PSImageData::makeFromXML(reader);
-                if(mCameras.contains(lNewImage->getCamID())) {
-                    lNewImage->setCameraData(mCameras.value(lNewImage->getCamID()));
-                }
-                mImages.push_back(lNewImage);
+                addImage(lNewImage);
+//                if(mCameras.contains(lNewImage->getCamID())) {
+//                    lNewImage->setCameraData(mCameras.value(lNewImage->getCamID()));
+//                }
+//                mImages.push_back(lNewImage);
             } catch (...) {
                 qWarning("Error while parsing XML to make PSImageData.");
             }
         } else {
             try {
                 PSCameraData* lNewCamera = PSCameraData::makeFromXML(reader);
-                if(mSensors.contains(lNewCamera->getSensorID())) {
-                    lNewCamera->setSensorData(mSensors.value(lNewCamera->getSensorID()));
-                }
-                mCameras.insert(lNewCamera->ID, lNewCamera);
+                addCamera(lNewCamera);
+//                if(mSensors.contains(lNewCamera->getSensorID())) {
+//                    lNewCamera->setSensorData(mSensors.value(lNewCamera->getSensorID()));
+//                }
+//                mCameras.insert(lNewCamera->ID, lNewCamera);
             } catch (...) {
                 qWarning("Error while parsing XML to make PSCameraData.");
             }
@@ -200,7 +220,7 @@ void PSChunkData::parseXMLFrame(QXmlStreamReader* reader) {
                 } else if (elem == "property") {
                     QString lPropertyName = reader->attributes().value(NULL, "name").toString();
                     QString lPropertyValue = reader->attributes().value(NULL, "value").toString();
-                    parseChunkProperty(lPropertyName, lPropertyValue);
+                    parseProperty(lPropertyName, lPropertyValue);
                 }
             }
         }
@@ -219,7 +239,7 @@ void PSChunkData::parseXMLFrame(QXmlStreamReader* reader) {
 }
 
 // Read a property tag that's inside a chunk (1 or MORE levels below)
-void PSChunkData::parseChunkProperty(QString pPropN, QString pPropV) {
+void PSChunkData::parseProperty(const QString& pPropN, const QString& pPropV) {
     // Pre-convert values for use in if-else below
     double lPropVD = pPropV.toDouble();
     long long lPropVL = pPropV.toLongLong();
@@ -246,6 +266,10 @@ void PSChunkData::parseChunkProperty(QString pPropN, QString pPropV) {
     else if(pPropN == "dense_cloud/density") { }
     else if(pPropN == "dense_cloud/resolution") { }
 
+    // Depth map properties
+    else if(pPropN == "depth/depth_downscale") { this->setDenseCloud_level((DenseCloudDetail)lPropVL); }
+    else if(pPropN == "depth/depth_filter_mode") { this->setDenseCloud_filterLevel((DenseCloudFilter)lPropVL); }
+
     // Image Alignment properties
     else if(pPropN == "match/match_downscale") { this->setImageAlignment_Level((ImageAlignmentDetail)lPropVL); }
     else if(pPropN == "match/match_filter_mask") { this->setImageAlignment_Masked((lPropVL)==0LL?false:true); }
@@ -256,7 +280,8 @@ void PSChunkData::parseChunkProperty(QString pPropN, QString pPropV) {
     // Duration properties
     else if(pPropN == "match/duration") { this->setImageAlignment_matchDurationSeconds(lPropVD); }
     else if(pPropN == "optimize/duration") { this->setOptimize_durationSeconds(lPropVD); }
-    else if(pPropN == "dense_cloud/duration") { this->setDenseCloud_durationSeconds(lPropVD); }
+    else if(pPropN == "dense_cloud/duration") { this->setDenseCloud_cloudDurationSeconds(lPropVD); }
+    else if(pPropN == "depth/duration") { this->setDenseCloud_depthDurationSeconds(lPropVD); }
     else if(pPropN == "align/duration") { this->setImageAlignment_alignDurationSeconds(lPropVD); }
     else if(pPropN == "model/duration") { this->setModelGeneration_durationSeconds(lPropVD); }
     else if(pPropN == "atlas/duration_blend") { this->setTextureGeneration_blendDuration(lPropVD); }
@@ -307,6 +332,25 @@ void PSChunkData::parseChunkProperty(QString pPropN, QString pPropV) {
     else if(pPropN == "accuracy_markers") { }
     else if(pPropN == "accuracy_scalebars") { }
     else if(pPropN == "accuracy_projections") { }
+}
+
+void PSChunkData::addSensor(PSSensorData* pNewSensor) {
+    mSensors.insert(pNewSensor->ID, pNewSensor);
+    mSensorCount_inChunk++;
+}
+
+void PSChunkData::addCamera(PSCameraData* pNewCamera) {
+    if(mSensors.contains(pNewCamera->getSensorID())) {
+        pNewCamera->setSensorData(mSensors.value(pNewCamera->getSensorID()));
+    }
+    mCameras.insert(pNewCamera->ID, pNewCamera);
+}
+
+void PSChunkData::addImage(PSImageData *pNewImage) {
+    if(mCameras.contains(pNewImage->getCamID())) {
+        pNewImage->setCameraData(mCameras.value(pNewImage->getCamID()));
+    }
+    mImages.push_back(pNewImage);
 }
 
 QString PSChunkData::toString() const {
@@ -571,7 +615,6 @@ QFileInfo PSChunkData::getModelArchiveFile() const {
     if(mModelData != NULL) {
         return mModelData->getArchiveFile();
     }
-
     return QFileInfo();
 }
 

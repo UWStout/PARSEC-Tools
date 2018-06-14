@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="1.1.0">
+  <sensor id="1" label="NEX-7 (35 mm)" type="frame">
+    <resolution width="6000" height="4000"/>
+    <property name="pixel_width" value="4.0384615384615376e-03"/>
+    <property name="pixel_height" value="4.0384615384615376e-03"/>
+    <property name="focal_length" value="3.5000000000000000e+01"/>
+    <property name="fixed" value="true"/>
+    <calibration type="frame" class="adjusted">
+      <resolution width="6000" height="4000"/>
+      <fx>9.0197125608661372e+03</fx>
+      <fy>9.0286015344273928e+03</fy>
+      <cx>2.9123942196099242e+03</cx>
+      <cy>1.9306826870411276e+03</cy>
+      <skew>7.1131437938187536e-01</skew>
+      <k1>1.2453126903681204e-01</k1>
+      <k2>6.4129126635342037e-01</k2>
+      <k3>-1.1363499220427324e+00</k3>
+      <p1>-7.7480326210287486e-03</p1>
+      <p2>-6.7937787244356914e-03</p2>
+    </calibration>
+  </sensor>
+</document>

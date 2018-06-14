@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document version="1.1.0">
+  <model>
+    <mesh path="model0.ply"/>
+    <texture path="model0.png"/>
+    <meta>
+      <property name="atlas/atlas_blend_mode" value="3"/>
+      <property name="atlas/atlas_count" value="1"/>
+      <property name="atlas/atlas_height" value="4096"/>
+      <property name="atlas/atlas_mapping_mode" value="1"/>
+      <property name="atlas/atlas_width" value="4096"/>
+      <property name="atlas/duration_blend" value="119.220816"/>
+      <property name="atlas/duration_uv" value="34.482901"/>
+    </meta>
+  </model>
+</document>

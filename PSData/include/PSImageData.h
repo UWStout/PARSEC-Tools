@@ -11,7 +11,7 @@ class PSCameraData;
 
 class PSDATASHARED_EXPORT PSImageData {
 public:
-    PSImageData(long pCamID);
+    PSImageData(long pCamID, QString pFilePath = "");
     ~PSImageData();
 
     static PSImageData* makeFromXML(QXmlStreamReader* reader);
@@ -21,8 +21,11 @@ public:
 
     long getCamID();
     QString getFilePath();
-    QString getProperty(QString key);
     PSCameraData* getCameraData();
+
+    QString getProperty(QString key);
+    QStringList getPropertyKeys() const;
+    int getPropertyCount() const;
 
 private:
     long mCamID;
