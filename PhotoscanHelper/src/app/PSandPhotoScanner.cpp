@@ -135,7 +135,7 @@ PSSessionData* examineProjectFolder(QFileInfo pProjectFolder) {
         }
     } catch(std::exception e) {
         qWarning("Error: unable to scan '%s'", pProjectFolder.filePath().toLocal8Bit().data());
-        qWarning(e.what());
+        qWarning("Exception: %s", e.what());
         return NULL;
     }
 }
