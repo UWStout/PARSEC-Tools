@@ -14,6 +14,18 @@ DEFINES += PSDATA_LIBRARY
 # Shared Project Configuration
 include(../config.pri)
 
+# 3rd party libs
+macx {
+ LIBS += -L$$PWD/../3rdParty/lib/mac-x64/ -lquazip
+}
+
+win32 {
+ LIBS += -L$$PWD/../3rdParty/lib/win32-x64/ -lquazip
+}
+
+INCLUDEPATH += $$PWD/../3rdParty/include
+DEPENDPATH += $$PWD/../3rdParty/include
+
 SOURCES += \
     src/PSCameraData.cpp \
     src/PSChunkData.cpp \
@@ -42,8 +54,3 @@ HEADERS += \
     include/PSXMLReader.h \
     include/ExposureSettings.h \
     include/DirLister.h
-
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
