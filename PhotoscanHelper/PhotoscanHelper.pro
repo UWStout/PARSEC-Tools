@@ -26,7 +26,8 @@ SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/app/PSandPhotoScanner.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
-#        src/UILogic/PSHelperMainWindow.cpp \
+        src/UILogic/PSHelperMainWindow.cpp \
+        src/UILogic/PSProjectInfoDialog.cpp \
 #        src/UILogic/CancelableModalProgressDialog.cpp \
 #        src/UILogic/ProcessQueueProgressDialog.cpp \
 #        src/UILogic/ProgramPreferencesDialog.cpp \
@@ -36,7 +37,8 @@ SOURCES += \
 HEADERS += \
         include/PSandPhotoScanner.h \
         include/CollectionSelectionDialog.h \
-#        include/PSHelperMainWindow.h \
+        include/PSHelperMainWindow.h \
+        include/PSProjectInfoDialog.h \
 #        include/CancelableModalProgressDialog.h \
 #        include/ProcessQueueProgressDialog.h \
 #        include/QueueableProcess.h \

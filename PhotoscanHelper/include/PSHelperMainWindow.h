@@ -1,8 +1,11 @@
-#include <QMainWindow>
+#ifndef PS_HELPER_MAIN_WINDOW_H
+#define PS_HELPER_MAIN_WINDOW_H
 
-#include <list>
-#include <string>
-using namespace std;
+#include <QMainWindow>
+#include <QFileInfo>
+#include <QString>
+
+#include "ui_PSHelperMain.h"
 
 // Forward declarations
 class PSandPhotoScanner;
@@ -12,11 +15,11 @@ class QSettings;
 class RawImageExposer;
 class GLModelViewer;
 
-//template <class T>
-//class CancelableModalProgressDialog<T>;
+template <class T>
+class CancelableModalProgressDialog;
 
-//template <class T>
-//class QueueableProcess<T>;
+template <class T>
+class QueueableProcess;
 
 namespace Ui {
     class PSHelperMainWindow;
@@ -30,21 +33,21 @@ public:
     virtual ~PSHelperMainWindow();
 
     void setModelData(PSandPhotoScanner* pScanner);
-    void showContextMenu(QPoint pos);
+    void showContextMenu(const QPoint &pos);
     bool validateSettings();
 
 private:
     QMenu* mContextMenu;
     PSSessionData* mLastData;
 
-    Ui::PSHelperMainWindow* mGUI;
+    Ui_PSHelperMainWindow* mGUI;
     PSProjectDataModel* mDataModel;
     QSettings* mDataInfoStore;
 
-    list<QueueableProcess<QObject>*> mProcessQueue;
+    QList<QueueableProcess<QObject>*> mProcessQueue;
 
     RawImageExposer* mRawExposer;
-    CancelableModalProgressDialog<File>* mRawExposureProgressDialog;
+    CancelableModalProgressDialog<QFileInfo>* mRawExposureProgressDialog;
 
     GLModelViewer* mModelViewer;
 
@@ -58,7 +61,7 @@ protected:
     void closeEvent(QCloseEvent* event);
 
 private slots:
-    void on_PSDataTableView_doubleClicked(QModelIndex pIndex);
+    void on_PSDataTableView_doubleClicked(const QModelIndex& pIndex);
     void on_action_WriteToCSVFile_triggered(bool pChecked);
     void on_action_ShowExtendedInfo_triggered(bool pChecked);
     void on_action_ShowColorsForStatus_triggered(bool pChecked);
@@ -81,3 +84,5 @@ private slots:
     void queuePhotoScanPhase1Action() {}
     void queuePhotoScanPhase2Action() {}
 };
+
+#endif

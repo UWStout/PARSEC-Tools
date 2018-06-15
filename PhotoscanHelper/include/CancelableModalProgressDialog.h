@@ -24,7 +24,7 @@ class CancelableModalProgressDialog : public QDialog {
     Q_OBJECT
 
 public:
-    CancelableModalProgressDialog(QString pLabelText, QWidget parent);
+    CancelableModalProgressDialog(QString pLabelText, QWidget* parent);
     ~CancelableModalProgressDialog();
     void setFuture(QFuture<T> pFuture);
     bool wasCanceled();

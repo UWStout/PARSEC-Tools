@@ -1,8 +1,13 @@
+#ifndef PS_PROJECT_DATA_MODEL_H
+#define PS_PROJECT_DATA_MODEL_H
+
+#include "psdata_global.h"
+
 #include <QAbstractItemModel>
 #include <QVector>
 class PSSessionData;
 
-class PSProjectDataModel : public QAbstractItemModel {
+class PSDATASHARED_EXPORT PSProjectDataModel : public QAbstractItemModel {
 
     // Colors used for indicating status
     static const QColor doneColor;
@@ -47,3 +52,5 @@ public:
     QString encodeForCSV(QString input);
     bool outputToCSVFile(QString destFilename);
 };
+
+#endif

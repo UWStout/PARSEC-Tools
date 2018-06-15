@@ -15,16 +15,16 @@ int DirLister::count() const { return mMatches.length(); }
 void DirLister::examineDir(QDir pCur, int pDepth) {
     // Find matchs in the current directory
     if (mDirsOnly) {
-        mMatches.append(pCur.entryInfoList(QStringList(), QDir::Dirs));
+        mMatches.append(pCur.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot));
     } else {
         mMatches.append(pCur.entryInfoList(mNameFilter, QDir::Files));
     }
 
     // Recurse into any directories
-    if (mMaxDepth >= 0 && pDepth < mMaxDepth) {
-        QFileInfoList lDirs = pCur.entryInfoList(QDir::Dirs | QDir::NoSymLinks);
+    if (pDepth < mMaxDepth || mMaxDepth < 0) {
+        QFileInfoList lDirs = pCur.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
         for (QFileInfo lNextDir : lDirs) {
-            examineDir(lNextDir.absoluteDir(), pDepth+1);
+            examineDir(QDir(lNextDir.filePath()), pDepth+1);
         }
     }
 }

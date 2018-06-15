@@ -97,7 +97,8 @@ PSSensorData* PSSensorData::makeFromXML(QXmlStreamReader* reader) {
                 }
 
                 else if(reader->name() == "coeffs" && lInsideCovar) {
-                    QVector<QStringRef> coeffs = reader->readElementText().splitRef("\\s");
+                    QString lText = reader->readElementText();
+                    QVector<QStringRef> coeffs = lText.splitRef("\\s");
                     newSensor->mCovarianceCoeffs = new double[coeffs.length()];
                     for(int i=0; i<coeffs.length(); i++) {
                         newSensor->mCovarianceCoeffs[i] = coeffs[i].toDouble();
