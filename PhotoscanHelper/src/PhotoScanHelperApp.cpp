@@ -1,5 +1,6 @@
 //#include "PSHelperMainWindow.h"
 #include "CollectionSelectionDialog.h"
+#include "PSHelperMainWindow.h"
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -42,11 +43,11 @@ int main(int argc, char *argv[]) {
         collectionPath = QString::fromLocal8Bit(argv[1]);
     }
 
-//    // Construct the main window and make sure we have valid settings
-//    PSHelperMainWindow myWindow;
-//    if(!myWindow.validateSettings()) {
-//        exit(-1);
-//    }
+    // Construct the main window and make sure we have valid settings
+    PSHelperMainWindow* myWindow = new PSHelperMainWindow(NULL);
+    if(!myWindow->validateSettings()) {
+        exit(-1);
+    }
 
     // Prepare a progress dialog
     QProgressDialog* myProgressDiag = new QProgressDialog("Scanning Files/Folders", "Cancel", 0, 0);
@@ -54,6 +55,7 @@ int main(int argc, char *argv[]) {
     myProgressDiag->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
     // Scan the given directory for PSZ files and images
+    PSandPhotoScanner* lScanner = NULL;
     try {
         // Use a future watcher to signal the progress dialog to close
         QFutureWatcher<PSSessionData*>* lWatcher = new QFutureWatcher<PSSessionData*>();
@@ -67,8 +69,8 @@ int main(int argc, char *argv[]) {
                 lWatcher, &QFutureWatcher<PSSessionData*>::cancel);
 
         // Do the scanning in a separate thread with a future signal
-        PSandPhotoScanner* mScanner = new PSandPhotoScanner(collectionPath, 1);
-        lWatcher->setFuture(mScanner->startScanParallel());
+        lScanner = new PSandPhotoScanner(collectionPath, 1);
+        lWatcher->setFuture(lScanner->startScanParallel());
 
         // Run dialog in a locally blocking event loop
         myProgressDiag->exec();
@@ -77,7 +79,7 @@ int main(int argc, char *argv[]) {
         }
 
         lWatcher->waitForFinished();
-        mScanner->finishDataParallel();
+        lScanner->finishDataParallel();
 
         delete lWatcher;
         delete myProgressDiag;
@@ -91,10 +93,11 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-//    // Setup the main GUI window
-//    myWindow.setModelData(mScanner);
-//    myWindow.show();
+    // Setup the main GUI window
+    myWindow->setModelData(lScanner);
+    myWindow->show();
 
     // Start the main Qt event loop
-//    return app.exec();
+    return app.exec();
+    delete myWindow;
 }

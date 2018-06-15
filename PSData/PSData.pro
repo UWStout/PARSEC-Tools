@@ -35,7 +35,8 @@ SOURCES += \
     src/PSSessionData.cpp \
     src/PSXMLReader.cpp \
     src/ExposureSettings.cpp \
-    src/DirLister.cpp
+    src/DirLister.cpp \
+    src/PSStatusDescribable.cpp
 
 HEADERS += \
     psdata_global.h \
@@ -52,3 +53,5 @@ HEADERS += \
     include/PSXMLReader.h \
     include/ExposureSettings.h \
     include/DirLister.h
+
+DISTFILES +=

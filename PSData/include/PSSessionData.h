@@ -1,6 +1,8 @@
 #ifndef PS_SESSION_DATA_H
 #define PS_SESSION_DATA_H
 
+#include "psdata_global.h"
+
 #include "PSStatusDescribable.h"
 #include "ExposureSettings.h"
 
@@ -15,7 +17,7 @@ class PSProjectFileData;
 class PSChunkData;
 class PSModelData;
 
-class PSSessionData : public PSStatusDescribable { // Comparable<PSSessionData>
+class PSDATASHARED_EXPORT PSSessionData : public PSStatusDescribable { // Comparable<PSSessionData>
 public:
     /**
      * @author berriers
@@ -60,7 +62,7 @@ public:
 	
     void autoSetStatus();
     void setCustomStatus(int statusIndex);
-    QString getID();
+    QString getID() const;
 	
     static int getNextID();
     void setID(QString mID);

@@ -1,10 +1,11 @@
-#ifndef DIRLISTER_H
-#define DIRLISTER_H
+#ifndef DIR_LISTER_H
+#define DIR_LISTER_H
+
+#include "psdata_global.h"
 
 #include <QDir>
 
-class DirLister
-{
+class PSDATASHARED_EXPORT DirLister {
 public:
     DirLister(QDir pRoot, QStringList pNamefilter, int pMaxDepth = -1, bool pDirsOnly = false);
 

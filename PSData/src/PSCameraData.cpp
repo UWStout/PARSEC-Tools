@@ -42,7 +42,8 @@ PSCameraData* PSCameraData::makeFromXML(QXmlStreamReader* reader) {
             reader->readNext();
             if(reader->isStartElement()) {
                 if(reader->name() == "transform") {
-                    QVector<QStringRef> coeffs = reader->readElementText().splitRef(QRegExp("\\s+"), QString::SkipEmptyParts);
+                    QString lText = reader->readElementText();
+                    QVector<QStringRef> coeffs = lText.splitRef(QRegExp("\\s+"), QString::SkipEmptyParts);
                     newCamera->mTransform = new double[coeffs.length()];
                     for(int i=0; i<coeffs.length(); i++) {
                         newCamera->mTransform[i] = coeffs[i].toDouble();

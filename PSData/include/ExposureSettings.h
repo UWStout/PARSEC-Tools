@@ -1,8 +1,10 @@
 #ifndef EXPOSURE_SETTINGS_H
 #define EXPOSURE_SETTINGS_H
 
+#include "psdata_global.h"
+
 // Note that instances of class are deliberately made immutable
-class ExposureSettings {
+class PSDATASHARED_EXPORT ExposureSettings {
 public:
     // The different white-balance modes for raw image exposure
     enum WhiteBalanceMode {

@@ -21,7 +21,7 @@ PSandPhotoScanner::PSandPhotoScanner(QString pPath, int pMaxRecursionDepth) {
 
 bool PSandPhotoScanner::buildDirectoryList(QFileInfo pRoot) {
     // List and examine all directories
-    DirLister lProjectLister(QDir(pRoot.path()), QStringList(), mMaxRecursionDepth, true);
+    DirLister lProjectLister(QDir(pRoot.filePath()), QStringList(), mMaxRecursionDepth, true);
     mProjectDirList = lProjectLister.getMatches();
 
     // Remove directories that start with '_'
@@ -125,23 +125,21 @@ int PSandPhotoScanner::countDirsWithoutModels() const {
 }
 
 PSSessionData* examineProjectFolder(QFileInfo pProjectFolder) {
-    try {
-        PSSessionData* lData = new PSSessionData(QDir(pProjectFolder.path()), NULL);
-        if(lData == NULL || (lData->getPSProjectFile().filePath() == "" &&
-           lData->getRawImageCount() == 0 && lData->getProcessedImageCount() == 0)) {
-            throw new std::logic_error("No files in directory.");
-        } else {
-            return lData;
-        }
-    } catch(std::exception e) {
+    PSSessionData* lData = new PSSessionData(QDir(pProjectFolder.filePath()), NULL);
+    if(lData == NULL || (lData->getPSProjectFile().filePath() == "" &&
+       lData->getRawImageCount() == 0 && lData->getProcessedImageCount() == 0)) {
         qWarning("Error: unable to scan '%s'", pProjectFolder.filePath().toLocal8Bit().data());
-        qWarning("Exception: %s", e.what());
+        delete lData;
         return NULL;
+    } else {
+        return lData;
     }
 }
 
 QFuture<PSSessionData*> PSandPhotoScanner::startScanParallel() {
     buildDirectoryList(mRootPath);
+    // TODO: Remove when done debugging
+//    QThreadPool::globalInstance()->setMaxThreadCount(1);
     mFutureResults = QtConcurrent::mapped(mProjectDirList.begin(), mProjectDirList.end(), examineProjectFolder);
     return mFutureResults;
 }

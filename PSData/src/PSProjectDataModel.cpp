@@ -57,7 +57,7 @@ bool PSProjectDataModel::setData(const QModelIndex& index, const QVariant& value
 
 // To change columns edit the column headers above
 int PSProjectDataModel::columnCount(const QModelIndex& parent) const {
-    if(!parent.isValid()) { return 0; }
+    if(parent.isValid()) { return 0; }
 
     if(mExtendedColsEnabled) { return PSSessionData::EXTENDED_LENGTH; }
     else { return PSSessionData::BASE_LENGTH; }
@@ -66,12 +66,12 @@ int PSProjectDataModel::columnCount(const QModelIndex& parent) const {
 // The array list of projects holds the rows
 int PSProjectDataModel::rowCount(const QModelIndex& arg0) const {
     (void)arg0;
-    return mData.size();
+    return mData.length();
 }
 
 // Only rows can be retrieved (aka, projects)
 PSSessionData* PSProjectDataModel::getDataAtIndex(int index) {
-    if(index >= 0 && index < mData.size()) { return mData[index]; }
+    if(index >= 0 && index < mData.length()) { return mData[index]; }
     else { return NULL; }
 }
 
@@ -109,7 +109,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                 case PSSessionData::F_IMAGE_COUNT_REAL: return QString::asprintf("%ld/%ld", curItem->getProcessedImageCount(), curItem->getRawImageCount());
 
                 // Detailed processing info (extended info)
-                case PSSessionData::F_PROJECT_STATUS: return curItem->getStatus();
+                case PSSessionData::F_PROJECT_STATUS: return PSStatusDescribable::getDescription(curItem->getStatus());
                 case PSSessionData::F_IMAGE_ALIGN_LEVEL: return curItem->describeImageAlignPhase();
                 case PSSessionData::F_DENSE_CLOUD_LEVEL: return curItem->describeDenseCloudPhase();
                 case PSSessionData::F_MODEL_GEN_LEVEL: return curItem->describeModelGenPhase();

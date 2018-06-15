@@ -26,35 +26,35 @@ int PSSessionData::mNextID = 0;
 
 // File name filters
 // Note: raw file extensions from https://en.wikipedia.org/wiki/Raw_image_format
-const QStringList gPSProjectFileExtensions = { ".psz", ".psx" };
+const QStringList gPSProjectFileExtensions = { "*.psz", "*.psx" };
 const QStringList gPSImageFileExtensions = {
-    ".jpg", ".jpeg",
-    ".tif", ".tiff",
-    ".pgm", ".ppm",
-    ".png",
-    ".bmp",
-    ".exr"
+    "*.jpg", "*.jpeg",
+    "*.tif", "*.tiff",
+    "*.pgm", "*.ppm",
+    "*.png",
+    "*.bmp",
+    "*.exr"
 };
 const QStringList gRawFileExtensions = {
-    ".3fr",
-    ".ari",".arw",
-    ".bay",
-    ".crw",".cr2",".cr3",
-    ".cap",
-    ".data",".dcs",".dcr",".dng",
-    ".drf",
-    ".eip",".erf",
-    ".fff",
-    ".gpr",
-    ".iiq",
-    ".k25",".kdc",
-    ".mdc",".mef",".mos",".mrw",
-    ".nef",".nrw",
-    ".obm",".orf",
-    ".pef",".ptx",".pxn",
-    ".r3d",".raf",".raw",".rwl",".rw2",".rwz",
-    ".sr2",".srf",".srw",
-    ".x3f"
+    "*.3fr",
+    "*.ari","*.arw",
+    "*.bay",
+    "*.crw","*.cr2","*.cr3",
+    "*.cap",
+    "*.data","*.dcs","*.dcr","*.dng",
+    "*.drf",
+    "*.eip","*.erf",
+    "*.fff",
+    "*.gpr",
+    "*.iiq",
+    "*.k25","*.kdc",
+    "*.mdc","*.mef","*.mos","*.mrw",
+    "*.nef","*.nrw",
+    "*.obm","*.orf",
+    "*.pef","*.ptx","*.pxn",
+    "*.r3d","*.raf","*.raw","*.rwl","*.rw2","*.rwz",
+    "*.sr2","*.srf","*.srw",
+    "*.x3f"
 };
 
 /**
@@ -263,7 +263,7 @@ void PSSessionData::setID(QString pID) {
     }
 }
 
-QString PSSessionData::getID() { return mID; }
+QString PSSessionData::getID() const { return mID; }
 int PSSessionData::getNextID() { return mNextID; }
 void PSSessionData::setSpecialNotes(QString pSpecialNotes) { mSpecialNotes = pSpecialNotes; }
 void PSSessionData::setName(QString pName) { mName = pName; }

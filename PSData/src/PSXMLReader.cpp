@@ -4,6 +4,8 @@
 #include <QFileInfo>
 #include <QXmlStreamReader>
 
+#include <quazip/quazipfile.h>
+
 // This looks for a 'path' attribute in the current element.
 // Sometimes a portion of the XML file is stripped out and placed
 // in it's own file under the .files directory. This function will
@@ -61,11 +63,13 @@ QXmlStreamReader* PSXMLReader::getXMLStreamFromFile(QFileInfo pFile) {
     // Zip files with the XML inside them as doc.xml
     if(ext == "psz" || ext == "zip")
     {
-//        QuaZipFile* lInsideFile = new QuaZipFile(pFile->fileName(), "doc.xml", lXMLFileStream);
-//        if(lInsideFile.pos() < 0) {
-//            lXMLFileStream = new QXmlStreamReader(lInsideFile);
-//            lInsideFile.setParent(lXMLFileStream);
-//        }
+        QuaZipFile* lInsideFile = new QuaZipFile(pFile.filePath(), "doc.xml");
+        if(!lInsideFile->open(QIODevice::ReadOnly)) {
+            qWarning("Failed to open zip file: %d.", lInsideFile->getZipError());
+            delete lInsideFile;
+        } else if(lInsideFile->pos() >= 0) {
+            lXMLFileStream = new QXmlStreamReader(lInsideFile);
+        }
     } else if(ext == "psx" || ext == "xml") {
         // A raw PS xml QFile (probably to be accompanied by a .files directory)
         // Note: This also happens during testing
