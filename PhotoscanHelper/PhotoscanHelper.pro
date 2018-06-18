@@ -25,6 +25,7 @@ ICON = resources/icons/PhotoScanHelper.icns
 SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/app/PSandPhotoScanner.cpp \
+        src/app/PLYMeshData.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
         src/UILogic/PSHelperMainWindow.cpp \
         src/UILogic/PSProjectInfoDialog.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 
 HEADERS += \
         include/PSandPhotoScanner.h \
+        include/PLYMeshData.h \
         include/CollectionSelectionDialog.h \
         include/PSHelperMainWindow.h \
         include/PSProjectInfoDialog.h \

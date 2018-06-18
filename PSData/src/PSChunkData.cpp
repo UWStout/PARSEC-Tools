@@ -647,6 +647,11 @@ char PSChunkData::getModelGenPhaseStatus() const {
     }
 }
 
+QString PSChunkData::getModelGeneration_levelString() const {
+    char lStatus = getModelGenPhaseStatus();
+    return QString::fromLocal8Bit(getDescription((ModelGenerationDetail)lStatus));
+}
+
 QString PSChunkData::describeTextureGenPhase() const {
     if(getTextureGeneration_count() != 0) {
         return QString::asprintf("%d @ (%d x %d)", getTextureGeneration_count(),

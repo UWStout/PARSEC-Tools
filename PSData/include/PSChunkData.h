@@ -256,6 +256,8 @@ public:
         mModelGeneration_durationSeconds = pModelGeneration_durationSeconds;
     }
 
+    QString getModelGeneration_levelString() const;
+
     long getModelGeneration_faceCount() const { return mModelGeneration_faceCount; }
     void setModelGeneration_faceCount(long pModelGeneration_faceCount) {
         mModelGeneration_faceCount = pModelGeneration_faceCount;
