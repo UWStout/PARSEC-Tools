@@ -7,10 +7,10 @@
 class PLYMeshData {
 public:
     // OpenGL vertex attribute names
-    static const int ATTRIB_LOC_VERTEX = 0;
-    static const int ATTRIB_LOC_NORMAL = 1;
-    static const int ATTRIB_LOC_COLORS = 2;
-    static const int ATTRIB_LOC_TEXCOR = 3;
+    static const int ATTRIB_LOC_VERTEX;
+    static const int ATTRIB_LOC_NORMAL;
+    static const int ATTRIB_LOC_COLORS;
+    static const int ATTRIB_LOC_TEXCOR;
 
     // Constructor/Destructor
     PLYMeshData();
@@ -44,18 +44,18 @@ public:
     QString validate() const;
 
     // Manage VBO construction
-    void buildPackedData();
-    void buildVBOs();
-    void releaseVBOs();
+//    void buildPackedData();
+//    void buildVBOs();
+//    void releaseVBOs();
 
 private:
-    // PLY PArsing helper functions
-    bool parsePLYFileStream(InputStream inStream);
-    void readVertexData(ElementReader reader);
-    void readFaceData(ElementReader reader);
+//    // PLY PArsing helper functions
+//    bool parsePLYFileStream(InputStream inStream);
+//    void readVertexData(ElementReader reader);
+//    void readFaceData(ElementReader reader);
 
-    // Return a PLY data type as a string
-    static QString dataTypeToString(Property prop);
+//    // Return a PLY data type as a string
+//    static QString dataTypeToString(Property prop);
 
     // Names of our VBOs
     int mFaceVBO, mPackedVBO;
@@ -83,6 +83,6 @@ private:
 
     // Names of mesh elements inside of the PLY file
     QString xCoordPropName, yCoordPropName, zCoordPropName, vertexIndexPropName;
-}
+};
 
 #endif

@@ -14,9 +14,9 @@ TEMPLATE = app
 # Shared Project Configuration
 include(../config.pri)
 
-win32 {
-    LIBS += -lopengl32 -lglu32
-}
+# Link in 3rd party libs
+macx:LIBS += -ltinyply -lraw -lquazip -ljpeg -lzip
+win32:LIBS += -ltinyply -llibraw -lquazip -ljpeg -lopengl32 -lglu32
 
 # Windows and Mac OS Icons (respectively)
 RC_ICONS = resources/icons/PhotoScanHelper.ico

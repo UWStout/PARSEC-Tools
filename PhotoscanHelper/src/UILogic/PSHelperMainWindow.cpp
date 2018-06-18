@@ -14,6 +14,7 @@
 #include "PSProjectInfoDialog.h"
 
 //#include "RawImageExposer.h"
+#include "PLYMeshData.h"
 //#include "GLModelViewer.h"
 //#include "QueueableProcess.h"
 //#include "CancelableModalProgressDialog.h"
@@ -290,6 +291,8 @@ void PSHelperMainWindow::on_RunQueueButton_clicked() {
 }
 
 void PSHelperMainWindow::viewModel() {
+    PLYMeshData* lMeshData = new PLYMeshData();
+    lMeshData->readPLYFile(mLastData->getPSProjectFile());
 //    if(mModelViewer == NULL) {
 //        mModelViewer = new GLModelViewer(mLastData, NULL);
 //        mModelViewer.show();

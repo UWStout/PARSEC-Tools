@@ -3,6 +3,16 @@
 #include <QXmlStreamReader>
 #include <QtTest>
 
+#include <exception>
+using namespace std;
+
+#include <ZipLib/ZipFile.h>
+#include <ZipLib/ZipArchive.h>
+#include <ZipLib/ZipArchiveEntry.h>
+
+#include <tinyply.h>
+using namespace tinyply;
+
 #include <PSProjectFileData.h>
 
 #include <PSSensorData.h>
@@ -27,6 +37,9 @@ public:
 
 private slots:
     void initTestCase();
+
+    void plyZipTest_data();
+    void plyZipTest();
 
     void sensorDataParsing_data();
     void sensorDataParsing();
@@ -349,6 +362,68 @@ void PSHTest_Test::initTestCase() {
     k0->setTextureGeneration_mappingMode(1);
     k0->setTextureGeneration_uvGenDuration(45.409368);
     k0->setTextureGeneration_width(4096);
+}
+
+void outputPLYInfo(const QString& pFilename, PlyFile& lModelFile) {
+    // Output some data
+    qInfo("........................................................................");
+    qInfo(". %-68s .", pFilename.toLocal8Bit().data());
+    qInfo("........................................................................");
+    for (auto c : lModelFile.get_comments()) {
+        qInfo("Comment: %s", c.c_str());
+    }
+
+    for (auto e : lModelFile.get_elements()) {
+        qInfo("element - %s (%d)", e.name.c_str(), (int)e.size);
+        for (auto p : e.properties) {
+            qInfo("\tproperty - %s (%s)", p.name.c_str(), tinyply::PropertyTable[p.propertyType].str.c_str());
+        }
+    }
+    qInfo("........................................................................");
+}
+
+void PSHTest_Test::plyZipTest_data()
+{
+    QTest::addColumn<QFileInfo>("archive");
+    QTest::addColumn<QString>("modelFile");
+
+    QTest::newRow("Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
+    QTest::newRow("Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
+    QTest::newRow("Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
+}
+
+void PSHTest_Test::plyZipTest()
+{
+    QFETCH(QFileInfo, archive);
+    QFETCH(QString, modelFile);
+
+    ZipArchive::Ptr lZipFile = ZipFile::Open(archive.filePath().toStdString());
+    if (lZipFile == nullptr) {
+        qWarning("Could not open zip file %s", archive.filePath().toLocal8Bit().data());
+        return;
+    }
+
+    ZipArchiveEntry::Ptr lEntry = lZipFile->GetEntry(modelFile.toStdString());
+    if (lEntry == nullptr) {
+        qWarning("Could not retrieve zip entry %s", modelFile.toLocal8Bit().data());
+        return;
+    }
+
+    lEntry->UseDataDescriptor(true);
+    istream* lInput = lEntry->GetDecompressionStream();
+    if (lInput == nullptr) {
+        qWarning("Error getting iostream for zip entry %s", modelFile.toLocal8Bit().data());
+        return;
+    }
+    Q_ASSERT(lInput != NULL);
+
+    // Parse the header info
+    PlyFile lPLY;
+    if(!lPLY.parse_header(*lInput)) {
+        qWarning("Failed to parse ply header");
+    } else {
+        outputPLYInfo(modelFile, lPLY);
+    }
 }
 
 void PSHTest_Test::sensorDataParsing_data()
