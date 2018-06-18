@@ -1,5 +1,13 @@
+DEFINES+=LIBRAW_NODLL
 win32:CONFIG+=console
-win32:LIBS+=libraw.lib
+
+CONFIG(debug,debug|release) {
+    win32:LIBS+=librawd.lib libjpeg.lib
+    win32:QMAKE_CXXFLAGS += /MDd
+} else {
+    win32:LIBS+=libraw.lib libjpeg.lib
+    win32:QMAKE_CXXFLAGS += /MD
+}
 
 macx:CONFIG-=app_bundle
 macx:LIBS+=-lraw -ljpeg
