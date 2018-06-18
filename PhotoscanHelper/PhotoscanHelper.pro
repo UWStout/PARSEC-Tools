@@ -25,7 +25,7 @@ ICON = resources/icons/PhotoScanHelper.icns
 SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/app/PSandPhotoScanner.cpp \
-        src/app/PLYMeshData.cpp \
+#        src/app/PLYMeshData.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
         src/UILogic/PSHelperMainWindow.cpp \
         src/UILogic/PSProjectInfoDialog.cpp \
@@ -34,10 +34,11 @@ SOURCES += \
 #        src/UILogic/ProgramPreferencesDialog.cpp \
 #        src/UILogic/GeneralSettingsDialog.cpp \
 #        src/UILogic/PSProjectInfoDialog.cpp
+        src/UILogic/RawImageExposureDialog.cpp \
 
 HEADERS += \
         include/PSandPhotoScanner.h \
-        include/PLYMeshData.h \
+#        include/PLYMeshData.h \
         include/CollectionSelectionDialog.h \
         include/PSHelperMainWindow.h \
         include/PSProjectInfoDialog.h \
@@ -48,6 +49,7 @@ HEADERS += \
 #        include/ImageProcessorIM4J.h \
 #        include/GeneralSettingsDialog.h \
 #        include/PSProjectInfoDialog.h \
+        include/RawImageExposureDialog.h \
 
 FORMS += \
         forms/AboutDialog.ui \
