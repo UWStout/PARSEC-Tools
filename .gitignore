@@ -11,9 +11,7 @@
 
 # Ignore 3rd-party build Directories
 zlib-*
-demosaic*
-LibRaw-*
-tinyply-*
+tinyply-*-build
 
 # Explicitly include 3rd party dependencies
 !3rdParty/lib/mac-x64/*
