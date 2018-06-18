@@ -1,7 +1,14 @@
 TEMPLATE=lib
 TARGET=raw
 INCLUDEPATH+=../
+win32:CONFIG+=staticlib
 include (libraw-common-lib.pro)
+
+CONFIG(debug,debug|release) {
+    win32:TARGET=librawd
+} else {
+    win32:TARGET=libraw
+}
 
 # JPEG section (libjpeg is linked later)
 DEFINES+=USE_JPEG
@@ -9,8 +16,8 @@ DEFINES+=USE_JPEG
 # Demosaic pack config
 DEFINES+=LIBRAW_DEMOSAIC_PACK_GPL2
 DEFINES+=LIBRAW_DEMOSAIC_PACK_GPL3
-macx:INCLUDEPATH+=../../LibRaw-0.18.12-demosaicGPL2
-macx:INCLUDEPATH+=../../LibRaw-0.18.12-demosaicGPL3
+INCLUDEPATH+=../../LibRaw-0.18.12-demosaicGPL2
+INCLUDEPATH+=../../LibRaw-0.18.12-demosaicGPL3
 
 ## RawSpeed section
 #DEFINES+=USE_RAWSPEED
@@ -31,17 +38,17 @@ HEADERS=../libraw/libraw.h \
 	../internal/var_defines.h \
 	../internal/libraw_internal_funcs.h
 
-win32: {
-PREPROCESS_FILES=../dcraw/dcraw.c
-preprocess.name=dcraw.c preprocess
-preprocess.input=PREPROCESS_FILES
-preprocess.output+=../internal/dcraw_common_fake.cpp 
-preprocess.commands=..\\win32pre.cmd
-preprocess.CONFIG+= no_link
-preprocess.clean=
-preprocess.variable_out=SOURCES
-QMAKE_EXTRA_COMPILERS+=preprocess
-}
+#win32: {
+#    PREPROCESS_FILES=../dcraw/dcraw.c
+#    preprocess.name=dcraw.c preprocess
+#    preprocess.input=PREPROCESS_FILES
+#    preprocess.output+=../internal/dcraw_common_fake.cpp
+#    preprocess.commands=cd $$PWD\\..\\win32pre.cmd
+#    preprocess.CONFIG+= no_link
+#    preprocess.clean=
+#    preprocess.variable_out=SOURCES
+#    QMAKE_EXTRA_COMPILERS+=preprocess
+#}
 
 CONFIG-=qt
 CONFIG+=warn_off

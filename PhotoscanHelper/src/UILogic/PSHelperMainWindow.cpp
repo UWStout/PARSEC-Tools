@@ -8,6 +8,7 @@
 #include "PSandPhotoScanner.h"
 #include "PSProjectDataModel.h"
 #include "PSSessionData.h"
+#include "ProgramPreferencesDialog.h"
 
 #include "ui_AboutDialog.h"
 
@@ -234,9 +235,9 @@ void PSHelperMainWindow::on_action_ShowColorsForStatus_triggered(bool pChecked) 
 
 void PSHelperMainWindow::on_PreferencesAction_triggered(bool pChecked) {
     (void)pChecked;
-//    ProgramPreferencesDialog prefsDiag = new ProgramPreferencesDialog(mDataInfoStore, this);
-//    if(prefsDiag.exec() == QDialog.DialogCode.Accepted.value()) {
-//        prefsDiag.writeResults(mDataInfoStore);
+//    ProgramPreferencesDialog* prefsDiag = new ProgramPreferencesDialog(mDataInfoStore, this);
+//    if(prefsDiag->exec() == QDialog::Accepted) {
+//        prefsDiag->writeResults(mDataInfoStore);
 //        writeSettings();
 //    }
 }
