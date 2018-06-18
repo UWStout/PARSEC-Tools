@@ -12,17 +12,8 @@ DEFINES += PSDATA_LIBRARY
 # Shared Project Configuration
 include(../config.pri)
 
-# 3rd party libs
-macx {
- LIBS += -L$$PWD/../3rdParty/lib/mac-x64/ -lquazip
-}
-
-win32 {
- LIBS += -L$$PWD/../3rdParty/lib/win32-x64/ -lquazip
-}
-
-INCLUDEPATH += $$PWD/../3rdParty/include
-DEPENDPATH += $$PWD/../3rdParty/include
+# Link in quazip
+LIBS += -lquazip
 
 SOURCES += \
     src/PSCameraData.cpp \

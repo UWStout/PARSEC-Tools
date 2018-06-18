@@ -16,6 +16,10 @@ TEMPLATE = app
 # Shared Project Configuration
 include(../config.pri)
 
+# Link in 3rd party libs
+macx:LIBS += -ltinyply -lzip
+win32:LIBS += -ltinyply -lZipLib
+
 SOURCES += \
     tst_pshtest_test.cpp
 
