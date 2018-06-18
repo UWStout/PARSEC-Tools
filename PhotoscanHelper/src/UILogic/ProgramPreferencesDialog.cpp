@@ -1,6 +1,9 @@
 #include <QFileInfo>
+#include <QMessageBox>
+#include <QFileDialog>
 
 #include "ProgramPreferencesDialog.h"
+#include "ImageProcessorIM4J.h"
 
 ProgramPreferencesDialog::ProgramPreferencesDialog(QSettings* infoStore, QWidget* parent) : QDialog(parent) {
     prefsUI = new Ui_ProgramPreferencesDialog();

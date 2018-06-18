@@ -79,7 +79,7 @@ void PSProjectInfoDialog::setProjectData(const PSSessionData* pProjData) {
 
         // Fill in the model generation phase details
         lChunkGUI->ModDetailLabel->setText(lChunk->getModelGeneration_levelString());
-        lChunkGUI->ModFacesLabel->setText(QLocale::toString(lChunk->getModelFaceCount()));
+        lChunkGUI->ModFacesLabel->setText(QLocale::system().toString(lChunk->getModelFaceCount()));
         //lChunkGUI->ModDurationLabel->setText(lChunk.getModelGeneration_durationString()); // TODO
 
         mGUI->tabWidget->addTab(lChunkInfo, QString::asprintf("Chunk %d", chunk+1));
