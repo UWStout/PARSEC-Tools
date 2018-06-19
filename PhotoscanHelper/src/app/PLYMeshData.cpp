@@ -42,23 +42,27 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
     istream* lInput = NULL;
     bool lIsDynamic = false;
 
+    // Declare shared pointers at this scope so they aren't garbage collected
+    // too soon and cause CRAZY errors.
+    ZipArchive::Ptr lZipFile;
+    ZipArchiveEntry::Ptr lEntry;
+
     // If needed, access through the psz project file
-    if (pProjectFile.filePath() != "") {
-        ZipArchive::Ptr lZipFile = ZipFile::Open(pProjectFile.filePath().toStdString());
+    if (pProjectFile.filePath() != "" && pProjectFile.exists()) {
+        lZipFile = ZipFile::Open(pProjectFile.filePath().toStdString());
         if (lZipFile == nullptr) {
             qWarning("Could not open zip file %s", pProjectFile.filePath().toLocal8Bit().data());
             return false;
         }
 
-        ZipArchiveEntry::Ptr lEntry = lZipFile->GetEntry(pFilename.toStdString());
+        lEntry = lZipFile->GetEntry(pFilename.toStdString());
         if (lEntry == nullptr) {
             qWarning("Could not retrieve zip entry %s", pFilename.toLocal8Bit().data());
             return false;
         }
 
-        lEntry->UseDataDescriptor(true);
         lInput = lEntry->GetDecompressionStream();
-        if (lInput == nullptr) {
+        if (lInput == NULL) {
             qWarning("Error getting iostream for zip entry %s", pFilename.toLocal8Bit().data());
             return false;
         }
@@ -71,7 +75,15 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
     }
 
     // Did we get a valid input stream?
-    if (lInput == NULL) {
+    if (lInput == NULL || !lInput->good()) {
+        if (lInput != NULL) {
+            qWarning("PLY input stream is in a bad state.");
+            if (lIsDynamic) {
+                delete lInput;
+            }
+        } else {
+            qWarning("Did not get an input stream for the PLY file.");
+        }
         return false;
     }
 

@@ -1,11 +1,19 @@
 #include <QDialog>
-#include <QPixmap>
-#include <QFutureWatcher>
-#include <QSettings>
 #include <QFileInfo>
+#include <QPixmap>
 
-#include "ui_RawImageExposureDialog.h"
-#include "PSSessionData.h"
+// Forward declarations
+namespace Ui {
+    class RawImageExposureDialog;
+}
+
+template <typename T>
+class QFutureWatcher;
+class QSettings;
+class QResizeEvent;
+class PSSessionData;
+class QAbstractButton;
+class ExposureSettings;
 
 class RawImageExposureDialog : public QDialog {
     Q_OBJECT
@@ -14,25 +22,30 @@ public:
     RawImageExposureDialog(QWidget* parent);
     ~RawImageExposureDialog();
 
+    QFileInfo getDestinationPath() const;
+    ExposureSettings* getExposureSettings() const;
+
     void setEnqueueMode(bool pEnabled);
-    void setprojectData(PSSessionData pData, QSettings pInfoStore);
-    void applySettings(ExposureSettings pSettings);
+    void setProjectData(PSSessionData *pData, QSettings *pInfoStore);
+    void applySettings(const ExposureSettings* pSettings);
     void setWBCustomEnabled(bool pEnable);
-    QFileInfo getDestinationPath();
+
     void updateFromGUI();
     void asyncGeneratePreview();
     void projectDataChanged();
     void updatePreviewImage();
-    ExposureSettings getExposureSettings();
+
+protected:
+    void resizeEvent(QResizeEvent* e);
 
 private:
-    Ui_RawImageExposureDialog* mGUI;
+    Ui::RawImageExposureDialog* mGUI;
     PSSessionData* mProjectData;
-    QPixmap* mPreviewImage;
-    QFutureWatcher<QObject*>* mPreviewFileWatcher;
-    QSettings mProjectInfoStore;
+    QPixmap mPreviewImage;
+    QFutureWatcher<QFileInfo>* mPreviewFileWatcher;
+    QSettings* mProjectInfoStore;
 
-    ExposureSettings mDefaultSettings;
+    ExposureSettings* mDefaultSettings;
     bool mEnqueueMode;
     bool mBlockUpdateFromGUI;
 

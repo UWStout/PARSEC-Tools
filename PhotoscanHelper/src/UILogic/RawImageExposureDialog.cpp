@@ -1,60 +1,41 @@
-//package edu.uwstout.berriers.PSHelper.UILogic;
-
-//import java.io.File;
-//import java.io.IOException;
-//import java.lang.reflect.Method;
-
-//import com.trolltech.qt.core.QFuture;
-//import com.trolltech.qt.core.QFutureWatcher;
-//import com.trolltech.qt.core.QSettings;
-//import com.trolltech.qt.core.Qt;
-//import com.trolltech.qt.core.QtConcurrent;
-//import com.trolltech.qt.gui.QAbstractButton;
-//import com.trolltech.qt.gui.QDialog;
-//import com.trolltech.qt.gui.QDialogButtonBox;
-//import com.trolltech.qt.gui.QFileDialog;
-//import com.trolltech.qt.gui.QImage;
-//import com.trolltech.qt.gui.QMessageBox;
-//import com.trolltech.qt.gui.QPixmap;
-//import com.trolltech.qt.gui.QResizeEvent;
-//import com.trolltech.qt.gui.QWidget;
-
-//import edu.uwstout.berriers.PSHelper.Model.PSSessionData;
-//import edu.uwstout.berriers.PSHelper.UIForms.Ui_RawImageExposureDialog;
-//import edu.uwstout.berriers.PSHelper.app.ExposureSettings;
-//import edu.uwstout.berriers.PSHelper.app.ImageProcessorIM4J;
-#include <QFileDialog>
-#include <QMessageBox>
-
 #include "RawImageExposureDialog.h"
 
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QPixmap>
+#include <QFutureWatcher>
+#include <QAbstractButton>
+#include <QSettings>
+
+#include "ui_RawImageExposureDialog.h"
+#include <PSSessionData.h>
+#include <ExposureSettings.h>
+
 RawImageExposureDialog::RawImageExposureDialog(QWidget *parent) : QDialog(parent) {
-    mDefaultSettings = ExposureSettings::DEFAULT_EXPOSURE;
+    mDefaultSettings = new ExposureSettings(ExposureSettings::DEFAULT_EXPOSURE);
+
     setUpGUI();
+
+    mPreviewFileWatcher = new QFutureWatcher<QFileInfo>(this);
+    connect(mPreviewFileWatcher, &QFutureWatcher<QFileInfo>::finished,
+            this, &RawImageExposureDialog::previewReady);
 }
 
 RawImageExposureDialog::~RawImageExposureDialog() {
-
+    delete mPreviewFileWatcher;
 }
 
 void RawImageExposureDialog::setUpGUI() {
-    mPreviewImage = NULL;
     mProjectData = NULL;
     mBlockUpdateFromGUI = false;
     mEnqueueMode = false;
 
-    mGUI = new Ui_RawImageExposureDialog();
+    mGUI = new Ui::RawImageExposureDialog();
     mGUI->setupUi(this);
     mGUI->BrightScaleSpinBox->setEnabled(false);
+
     setWBCustomEnabled(false);
     setEnqueueMode(false);
-
-    mPreviewFileWatcher = new QFutureWatcher<QObject*>(this);
-    connect(mPreviewFileWatcher, &QFutureWatcher::finished,
-            this, &RawImageExposureDialog::previewReady
-
-    );
-
     applySettings(mDefaultSettings);
 }
 
@@ -63,11 +44,11 @@ void RawImageExposureDialog::setEnqueueMode(bool pEnabled) {
     if(mEnqueueMode) {
         mGUI->buttonBox->button(QDialogButtonBox::Ok)->setText("Enqueue");
     } else {
-        mGUI->buttonBox->button(QDialogButtonBox::Ok)->settext("Expose");
+        mGUI->buttonBox->button(QDialogButtonBox::Ok)->setText("Expose");
     }
 }
 
-void RawImageExposureDialog::setprojectData(PSSessionData pData, QSettings pInfoStore) {
+void RawImageExposureDialog::setProjectData(PSSessionData* pData, QSettings* pInfoStore) {
     mProjectData = pData;
     mProjectInfoStore = pInfoStore;
     try {
@@ -76,16 +57,16 @@ void RawImageExposureDialog::setprojectData(PSSessionData pData, QSettings pInfo
     projectDataChanged();
 }
 
-void RawImageExposureDialog::applySettings(ExposureSettings pSettings) {
+void RawImageExposureDialog::applySettings(const ExposureSettings* pSettings) {
     mBlockUpdateFromGUI = true;
-    mGUI->WBModeComboBox->setCurrentIndex((int)pSettings.getWBMode());
-    mGUI->RSpinBox->setValue(pSettings.getWBCustom()[0]);
-    mGUI->G1SpinBox->setValue(pSettings.getWBCustom()[1]);
-    mGUI->BSpinBox->setValue(pSettings.getWBCustom()[2]);
-    mGUI->G2SpinBox->setValue(pSettings.getWBCustom()[3]);
+    mGUI->WBModeComboBox->setCurrentIndex((int)pSettings->getWBMode());
+    mGUI->RSpinBox->setValue(pSettings->getWBCustom()[0]);
+    mGUI->G1SpinBox->setValue(pSettings->getWBCustom()[1]);
+    mGUI->BSpinBox->setValue(pSettings->getWBCustom()[2]);
+    mGUI->G2SpinBox->setValue(pSettings->getWBCustom()[3]);
 
-    mGUI->BrightModeComboBox->setCurrentIndex((int)pSettings.getBrightMode());
-    mGUI->BrightScaleSpinBox->setValue(pSettings.getBrightScale());
+    mGUI->BrightModeComboBox->setCurrentIndex((int)pSettings->getBrightMode());
+    mGUI->BrightScaleSpinBox->setValue(pSettings->getBrightScale());
     mBlockUpdateFromGUI = false;
 
     asyncGeneratePreview();
@@ -118,24 +99,22 @@ void RawImageExposureDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
             break;
 
         case QDialogButtonBox::Ok: {
-            QMessageBox::StandardButton lResult = NULL;
-            QMessageBox::StandardButtons lButtons = (QMessageBox::Cancel | QMessageBox::Yes);
+            int lResult = NULL;
             if(mEnqueueMode) {
-                lResult = QMessageBox::question(this, "Add to queue?", "Add to processing queue?", lButtons);
+                lResult = QMessageBox::question(this, "Add to queue?", "Add to processing queue?", QMessageBox::Cancel | QMessageBox::Yes);
             } else {
                 lResult = QMessageBox::question(this, "Start Processing?",
-                                                "Begin processing raw images?\n\n(Note: Processing may take a long time and use significant resources)",
-                                                lButtons);
+                            "Begin processing raw images?\n\n(Note: Processing may take a long time and use significant resources)",
+                            QMessageBox::Cancel | QMessageBox::Yes);
             }
 
             if(lResult == QMessageBox::Yes) {
-                mProjectData->writeExposureSettings(getExposureSettings(), mProjectInfoStore);
+                mProjectData->writeExposureSettings(*getExposureSettings(), mProjectInfoStore);
                 this->accept();
             }
         } break;
 
-        case QDialogButtonBox::Cancel: this->reject();
-        break;
+        case QDialogButtonBox::Cancel: this->reject(); break;
 
         default: break;
     }
@@ -148,7 +127,7 @@ void RawImageExposureDialog::setWBCustomEnabled(bool pEnable) {
     mGUI->G2SpinBox->setEnabled(pEnable);
 }
 
-QFileInfo RawImageExposureDialog::getDestinationPath() {
+QFileInfo RawImageExposureDialog::getDestinationPath() const {
     return QFileInfo(mGUI->DestinationDirLineEdit->text());
 }
 
@@ -164,21 +143,20 @@ void RawImageExposureDialog::asyncGeneratePreview() {
     qInfo() << "Generating preview.";
     mGUI->PreviewButton->setEnabled(false);
     mGUI->PreviewButton->setText("Wait...");
-    ExposureSettings* lSettings = new getExposureSettings();
-    if(lSettings != NULL) {
-        int lIndex = mGUI->PreviewImageComboBox->currentIndex();
-        if(lIndex >= 0 && lIndex < mProjectData->getRawFileList().length()) {
-            QFileInfo lRawFile = mProjectData->getRawFileList()[lIndex];
+    ExposureSettings lSettings(*getExposureSettings());
 
-            try {
-//                Method lMeth = ImageProcessorIM4J.class.getMethod("developRawImage",
-//                                            File.class, ExposureSettings.class, boolean.class);
+    int lIndex = mGUI->PreviewImageComboBox->currentIndex();
+    if(lIndex >= 0 && lIndex < mProjectData->getRawFileList().length()) {
+        QFileInfo lRawFile = mProjectData->getRawFileList()[lIndex];
 
-//                QFuture<Object> lPreviewResult = QtConcurrent.run(this, lMeth, lRawFile, lSettings, true);
-//                mPreviewFileWatcher.setFuture(lPreviewResult);
-            } catch(std::exception e) {
-                qWarning() << e.what();
-            }
+        try {
+//            Method lMeth = ImageProcessorIM4J.class.getMethod("developRawImage",
+//                                        File.class, ExposureSettings.class, boolean.class);
+
+//            QFuture<Object> lPreviewResult = QtConcurrent.run(this, lMeth, lRawFile, lSettings, true);
+//            mPreviewFileWatcher.setFuture(lPreviewResult);
+        } catch(std::exception e) {
+            qWarning("Exception occured: %s", e.what());
         }
     }
 }
@@ -198,8 +176,7 @@ void RawImageExposureDialog::previewReady() {
         mBlockUpdateFromGUI = false;
 
         // Put in label
-        mPreviewImage = QPixmap::fromImage(new QImage(lResult.path()));
-        delete lResult;
+        mPreviewImage = QPixmap::fromImage(QImage(lResult.filePath()));
         updatePreviewImage();
     } else {
         qWarning() << "\tPreview output is null or does not exist";
@@ -207,7 +184,7 @@ void RawImageExposureDialog::previewReady() {
 }
 
 void RawImageExposureDialog::projectDataChanged() {
-    mDefaultSettings = mProjectData->readExposureSettings(mProjectInfoStore);
+    mDefaultSettings = new ExposureSettings(mProjectData->readExposureSettings(mProjectInfoStore));
     applySettings(mDefaultSettings);
 
     mGUI->PreviewImageComboBox->clear();
@@ -221,12 +198,12 @@ void RawImageExposureDialog::projectDataChanged() {
 }
 
 void RawImageExposureDialog::updatePreviewImage() {
-    if(mPreviewImage == NULL) return;
+    if(mPreviewImage.isNull()) return;
 
     // get label dimensions
     int w = mGUI->ImagePreviewLabel->width();
     int h = mGUI->ImagePreviewLabel->height();
-    mGUI->ImagePreviewLabel->setPixmap(mPreviewImage->scaled(w, h, Qt::KeepAspectRatio));
+    mGUI->ImagePreviewLabel->setPixmap(mPreviewImage.scaled(w, h, Qt::KeepAspectRatio));
 }
 
 void RawImageExposureDialog::resizeEvent(QResizeEvent* e) {
@@ -234,24 +211,17 @@ void RawImageExposureDialog::resizeEvent(QResizeEvent* e) {
     updatePreviewImage();
 }
 
-ExposureSettings RawImageExposureDialog::getExposureSettings() {
-//    double[] lCustomWB = {mGUI.RSpinBox.value(), mGUI.G1SpinBox.value(),
-//             mGUI.BSpinBox.value(), mGUI.G2SpinBox.value()};
-//    ImageProcessorIM4J.WhiteBalanceMode lWBMode =
-//            ImageProcessorIM4J.WhiteBalanceMode.values()[mGUI.WBModeComboBox.currentIndex()];
-//    ImageProcessorIM4J.BrightnessMode lBrightMode =
-//            ImageProcessorIM4J.BrightnessMode.values()[mGUI.BrightModeComboBox.currentIndex()];
+ExposureSettings* RawImageExposureDialog::getExposureSettings() const {
+    double lCustomWB[] = { mGUI->RSpinBox->value(), mGUI->G1SpinBox->value(),
+                           mGUI->BSpinBox->value(), mGUI->G2SpinBox->value() };
+    ExposureSettings::WhiteBalanceMode lWBMode =
+        (ExposureSettings::WhiteBalanceMode)mGUI->WBModeComboBox->currentIndex();
+    ExposureSettings::BrightnessMode lBrightMode =
+        (ExposureSettings::BrightnessMode)mGUI->BrightModeComboBox->currentIndex();
 
-//    ExposureSettings lSettings = null;
-//    try {
-//        lSettings = new ExposureSettings(lWBMode, lCustomWB, lBrightMode, mGUI.BrightScaleSpinBox.value());
-//    } catch (Exception e) {
-//        System.err.println("Error: could not build exposure settings.\n");
-//        System.err.println(e.getMessage());
-//        return null;
-//    }
-
-//    return lSettings;
+    ExposureSettings* lSettings = new ExposureSettings(
+                lWBMode, lCustomWB, lBrightMode, mGUI->BrightScaleSpinBox->value());
+    return lSettings;
 }
 
 //public class RawImageExposureDialog extends QDialog {
