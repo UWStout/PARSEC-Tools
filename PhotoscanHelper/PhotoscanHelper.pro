@@ -16,7 +16,9 @@ include(../config.pri)
 
 # Link in 3rd party libs
 macx:LIBS += -ltinyply -lraw -lquazip -ljpeg -lzip
-win32:LIBS += -ltinyply -llibraw -lquazip -ljpeg -lopengl32 -lglu32
+
+win32:CONFIG(debug, debug|release): LIBS += -ltinyplyd -lzlibd -llzmad -lbzip2d -lZipLibd -llibrawd -lquazipd -lopengl32 -lglu32
+else:win32:CONFIG(debug, debug|release): LIBS += -ltinyply -lzlib -llzma -lbzip2 -lZipLib -llibraw -lquazip -lopengl32 -lglu32
 
 # Windows and Mac OS Icons (respectively)
 RC_ICONS = resources/icons/PhotoScanHelper.ico
@@ -25,7 +27,7 @@ ICON = resources/icons/PhotoScanHelper.icns
 SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/app/PSandPhotoScanner.cpp \
-#        src/app/PLYMeshData.cpp \
+        src/app/PLYMeshData.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
         src/UILogic/PSHelperMainWindow.cpp \
         src/UILogic/PSProjectInfoDialog.cpp \
@@ -38,7 +40,7 @@ SOURCES += \
 
 HEADERS += \
         include/PSandPhotoScanner.h \
-#        include/PLYMeshData.h \
+        include/PLYMeshData.h \
         include/CollectionSelectionDialog.h \
         include/PSHelperMainWindow.h \
         include/PSProjectInfoDialog.h \

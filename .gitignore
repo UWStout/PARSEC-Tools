@@ -18,6 +18,9 @@ tinyply-*-build
 !3rdParty/lib/win32-x64/*
 !3rdParty/bin/*
 
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
 # Qt-es
 object_script.*.Release
 object_script.*.Debug

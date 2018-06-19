@@ -18,7 +18,9 @@ include(../config.pri)
 
 # Link in 3rd party libs
 macx:LIBS += -ltinyply -lzip
-win32:LIBS += -ltinyply -lZipLib
+
+win32:CONFIG(debug, debug|release): LIBS += -ltinyplyd -lzlibd -llzmad -lbzip2d -lZipLibd
+else:win32:CONFIG(debug, debug|release): LIBS += -ltinyply -lzlib -llzma -lbzip2 -lZipLib
 
 SOURCES += \
     tst_pshtest_test.cpp

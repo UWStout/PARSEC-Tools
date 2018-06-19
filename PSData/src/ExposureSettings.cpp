@@ -5,6 +5,11 @@
 const ExposureSettings ExposureSettings::DEFAULT_EXPOSURE = ExposureSettings(
             ExposureSettings::WB_MODE_DEFAULT, ExposureSettings::BRIGHT_MODE_AUTO_HISTOGRAM);
 
+ExposureSettings::ExposureSettings(const ExposureSettings& copy)
+    : mWBMode(copy.mWBMode), mBrightMode(copy.mBrightMode), mBrightScale(copy.mBrightScale),
+      mWBCustom{copy.mWBCustom[0], copy.mWBCustom[1], copy.mWBCustom[2], copy.mWBCustom[3] }
+{}
+
 ExposureSettings::ExposureSettings(WhiteBalanceMode pWBMode, BrightnessMode pBrightMode)
     : mWBMode(pWBMode), mBrightMode(pBrightMode), mBrightScale(1.0), mWBCustom{1.0, 1.0, 1.0, 1.0} {
     // Consistency check
