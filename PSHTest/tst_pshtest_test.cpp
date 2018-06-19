@@ -391,9 +391,16 @@ void PSHTest_Test::plyZipTest_data()
     QTest::newRow("Local PLY Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
     QTest::newRow("Local PLY Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
     QTest::newRow("Local PLY Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
+
+#ifdef Q_OS_WIN32
     QTest::newRow("Network PLY Model 0") << QFileInfo("E:/OtherData/basement-studio/BlueBird/BlueBird.psz") << QString("model0.ply");
     QTest::newRow("Network PLY Model 1") << QFileInfo("E:/OtherData/basement-studio/PumpkinMoldy/Pumpkin-Moldy.psz") << QString("model0.ply");
     QTest::newRow("Network PLY Model 2") << QFileInfo("E:/OtherData/basement-studio/GnomeMesh/Gnome2-HiRes.psz") << QString("model0.ply");
+#elif defined(Q_OS_MAC)
+    QTest::newRow("Network PLY Model 0") << QFileInfo("/Volumes/PARSEC-Data/OtherData/basement-studio/BlueBird/BlueBird.psz") << QString("model0.ply");
+    QTest::newRow("Network PLY Model 1") << QFileInfo("/Volumes/PARSEC-Data/OtherData/basement-studio/PumpkinMoldy/Pumpkin-Moldy.psz") << QString("model0.ply");
+    QTest::newRow("Network PLY Model 2") << QFileInfo("/Volumes/PARSEC-Data/OtherData/basement-studio/GnomeMesh/Gnome2-HiRes.psz") << QString("model0.ply");
+#endif
 }
 
 void PSHTest_Test::plyZipTest()
@@ -431,8 +438,27 @@ void PSHTest_Test::plyZipTest()
     if(!lPLY.parse_header(*lInput)) {
         qWarning("Failed to parse ply header");
     } else {
-        QString name = QString("%1 :: %2").arg(archive.filePath()).arg(modelFile);
+        QString name = QString("%1::%2").arg(archive.filePath()).arg(modelFile);
         outputPLYInfo(name, lPLY);
+
+        std::shared_ptr<PlyData> lVerts, lFaces;
+        try { lVerts = lPLY.request_properties_from_element("vertex", { "x", "y", "z" }); }
+        catch (const std::exception & e) { qWarning("PLY vertex property request exception: %s", e.what()); }
+
+        try { lFaces = lPLY.request_properties_from_element("face", { "vertex_indices" }); }
+        catch (const std::exception & e) { qWarning("PLY face property request exception: %s", e.what()); }
+
+        try { lPLY.read(*lInput); }
+        catch (const std::exception & e) { qWarning("PLY reading exception: %s", e.what()); }
+
+        if (lVerts) {
+            qInfo("\tRead %s total vertices", QLocale::system().toString((int)lVerts->count).toLocal8Bit().data());
+        } else { qWarning("\tError reading vertices"); }
+
+        if (lFaces) {
+            qInfo("\tRead %s total faces", QLocale::system().toString((int)lFaces->count).toLocal8Bit().data());
+        } else { qWarning("\tError reading faces"); }
+        qInfo("........................................................................");
     }
 }
 
