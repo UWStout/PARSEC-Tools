@@ -20,7 +20,11 @@ INCLUDEPATH += include/
 
 # Enable C++17 support
 win32 {
-    QMAKE_CXXFLAGS += /std:c++17
+    CONFIG(debug, debug|release) {
+        QMAKE_CXXFLAGS += /std:c++17 /MDd
+    } else {
+        QMAKE_CXXFLAGS += /std:c++17 /MD
+    }
 } else {
     QMAKE_CXXFLAGS += -std=c++17
 }

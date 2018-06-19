@@ -25,6 +25,7 @@ public:
     const static ExposureSettings DEFAULT_EXPOSURE;
 
     // Various constructors
+    ExposureSettings(const ExposureSettings& copy);
     ExposureSettings(WhiteBalanceMode pWBMode, BrightnessMode pBrightMode);
     ExposureSettings(WhiteBalanceMode pWBMode, const double* pWBCustom, BrightnessMode pBrightMode);
     ExposureSettings(WhiteBalanceMode pWBMode, BrightnessMode pBrightMode, double pBrightScale);

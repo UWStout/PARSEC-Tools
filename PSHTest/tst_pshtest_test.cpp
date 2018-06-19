@@ -4,7 +4,6 @@
 #include <QtTest>
 
 #include <exception>
-using namespace std;
 
 #include <ZipLib/ZipFile.h>
 #include <ZipLib/ZipArchive.h>
@@ -27,6 +26,8 @@ Q_DECLARE_METATYPE(PSCameraData*)
 Q_DECLARE_METATYPE(PSImageData*)
 Q_DECLARE_METATYPE(PSChunkData*)
 Q_DECLARE_METATYPE(PSModelData*)
+
+using namespace std;
 
 class PSHTest_Test : public QObject
 {
@@ -387,15 +388,23 @@ void PSHTest_Test::plyZipTest_data()
     QTest::addColumn<QFileInfo>("archive");
     QTest::addColumn<QString>("modelFile");
 
-    QTest::newRow("Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
-    QTest::newRow("Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
-    QTest::newRow("Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
+    QTest::newRow("Local PLY Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
+    QTest::newRow("Local PLY Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
+    QTest::newRow("Local PLY Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
+    QTest::newRow("Network PLY Model 0") << QFileInfo("E:/OtherData/basement-studio/BlueBird/BlueBird.psz") << QString("model0.ply");
+    QTest::newRow("Network PLY Model 1") << QFileInfo("E:/OtherData/basement-studio/PumpkinMoldy/Pumpkin-Moldy.psz") << QString("model0.ply");
+    QTest::newRow("Network PLY Model 2") << QFileInfo("E:/OtherData/basement-studio/GnomeMesh/Gnome2-HiRes.psz") << QString("model0.ply");
 }
 
 void PSHTest_Test::plyZipTest()
 {
     QFETCH(QFileInfo, archive);
     QFETCH(QString, modelFile);
+
+    if (!archive.exists()) {
+        qWarning("File does not exist %s", archive.filePath().toLocal8Bit().data());
+        return;
+    }
 
     ZipArchive::Ptr lZipFile = ZipFile::Open(archive.filePath().toStdString());
     if (lZipFile == nullptr) {
@@ -411,7 +420,7 @@ void PSHTest_Test::plyZipTest()
 
     lEntry->UseDataDescriptor(true);
     istream* lInput = lEntry->GetDecompressionStream();
-    if (lInput == nullptr) {
+    if (lInput == NULL || !lInput->good()) {
         qWarning("Error getting iostream for zip entry %s", modelFile.toLocal8Bit().data());
         return;
     }
@@ -422,7 +431,8 @@ void PSHTest_Test::plyZipTest()
     if(!lPLY.parse_header(*lInput)) {
         qWarning("Failed to parse ply header");
     } else {
-        outputPLYInfo(modelFile, lPLY);
+        QString name = QString("%1 :: %2").arg(archive.filePath()).arg(modelFile);
+        outputPLYInfo(name, lPLY);
     }
 }
 
