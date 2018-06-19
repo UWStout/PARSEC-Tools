@@ -3,6 +3,7 @@
 #include <QXmlStreamReader>
 #include <QtTest>
 
+#include <fstream>
 #include <exception>
 
 #include <ZipLib/ZipFile.h>
@@ -388,9 +389,15 @@ void PSHTest_Test::plyZipTest_data()
     QTest::addColumn<QFileInfo>("archive");
     QTest::addColumn<QString>("modelFile");
 
-    QTest::newRow("Local PLY Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
-    QTest::newRow("Local PLY Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
-    QTest::newRow("Local PLY Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
+//    QTest::newRow("Local Compressed PLY Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
+//    QTest::newRow("Local Compressed PLY Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
+//    QTest::newRow("Local Compressed PLY Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
+//    QTest::newRow("Local Compressed PLY Model 3") << QFileInfo("Pumpkin-Moldy.psz") << QString("model0.ply");
+
+//    QTest::newRow("Local Uncompressed PLY Model 0") << QFileInfo() << QString("BlueBird.ply");
+    QTest::newRow("Local Uncompressed PLY Model 1") << QFileInfo() << QString("Chair.ply");
+    QTest::newRow("Local Uncompressed PLY Model 2") << QFileInfo() << QString("Gun.ply");
+//    QTest::newRow("Local Uncompressed PLY Model 3") << QFileInfo() << QString("Pumpkin-Moldy.ply");
 
 #ifdef Q_OS_WIN32
     QTest::newRow("Network PLY Model 0") << QFileInfo("E:/OtherData/basement-studio/BlueBird/BlueBird.psz") << QString("model0.ply");
@@ -408,29 +415,40 @@ void PSHTest_Test::plyZipTest()
     QFETCH(QFileInfo, archive);
     QFETCH(QString, modelFile);
 
-    if (!archive.exists()) {
-        qWarning("File does not exist %s", archive.filePath().toLocal8Bit().data());
-        return;
+    ZipArchive::Ptr lZipFile = nullptr;
+    ZipArchiveEntry::Ptr lEntry = nullptr;
+    istream* lInput = NULL;
+    bool lIsDynamic = false;
+
+    if (archive.filePath() == "") {
+        lInput = new ifstream(modelFile.toStdString(), ios::binary | ios::in);
+        lIsDynamic = true;
+    } else {
+        if (!archive.exists()) {
+            qWarning("File does not exist %s", archive.filePath().toLocal8Bit().data());
+            return;
+        }
+
+        lZipFile = ZipFile::Open(archive.filePath().toStdString());
+        if (lZipFile == nullptr) {
+            qWarning("Could not open zip file %s", archive.filePath().toLocal8Bit().data());
+            return;
+        }
+
+        lEntry = lZipFile->GetEntry(modelFile.toStdString());
+        if (lEntry == nullptr) {
+            qWarning("Could not retrieve zip entry %s", modelFile.toLocal8Bit().data());
+            return;
+        }
+
+        lEntry->UseDataDescriptor(true);
+        lInput = lEntry->GetDecompressionStream();
+        if (lInput == NULL || !lInput->good()) {
+            qWarning("Error getting iostream for zip entry %s", modelFile.toLocal8Bit().data());
+            return;
+        }
     }
 
-    ZipArchive::Ptr lZipFile = ZipFile::Open(archive.filePath().toStdString());
-    if (lZipFile == nullptr) {
-        qWarning("Could not open zip file %s", archive.filePath().toLocal8Bit().data());
-        return;
-    }
-
-    ZipArchiveEntry::Ptr lEntry = lZipFile->GetEntry(modelFile.toStdString());
-    if (lEntry == nullptr) {
-        qWarning("Could not retrieve zip entry %s", modelFile.toLocal8Bit().data());
-        return;
-    }
-
-    lEntry->UseDataDescriptor(true);
-    istream* lInput = lEntry->GetDecompressionStream();
-    if (lInput == NULL || !lInput->good()) {
-        qWarning("Error getting iostream for zip entry %s", modelFile.toLocal8Bit().data());
-        return;
-    }
     Q_ASSERT(lInput != NULL);
 
     // Parse the header info
@@ -438,8 +456,13 @@ void PSHTest_Test::plyZipTest()
     if(!lPLY.parse_header(*lInput)) {
         qWarning("Failed to parse ply header");
     } else {
-        QString name = QString("%1::%2").arg(archive.filePath()).arg(modelFile);
-        outputPLYInfo(name, lPLY);
+        if (archive.filePath() == "") {
+            QString name = QString("%1::%2").arg("UNCOMPRESSED").arg(modelFile);
+            outputPLYInfo(name, lPLY);
+        } else {
+            QString name = QString("%1::%2").arg(archive.filePath()).arg(modelFile);
+            outputPLYInfo(name, lPLY);
+        }
 
         std::shared_ptr<PlyData> lVerts, lFaces;
         try { lVerts = lPLY.request_properties_from_element("vertex", { "x", "y", "z" }); }
@@ -459,6 +482,14 @@ void PSHTest_Test::plyZipTest()
             qInfo("\tRead %s total faces", QLocale::system().toString((int)lFaces->count).toLocal8Bit().data());
         } else { qWarning("\tError reading faces"); }
         qInfo("........................................................................");
+    }
+
+    if (lIsDynamic) {
+        delete lInput;
+    }
+
+    if (lEntry != nullptr) {
+        lEntry->CloseDecompressionStream();
     }
 }
 

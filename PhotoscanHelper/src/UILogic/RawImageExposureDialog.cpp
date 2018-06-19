@@ -137,6 +137,7 @@ void RawImageExposureDialog::updateFromGUI() {
     }
 }
 
+// TODO: Update to use libraw exposure
 void RawImageExposureDialog::asyncGeneratePreview() {
     if(mProjectData == NULL) return;
 
@@ -161,6 +162,7 @@ void RawImageExposureDialog::asyncGeneratePreview() {
     }
 }
 
+// TODO: Update to use results of libraw exposure
 void RawImageExposureDialog::previewReady() {
     mGUI->PreviewButton->setText("Preview");
     mGUI->PreviewButton->setEnabled(true);
