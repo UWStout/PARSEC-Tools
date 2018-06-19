@@ -4,6 +4,8 @@
 #include <QString>
 #include <QFileInfo>
 
+#include <tinyply.h>
+
 class PLYMeshData {
 public:
     // OpenGL vertex attribute names
@@ -25,13 +27,13 @@ public:
     float getUnitScale() const { return mVertexScale; }
 
     // Get model data qualities
-    bool withNormals() const { return hasNormals; }
-    bool withColors() const { return hasColors; }
-    bool withTexCoords() const { return hasTexCoords; }
-    bool withMultiTextures() const { return hasMultiTex; }
+    bool withNormals() const { return mHasNormals; }
+    bool withColors() const { return mHasColors; }
+    bool withTexCoords() const { return mHasTexCoords; }
+    bool withMultiTextures() const { return mHasMultiTex; }
 
     // Check for missing data
-    bool isMissingData() const { return (!hasNormals || !hasColors || !hasTexCoords); }
+    bool isMissingData() const { return (!mHasNormals || !mHasColors || !mHasTexCoords); }
 
     // Get VBO names
     int getFaceVBO() const { return mFaceVBO; }
@@ -49,8 +51,8 @@ public:
 //    void releaseVBOs();
 
 private:
-//    // PLY PArsing helper functions
-//    bool parsePLYFileStream(InputStream inStream);
+    // PLY PArsing helper functions
+    bool parsePLYFileStream(std::istream *pInput);
 //    void readVertexData(ElementReader reader);
 //    void readFaceData(ElementReader reader);
 
@@ -79,10 +81,10 @@ private:
     float mVertexScale;
 
     // Flags for presence of various mesh elements
-    bool hasNormals, hasColors, hasTexCoords, hasMultiTex;
+    bool mHasNormals, mHasColors, mHasTexCoords, mHasMultiTex;
 
     // Names of mesh elements inside of the PLY file
-    QString xCoordPropName, yCoordPropName, zCoordPropName, vertexIndexPropName;
+    QString mXCoordPropName, mYCoordPropName, mZCoordPropName, mVertexIndexPropName;
 };
 
 #endif

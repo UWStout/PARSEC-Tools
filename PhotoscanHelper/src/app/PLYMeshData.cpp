@@ -1,6 +1,5 @@
 #include "PLYMeshData.h"
 
-#include <tinyply.h>
 using namespace tinyply;
 
 #include <ZipLib/ZipFile.h>
@@ -24,15 +23,15 @@ PLYMeshData::PLYMeshData() {
     mFace = mFaceTexNum = NULL;
     mPackedData = NULL;
 
-    hasNormals = hasColors = hasMultiTex = true;
-    hasTexCoords = true;
+    mHasNormals = mHasColors = mHasMultiTex = true;
+    mHasTexCoords = true;
     mVertexCount = mFaceCount = 0;
     mVertexScale = 1.0f;
 
-    xCoordPropName = "x";
-    yCoordPropName = "y";
-    zCoordPropName = "z";
-    vertexIndexPropName = "vertex_index";
+    mXCoordPropName = "x";
+    mYCoordPropName = "y";
+    mZCoordPropName = "z";
+    mVertexIndexPropName = "vertex_index";
 }
 
 PLYMeshData::~PLYMeshData() {}
@@ -44,8 +43,8 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
 
     // Declare shared pointers at this scope so they aren't garbage collected
     // too soon and cause CRAZY errors.
-    ZipArchive::Ptr lZipFile;
-    ZipArchiveEntry::Ptr lEntry;
+    ZipArchive::Ptr lZipFile = nullptr;
+    ZipArchiveEntry::Ptr lEntry = nullptr;
 
     // If needed, access through the psz project file
     if (pProjectFile.filePath() != "" && pProjectFile.exists()) {
@@ -87,31 +86,10 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
         return false;
     }
 
-    // Parse the header info
-    PlyFile lPLY;
-    if(!lPLY.parse_header(*lInput)) {
-        qWarning("Failed to parse ply header");
-    } else {
-        // Output some data
-        qInfo("........................................................................");
-        qInfo(". %-68s .", pFilename.toLocal8Bit().data());
-        qInfo("........................................................................");
-        for (auto c : lPLY.get_comments()) {
-            qInfo("Comment: %s", c.c_str());
-        }
+    parsePLYFileStream(lInput);
 
-        for (auto e : lPLY.get_elements()) {
-            qInfo("element - %s (%d)", e.name.c_str(), (int)e.size);
-            for (auto p : e.properties) {
-                qInfo("\tproperty - %s (%s)", p.name.c_str(), tinyply::PropertyTable[p.propertyType].str.c_str());
-            }
-        }
-        qInfo("........................................................................");
-    }
-
-    if (lIsDynamic) {
-        delete lInput;
-    }
+    if (lEntry != nullptr) { lEntry->CloseDecompressionStream(); }
+    if (lIsDynamic) { delete lInput; }
 
     return true;
 }
@@ -119,14 +97,14 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
 QString PLYMeshData::validate() const {
 
     QString output = "";
-    if(xCoordPropName != "x" || yCoordPropName != "y" || zCoordPropName != "z") {
+    if(mXCoordPropName != "x" || mYCoordPropName != "y" || mZCoordPropName != "z") {
         output += QString::asprintf("\tWarning: file uses non-standard name for one or more vertex coordinate properties [%s, %s, %s].\n",
-                xCoordPropName.toLocal8Bit().data(), yCoordPropName.toLocal8Bit().data(), zCoordPropName.toLocal8Bit().data());
+                mXCoordPropName.toLocal8Bit().data(), mYCoordPropName.toLocal8Bit().data(), mZCoordPropName.toLocal8Bit().data());
     }
 
-    if(vertexIndexPropName != "vertex_index") {
+    if(mVertexIndexPropName != "vertex_index") {
         output += QString::asprintf("\tWarning: file uses non-standard name for face vertex index [%s].",
-                                 vertexIndexPropName.toLocal8Bit().data());
+                                 mVertexIndexPropName.toLocal8Bit().data());
     }
 
     return output;
@@ -213,53 +191,95 @@ QString PLYMeshData::validate() const {
 //    if(glIsBuffer(faceVBO)) { glDeleteBuffers(faceVBO); }
 //}
 
-//bool PLYMeshData::parsePLYFileStream(InputStream inStream) { // throws IOException {
-//    if(inStream == NULL) { return false; }
+bool PLYMeshData::parsePLYFileStream(std::istream* pInput) { // throws IOException {
+    if(pInput == NULL) { return false; }
 
-//    PlyReader ply = NULL;
-//    // Open PLY QFileInfo
-//    ply = new PlyReaderFile(inStream);
+    // Parse the header info
+    PlyFile lPLY;
+    if(!lPLY.parse_header(*pInput)) {
+        qWarning("Failed to parse ply header");
+        return false;
+    } else {
+        // Examine elements and header information
+        for (auto e : lPLY.get_elements()) {
+            // Parse vertex element properties
+            if (e.name.compare("vertex") == 0) {
+                int i = 0;
+                for (auto p : e.properties) {
+                    switch(i) {
+                        case 0: mXCoordPropName = QString::fromStdString(p.name); break;
+                        case 1: mYCoordPropName = QString::fromStdString(p.name); break;
+                        case 2: mZCoordPropName = QString::fromStdString(p.name); break;
+                        default:
+                            mHasColors = (p.name.compare("red") == 0 ||
+                                          p.name.compare("green") == 0 ||
+                                          p.name.compare("blue") == 0);
+                        break;
+                    }
 
-//    // Wrap with a normalizing filter
-//    ply = new NormalizingPlyReader(ply, TesselationMode.PASS_THROUGH,
-//                NormalMode.ADD_NORMALS_CCW, TextureMode.PASS_THROUGH);
+                    i++;
+                }
+            }
 
-//    // Debugging output
-////			System.out.printf("\tModel has %d PLY elements\n", ply.getElementTypes().size());
-////			int X=1;
-////			for(const ElementType ET : ply.getElementTypes()) {
-////				System.out.printf("\t\t[%2d]: %s\n", X, ET.getName());
-////				X++;
-////			}
-////			System.out.println();
-////			System.out.flush();
+            // Parse face element properties
+            else if (e.name.compare("face") == 0) {
+                int i = 0;
+                for (auto p : e.properties) {
+                    switch(i) {
+                        case 0: mVertexIndexPropName = QString::fromStdString(p.name); break;
+                        default:
+                            mHasTexCoords = (p.name.compare("texcoord") == 0);
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }
+    }
 
-//    // Examine each element in the PLY file
-//    ElementReader reader = ply.nextElementReader();
-//    while (reader != NULL) {
-//        try {
-//            // Look at type
-//            if(reader.getElementType().getName().equals("vertex")) {
-//                readVertexData(reader);
-//            } else if(reader.getElementType().getName().equals("face")) {
-//                readFaceData(reader);
-//            }
-//        } catch(Exception e) {
-//            System.out.println("ERROR: PLY reading error");
-//            e.printStackTrace();
-//        }
+    // Prepare to read the data
+    std::shared_ptr<PlyData> lVerts, lFaces;
 
-//        // Close the reader for the current type before getting the next one.
-//        reader.close();
-//        reader = ply.nextElementReader();
-//    }
+    // - Vertex data
+    try {
+        lVerts = lPLY.request_properties_from_element("vertex", {
+            "x", "y", "z"
+        });
+    } catch (const std::exception & e) {
+        qWarning("PLY vertex property request exception: : %s", e.what());
+    }
 
-//    ply.close();
+    // - Face data
+    try {
+        if (false) {
+            lFaces = lPLY.request_properties_from_element("face", {
+                "vertex_indices",
+                "texcoord"
+            });
+        } else {
+            lFaces = lPLY.request_properties_from_element("face", {
+                "vertex_indices"
+            });
+        }
+    } catch (const std::exception & e) {
+        qWarning("PLY face property request exception: %s", e.what());
+    }
 
+    // Read the data
+    try {
+        lPLY.read(*pInput);
+        if (lVerts) { qInfo("\tRead %lu total vertices", lVerts->count); }
+        else { qWarning("\tError reading vertices"); }
 
-//    buildPackedData();
-//    return true;
-//}
+        if (lFaces) { qInfo("\tRead %lu total faces", lFaces->count); }
+        else { qWarning("\tError reading faces"); }
+    } catch (const std::exception & e) {
+        qWarning("PLY reading exception: %s", e.what());
+    }
+
+    //    buildPackedData();
+    return true;
+}
 
 //void PLYMeshData::readVertexData(ElementReader reader) { // throws IOException {
 
