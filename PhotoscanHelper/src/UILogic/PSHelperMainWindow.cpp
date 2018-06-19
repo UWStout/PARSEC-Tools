@@ -8,7 +8,9 @@
 #include "PSandPhotoScanner.h"
 #include "PSProjectDataModel.h"
 #include "PSSessionData.h"
-#include "ProgramPreferencesDialog.h"
+//#include "ProgramPreferencesDialog.h"
+#include "RawImageExposureDialog.h"
+#include "GeneralSettingsDialog.h"
 
 #include "ui_AboutDialog.h"
 
@@ -304,18 +306,18 @@ void PSHelperMainWindow::viewModel() {
 }
 
 void PSHelperMainWindow::editGeneralSettings() {
-//    GeneralSettingsDialog lDialog = new GeneralSettingsDialog(mLastData, this);
-//    if(lDialog.exec() == QDialog.DialogCode.Accepted.value()) {
-//        mLastData.writeGeneralSettings(mDataInfoStore);
-//    }
+    GeneralSettingsDialog* lDialog = new GeneralSettingsDialog(mLastData, this);
+    if(lDialog->exec() == QDialog::Accepted) {
+        mLastData->writeGeneralSettings(mDataInfoStore);
+    }
 }
 
 void PSHelperMainWindow::runExposeImagesAction() {
     if(mLastData == NULL) return;
 
-//    RawImageExposureDialog lExposureDialog = new RawImageExposureDialog(this);
-//    lExposureDialog.setProjectData(mLastData, mDataInfoStore);
-//    int result = lExposureDialog.exec();
+    RawImageExposureDialog* lExposureDialog = new RawImageExposureDialog(this);
+    lExposureDialog->setProjectData(mLastData, mDataInfoStore);
+    int result = lExposureDialog->exec();
 
 //    if(result == 1) {
 //        try {
@@ -345,17 +347,17 @@ void PSHelperMainWindow::dequeue() {
 
 void PSHelperMainWindow::queueExposeImagesAction() {
     if(mLastData == NULL) return;
-//    RawImageExposureDialog lExposureDialog = new RawImageExposureDialog(this);
-//    lExposureDialog.setEnqueueMode(true);
-//    lExposureDialog.setProjectData(mLastData, mDataInfoStore);
-//    int result = lExposureDialog.exec();
+    RawImageExposureDialog* lExposureDialog = new RawImageExposureDialog(this);
+    lExposureDialog->setEnqueueMode(true);
+    lExposureDialog->setProjectData(mLastData, mDataInfoStore);
+    int result = lExposureDialog->exec();
 
 //    if(result == 1) {
 //        try {
-//            mRawExposer = new RawImageExposer(mLastData, lExposureDialog.getExposureSettings(),
-//                    lExposureDialog.getDestinationPath());
+//            mRawExposer = new RawImageExposer(mLastData, lExposureDialog->getExposureSettings(),
+//                    lExposureDialog->getDestinationPath());
 //            mProcessQueue.add(mRawExposer);
-//            QListWidgetItem lNewItem = new QListWidgetItem(mRawExposer.describeProcess(), mGUI->QueueListWidget);
-//        } catch (Exception e) {}
+//            QListWidgetItem lNewItem = new QListWidgetItem(mRawExposer->describeProcess(), mGUI->QueueListWidget);
+//        } catch (std::exception& e) {}
 //    }
 }
