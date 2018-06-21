@@ -47,7 +47,7 @@ private:
     const WhiteBalanceMode mWBMode;
     const BrightnessMode mBrightMode;
 
-    const double mBrightScale;
+    const float mBrightScale;
     const double mWBCustom[4];
 };
 

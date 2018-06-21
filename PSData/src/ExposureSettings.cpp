@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "ExposureSettings.h"
+#include "libraw/libraw.h"
 
 const ExposureSettings ExposureSettings::DEFAULT_EXPOSURE = ExposureSettings(
             ExposureSettings::WB_MODE_DEFAULT, ExposureSettings::BRIGHT_MODE_AUTO_HISTOGRAM);
@@ -120,3 +121,34 @@ ExposureSettings* ExposureSettings::makeIndependentlyConsistent() {
 
 //		return options;
 //	}
+
+//void ExposureSettings::toLibRawOptions(LibRaw* pCommandOptions) {
+//    switch(mBrightMode) {
+//        default:
+//        case BRIGHT_MODE_AUTO_HISTOGRAM: break;
+
+//        case BRIGHT_MODE_DISABLED:
+//            pCommandOptions->imgdata.params.no_auto_bright = 1;
+//            break;
+//        case BRIGHT_MODE_SCALED:
+//            pCommandOptions->imgdata.params.no_auto_bright = 1;
+//            pCommandOptions->imgdata.params.bright = mBrightScale;
+//            break;
+//    }
+
+//    switch(mWBMode) {
+//        default:
+//        case WB_MODE_DEFAULT: break;
+
+//        case WB_MODE_CAMERA:
+//            pCommandOptions->imgdata.params.use_camera_wb = 1;
+//            break;
+//        case WB_MODE_AVERAGE:
+//            pCommandOptions->imgdata.params.use_auto_wb = 1;
+//            break;
+//        case WB_MODE_CUSTOM:
+//            // How to set custom values...
+//            break;
+
+//    }
+//}

@@ -17,8 +17,9 @@ include(../config.pri)
 # Link in 3rd party libs
 macx:LIBS += -ltinyply -lraw -lquazip -ljpeg -lzip
 
-win32:CONFIG(debug, debug|release): LIBS += -ltinyplyd -lzlibd -llzmad -lbzip2d -lZipLibd -llibrawd -lquazipd -lopengl32 -lglu32
-else:win32:CONFIG(debug, debug|release): LIBS += -ltinyply -lzlib -llzma -lbzip2 -lZipLib -llibraw -lquazip -lopengl32 -lglu32
+win32:CONFIG(debug, debug|release): LIBS += -ltinyplyd -lzlibd -llzmad -lbzip2d -lZipLibd -llibrawd -llibjpegd -lquazipd -lopengl32 -lglu32
+else:win32:CONFIG(debug, debug|release): LIBS += -ltinyply -lzlib -llzma -lbzip2 -lZipLib -llibraw -llibjpeg -lquazip -lopengl32 -lglu32
+win32:DEFINES += LIBRAW_NODLL
 
 # Windows and Mac OS Icons (respectively)
 RC_ICONS = resources/icons/PhotoScanHelper.ico
@@ -37,6 +38,7 @@ SOURCES += \
         src/UILogic/GeneralSettingsDialog.cpp \
 #        src/UILogic/PSProjectInfoDialog.cpp
         src/UILogic/RawImageExposureDialog.cpp \
+    src/app/ImageProcessor.cpp
 
 HEADERS += \
         include/PSandPhotoScanner.h \
@@ -52,6 +54,7 @@ HEADERS += \
         include/GeneralSettingsDialog.h \
 #        include/PSProjectInfoDialog.h \
         include/RawImageExposureDialog.h \
+    include/ImageProcessor.h
 
 FORMS += \
         forms/AboutDialog.ui \

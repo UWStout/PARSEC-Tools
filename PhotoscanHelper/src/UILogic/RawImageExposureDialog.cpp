@@ -6,10 +6,13 @@
 #include <QFutureWatcher>
 #include <QAbstractButton>
 #include <QSettings>
+#include <QtConcurrent>
 
 #include "ui_RawImageExposureDialog.h"
+#include "ImageProcessor.h"
 #include <PSSessionData.h>
 #include <ExposureSettings.h>
+#include <libraw/libraw.h>
 
 RawImageExposureDialog::RawImageExposureDialog(QWidget *parent) : QDialog(parent) {
     mDefaultSettings = new ExposureSettings(ExposureSettings::DEFAULT_EXPOSURE);
@@ -23,6 +26,7 @@ RawImageExposureDialog::RawImageExposureDialog(QWidget *parent) : QDialog(parent
 
 RawImageExposureDialog::~RawImageExposureDialog() {
     delete mPreviewFileWatcher;
+    qDebug() << "Destructor called";
 }
 
 void RawImageExposureDialog::setUpGUI() {
@@ -137,6 +141,34 @@ void RawImageExposureDialog::updateFromGUI() {
     }
 }
 
+QFileInfo RawImageExposureDialog::localDevelopRawImage(QFileInfo lRawFile) {
+    LibRaw lProcessor;
+    lProcessor.imgdata.params.output_tiff = 1;
+    lProcessor.imgdata.params.half_size = 1;
+    lProcessor.imgdata.params.user_qual = 0;
+
+    // Open file using c_str
+    lProcessor.open_file(lRawFile.filePath().toLocal8Bit().data());
+
+    // Unpack the image
+    lProcessor.unpack();
+
+    // Run DCRAW on the image
+    lProcessor.dcraw_process();
+
+    mTempFile.open();
+    qDebug() << "lTempFile location: " << mTempFile.fileName();
+
+
+    // Expose to .tiff
+    int lErr = lProcessor.dcraw_ppm_tiff_writer(mTempFile.fileName().toLocal8Bit().data());
+    if(lErr != LIBRAW_SUCCESS) {
+        qDebug() << "Failed to expose to tiff, error code = " << lErr;
+    }
+
+    return QFileInfo(mTempFile.fileName());
+}
+
 // TODO: Update to use libraw exposure
 void RawImageExposureDialog::asyncGeneratePreview() {
     if(mProjectData == NULL) return;
@@ -151,15 +183,32 @@ void RawImageExposureDialog::asyncGeneratePreview() {
         QFileInfo lRawFile = mProjectData->getRawFileList()[lIndex];
 
         try {
-//            Method lMeth = ImageProcessorIM4J.class.getMethod("developRawImage",
-//                                        File.class, ExposureSettings.class, boolean.class);
-
-//            QFuture<Object> lPreviewResult = QtConcurrent.run(this, lMeth, lRawFile, lSettings, true);
-//            mPreviewFileWatcher.setFuture(lPreviewResult);
+            QFuture<QFileInfo> lPreviewResult = QtConcurrent::run(this, &ImageProcessor::developRawImage, lRawFile, lSettings, true);
+            mPreviewFileWatcher->setFuture(lPreviewResult);
         } catch(std::exception e) {
             qWarning("Exception occured: %s", e.what());
         }
     }
+
+//    qInfo() << "Generating preview.";
+//    mGUI->PreviewButton->setEnabled(false);
+//    mGUI->PreviewButton->setText("Wait...");
+//    ExposureSettings lSettings(*getExposureSettings());
+
+//    int lIndex = mGUI->PreviewImageComboBox->currentIndex();
+//    if(lIndex >= 0 && lIndex < mProjectData->getRawFileList().length()) {
+//        QFileInfo lRawFile = mProjectData->getRawFileList()[lIndex];
+
+//        try {
+////            Method lMeth = ImageProcessorIM4J.class.getMethod("developRawImage",
+////                                        File.class, ExposureSettings.class, boolean.class);
+
+////            QFuture<Object> lPreviewResult = QtConcurrent.run(this, lMeth, lRawFile, lSettings, true);
+////            mPreviewFileWatcher.setFuture(lPreviewResult);
+//        } catch(std::exception e) {
+//            qWarning("Exception occured: %s", e.what());
+//        }
+//    }
 }
 
 // TODO: Update to use results of libraw exposure
@@ -200,8 +249,10 @@ void RawImageExposureDialog::projectDataChanged() {
 }
 
 void RawImageExposureDialog::updatePreviewImage() {
-    if(mPreviewImage.isNull()) return;
-
+    if(mPreviewImage.isNull()) {
+        qDebug() << "Image is null";
+        return;
+    }
     // get label dimensions
     int w = mGUI->ImagePreviewLabel->width();
     int h = mGUI->ImagePreviewLabel->height();
