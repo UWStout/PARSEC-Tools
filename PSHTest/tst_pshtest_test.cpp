@@ -6,12 +6,29 @@
 #include <fstream>
 #include <exception>
 
-#include <ZipLib/ZipFile.h>
-#include <ZipLib/ZipArchive.h>
-#include <ZipLib/ZipArchiveEntry.h>
+#include <quazip/quazipfile.h>
 
-#include <tinyply.h>
-using namespace tinyply;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
+#include <ply_impl.h>
+
+namespace PLY {
+    const char* Vertex::name = "vertex";
+    const Property Vertex::prop_x = Property("x", SCALAR, Float32);
+    const Property Vertex::prop_y = Property("y", SCALAR, Float32);
+    const Property Vertex::prop_z = Property("z", SCALAR, Float32);
+    const Property VertexColor::prop_r = Property("red", SCALAR, Float32);
+    const Property VertexColor::prop_g = Property("green", SCALAR, Float32);
+    const Property VertexColor::prop_b = Property("blue", SCALAR, Float32);
+    const char* Face::name = "face";
+    const Property Face::prop_ind = Property("vertex_indices", LIST, Uint32, Uint8);
+    const Property FaceTex::prop_tex = Property("texcoord", LIST, Float32, Uint8);
+} // namespace PLY
+
+#include <io.h>
+
+#pragma clang diagnostic pop
 
 #include <PSProjectFileData.h>
 
@@ -366,38 +383,20 @@ void PSHTest_Test::initTestCase() {
     k0->setTextureGeneration_width(4096);
 }
 
-void outputPLYInfo(const QString& pFilename, PlyFile& lModelFile) {
-    // Output some data
-    qInfo("........................................................................");
-    qInfo(". %-68s .", pFilename.toLocal8Bit().data());
-    qInfo("........................................................................");
-    for (auto c : lModelFile.get_comments()) {
-        qInfo("Comment: %s", c.c_str());
-    }
-
-    for (auto e : lModelFile.get_elements()) {
-        qInfo("element - %s (%d)", e.name.c_str(), (int)e.size);
-        for (auto p : e.properties) {
-            qInfo("\tproperty - %s (%s)", p.name.c_str(), tinyply::PropertyTable[p.propertyType].str.c_str());
-        }
-    }
-    qInfo("........................................................................");
-}
-
 void PSHTest_Test::plyZipTest_data()
 {
     QTest::addColumn<QFileInfo>("archive");
     QTest::addColumn<QString>("modelFile");
 
-//    QTest::newRow("Local Compressed PLY Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
-//    QTest::newRow("Local Compressed PLY Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
-//    QTest::newRow("Local Compressed PLY Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
-//    QTest::newRow("Local Compressed PLY Model 3") << QFileInfo("Pumpkin-Moldy.psz") << QString("model0.ply");
+    QTest::newRow("Local Compressed PLY Model 0") << QFileInfo("BlueBird.psz") << QString("model0.ply");
+    QTest::newRow("Local Compressed PLY Model 1") << QFileInfo("Chair.psz") << QString("model0.ply");
+    QTest::newRow("Local Compressed PLY Model 2") << QFileInfo("Gun.psz") << QString("model0.ply");
+    QTest::newRow("Local Compressed PLY Model 3") << QFileInfo("Pumpkin-Moldy.psz") << QString("model0.ply");
 
-//    QTest::newRow("Local Uncompressed PLY Model 0") << QFileInfo() << QString("BlueBird.ply");
+    QTest::newRow("Local Uncompressed PLY Model 0") << QFileInfo() << QString("BlueBird.ply");
     QTest::newRow("Local Uncompressed PLY Model 1") << QFileInfo() << QString("Chair.ply");
     QTest::newRow("Local Uncompressed PLY Model 2") << QFileInfo() << QString("Gun.ply");
-//    QTest::newRow("Local Uncompressed PLY Model 3") << QFileInfo() << QString("Pumpkin-Moldy.ply");
+    QTest::newRow("Local Uncompressed PLY Model 3") << QFileInfo() << QString("Pumpkin-Moldy.ply");
 
 #ifdef Q_OS_WIN32
     QTest::newRow("Network PLY Model 0") << QFileInfo("E:/OtherData/basement-studio/BlueBird/BlueBird.psz") << QString("model0.ply");
@@ -410,87 +409,117 @@ void PSHTest_Test::plyZipTest_data()
 #endif
 }
 
+bool saveAsOBJ(QString pName, std::vector<PLY::VertexColor>& pVerts, std::vector<PLY::FaceTex>& pFaces) {
+    QFile lOutput(pName);
+    lOutput.open(QFile::WriteOnly);
+    if (!lOutput.isOpen() || !lOutput.isWritable()) {
+        qWarning("Couldn't open obj file for writing");
+        lOutput.close();
+        return false;
+    }
+
+    // Open and configure our output stream
+    QTextStream lOut(&lOutput);
+    lOut.setRealNumberNotation(QTextStream::FixedNotation);
+    lOut.setRealNumberPrecision(8);
+
+    // Output material details
+    lOut << "# Fake materials to check text coords" << endl;
+    lOut << "mtllib chair.mtl" << endl;
+    lOut << "usemtl Mapped" << endl << endl;
+
+    // Output vertices
+    lOut << "# " << QLocale::system().toString((long long)pVerts.size()) << " vertices" << endl;
+    for (auto lV : pVerts) {
+        lOut << "v " << lV.x() << " " << lV.y() << " " << lV.z() << endl;
+    }
+    lOut << endl;
+
+    // Output texture coords
+    lOut << "# " << QLocale::system().toString((long long)(pFaces.size() * 3)) << " texture coords" << endl;
+    for (auto lF : pFaces) {
+        for (size_t t = 0; t < lF.size(); t++) {
+            float u = lF.texcoord(2*t), v = lF.texcoord((2*t)+1);
+            lOut << "vt " << u << " " << v << endl;
+        }
+    }
+    lOut << endl;
+
+    // Output faces
+    lOut << "# " << QLocale::system().toString((long long)pFaces.size()) << " faces" << endl;
+    size_t vt = 1;
+    for (auto lF : pFaces) {
+        size_t A = lF.vertex(0), B = lF.vertex(1), C = lF.vertex(2);
+        lOut << "f " << (A+1) << "/" << (vt+0) << " "
+                     << (B+1) << "/" << (vt+1) << " "
+                     << (C+1) << "/" << (vt+2) << endl;
+        vt += 3;
+    }
+
+    lOutput.close();
+    return true;
+}
+
 void PSHTest_Test::plyZipTest()
 {
     QFETCH(QFileInfo, archive);
     QFETCH(QString, modelFile);
 
-    ZipArchive::Ptr lZipFile = nullptr;
-    ZipArchiveEntry::Ptr lEntry = nullptr;
-    istream* lInput = NULL;
-    bool lIsDynamic = false;
+    // Process an archive if there is one
+    QuaZipFile* lInsideFile = NULL;
+    if (archive.filePath() != "") {
+        lInsideFile = new QuaZipFile(archive.filePath(), modelFile);
+        if(!lInsideFile->open(QIODevice::ReadOnly)) {
+            qWarning("Failed to open zip file: %d.", lInsideFile->getZipError());
+            delete lInsideFile;
+            return;
+        }
+    }
 
-    if (archive.filePath() == "") {
-        lInput = new ifstream(modelFile.toStdString(), ios::binary | ios::in);
-        lIsDynamic = true;
+    // Open file and read header info
+    PLY::Header header;
+    PLY::Reader reader(header);
+    if (lInsideFile != NULL) {
+        if (!reader.use_io_device(lInsideFile)) {
+            qWarning("Failed to use archive stream");
+            lInsideFile->close();
+            delete lInsideFile;
+            return;
+        }
     } else {
-        if (!archive.exists()) {
-            qWarning("File does not exist %s", archive.filePath().toLocal8Bit().data());
-            return;
-        }
-
-        lZipFile = ZipFile::Open(archive.filePath().toStdString());
-        if (lZipFile == nullptr) {
-            qWarning("Could not open zip file %s", archive.filePath().toLocal8Bit().data());
-            return;
-        }
-
-        lEntry = lZipFile->GetEntry(modelFile.toStdString());
-        if (lEntry == nullptr) {
-            qWarning("Could not retrieve zip entry %s", modelFile.toLocal8Bit().data());
-            return;
-        }
-
-        lEntry->UseDataDescriptor(true);
-        lInput = lEntry->GetDecompressionStream();
-        if (lInput == NULL || !lInput->good()) {
-            qWarning("Error getting iostream for zip entry %s", modelFile.toLocal8Bit().data());
+        if (!reader.open_file(modelFile)) {
+            qWarning("Failed to open '%s'", modelFile.toLocal8Bit().data());
             return;
         }
     }
 
-    Q_ASSERT(lInput != NULL);
+    // Prepare storage
+    PLY::Storage store(header);
+    PLY::Element& vertex = *header.find_element(PLY::VertexColor::name);
+    PLY::Element& face = *header.find_element(PLY::FaceTex::name);
 
-    // Parse the header info
-    PlyFile lPLY;
-    if(!lPLY.parse_header(*lInput)) {
-        qWarning("Failed to parse ply header");
-    } else {
-        if (archive.filePath() == "") {
-            QString name = QString("%1::%2").arg("UNCOMPRESSED").arg(modelFile);
-            outputPLYInfo(name, lPLY);
-        } else {
-            QString name = QString("%1::%2").arg(archive.filePath()).arg(modelFile);
-            outputPLYInfo(name, lPLY);
-        }
+    std::vector<PLY::VertexColor> vertColl;
+    PLY::VCExternal vertices(vertColl);
+    store.set_collection(header, vertex, vertices);
+    std::vector<PLY::FaceTex> faceColl;
+    PLY::FTExternal faces(faceColl);
+    store.set_collection(header, face, faces);
 
-        std::shared_ptr<PlyData> lVerts, lFaces;
-        try { lVerts = lPLY.request_properties_from_element("vertex", { "x", "y", "z" }); }
-        catch (const std::exception & e) { qWarning("PLY vertex property request exception: %s", e.what()); }
+    // Read the data in the file into the storage.
+    bool ok = reader.read_data(&store);
+    reader.close_file();
+    delete lInsideFile;
 
-        try { lFaces = lPLY.request_properties_from_element("face", { "vertex_indices" }); }
-        catch (const std::exception & e) { qWarning("PLY face property request exception: %s", e.what()); }
-
-        try { lPLY.read(*lInput); }
-        catch (const std::exception & e) { qWarning("PLY reading exception: %s", e.what()); }
-
-        if (lVerts) {
-            qInfo("\tRead %s total vertices", QLocale::system().toString((int)lVerts->count).toLocal8Bit().data());
-        } else { qWarning("\tError reading vertices"); }
-
-        if (lFaces) {
-            qInfo("\tRead %s total faces", QLocale::system().toString((int)lFaces->count).toLocal8Bit().data());
-        } else { qWarning("\tError reading faces"); }
-        qInfo("........................................................................");
+    if (!ok) {
+        qWarning("Error reading data from PLY file");
+        return;
     }
 
-    if (lIsDynamic) {
-        delete lInput;
-    }
-
-    if (lEntry != nullptr) {
-        lEntry->CloseDecompressionStream();
-    }
+    // NOTE: Enable the saveAsOBJ line below to write the data to a file for visual verification
+    qInfo("Read %lu vertices and %lu faces.", vertColl.size(), faceColl.size());
+//    if (!saveAsOBJ(archive.fileName().append(modelFile.append(".obj")), vertColl, faceColl)) {
+//        qWarning("Failed to save to obj file");
+//    }
 }
 
 void PSHTest_Test::sensorDataParsing_data()
