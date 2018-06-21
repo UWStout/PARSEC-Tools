@@ -13,12 +13,12 @@ class GeneralSettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
-    GeneralSettingsDialog(PSSessionData pData, QWidget* parent);
+    GeneralSettingsDialog(PSSessionData* pData, QWidget* parent);
     ~GeneralSettingsDialog();
 
 private:
     Ui_GeneralSettingsDialog* mGUI;
-    PSSessionData mProjectData;
+    PSSessionData* mProjectData;
 
     void restoreSettings();
 

@@ -34,7 +34,7 @@ SOURCES += \
 #        src/UILogic/CancelableModalProgressDialog.cpp \
 #        src/UILogic/ProcessQueueProgressDialog.cpp \
 #        src/UILogic/ProgramPreferencesDialog.cpp \
-#        src/UILogic/GeneralSettingsDialog.cpp \
+        src/UILogic/GeneralSettingsDialog.cpp \
 #        src/UILogic/PSProjectInfoDialog.cpp
         src/UILogic/RawImageExposureDialog.cpp \
 
@@ -49,7 +49,7 @@ HEADERS += \
 #        include/QueueableProcess.h \
 #        include/ProgramPreferencesDialog.h \
 #        include/ImageProcessorIM4J.h \
-#        include/GeneralSettingsDialog.h \
+        include/GeneralSettingsDialog.h \
 #        include/PSProjectInfoDialog.h \
         include/RawImageExposureDialog.h \
 
