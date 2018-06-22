@@ -183,7 +183,7 @@ void RawImageExposureDialog::asyncGeneratePreview() {
         QFileInfo lRawFile = mProjectData->getRawFileList()[lIndex];
 
         try {
-            QFuture<QFileInfo> lPreviewResult = QtConcurrent::run(this, &ImageProcessor::developRawImage, lRawFile, lSettings, true);
+            QFuture<QFileInfo> lPreviewResult = QtConcurrent::run(&ImageProcessor::developRawImage, lRawFile, lSettings, true);
             mPreviewFileWatcher->setFuture(lPreviewResult);
         } catch(std::exception e) {
             qWarning("Exception occured: %s", e.what());

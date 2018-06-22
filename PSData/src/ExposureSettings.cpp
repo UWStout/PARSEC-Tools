@@ -132,7 +132,7 @@ ExposureSettings* ExposureSettings::makeIndependentlyConsistent() {
 //            break;
 //        case BRIGHT_MODE_SCALED:
 //            pCommandOptions->imgdata.params.no_auto_bright = 1;
-//            pCommandOptions->imgdata.params.bright = mBrightScale;
+//            pCommandOptions->imgdata.params.bright = (float)mBrightScale;
 //            break;
 //    }
 
@@ -147,7 +147,10 @@ ExposureSettings* ExposureSettings::makeIndependentlyConsistent() {
 //            pCommandOptions->imgdata.params.use_auto_wb = 1;
 //            break;
 //        case WB_MODE_CUSTOM:
-//            // How to set custom values...
+//            pCommandOptions->imgdata.params.user_mul[0] = (float)mWBCustom[0];
+//            pCommandOptions->imgdata.params.user_mul[1] = (float)mWBCustom[1];
+//            pCommandOptions->imgdata.params.user_mul[2] = (float)mWBCustom[2];
+//            pCommandOptions->imgdata.params.user_mul[3] = (float)mWBCustom[3];
 //            break;
 
 //    }

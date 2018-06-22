@@ -19,6 +19,7 @@ macx:LIBS += -lraw -lquazip -ljpeg
 
 win32:CONFIG(debug, debug|release): LIBS += -llibrawd -ljpegd -lquazipd -lopengl32 -lglu32
 else:win32:CONFIG(debug, debug|release): LIBS += -llibraw -ljpeg -lquazip -lopengl32 -lglu32
+win32:DEFINES += LIBRAW_NODLL
 
 # Windows and Mac OS Icons (respectively)
 RC_ICONS = resources/icons/PhotoScanHelper.ico

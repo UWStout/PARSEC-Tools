@@ -43,11 +43,13 @@ public:
 //	ArrayList<String> argumentList();
 //	DCRAWOperation toIM4JOptions();
 
+    void toLibRawOptions(LibRaw* pCommandOptions);
+
 private:
     const WhiteBalanceMode mWBMode;
     const BrightnessMode mBrightMode;
 
-    const float mBrightScale;
+    const double mBrightScale;
     const double mWBCustom[4];
 };
 
