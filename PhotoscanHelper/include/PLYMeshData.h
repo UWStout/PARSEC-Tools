@@ -4,7 +4,7 @@
 #include <QString>
 #include <QFileInfo>
 
-#include <tinyply.h>
+class QuaZipFile;
 
 class PLYMeshData {
 public:
@@ -42,9 +42,6 @@ public:
     // Read data from a PLY file
     bool readPLYFile(QFileInfo pProjectFile, QString pFilename = "model0.ply");
 
-    // Make sure PLY data names are standard
-    QString validate() const;
-
     // Manage VBO construction
 //    void buildPackedData();
 //    void buildVBOs();
@@ -52,12 +49,7 @@ public:
 
 private:
     // PLY PArsing helper functions
-    bool parsePLYFileStream(std::istream *pInput);
-//    void readVertexData(ElementReader reader);
-//    void readFaceData(ElementReader reader);
-
-//    // Return a PLY data type as a string
-//    static QString dataTypeToString(Property prop);
+    bool parsePLYFileStream(QString pFilename = "", QuaZipFile* pInsideFile = NULL);
 
     // Names of our VBOs
     int mFaceVBO, mPackedVBO;
@@ -82,9 +74,6 @@ private:
 
     // Flags for presence of various mesh elements
     bool mHasNormals, mHasColors, mHasTexCoords, mHasMultiTex;
-
-    // Names of mesh elements inside of the PLY file
-    QString mXCoordPropName, mYCoordPropName, mZCoordPropName, mVertexIndexPropName;
 };
 
 #endif
