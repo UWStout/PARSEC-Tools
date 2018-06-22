@@ -3,6 +3,8 @@
 
 #include "psdata_global.h"
 
+class LibRaw;
+
 // Note that instances of class are deliberately made immutable
 class PSDATASHARED_EXPORT ExposureSettings {
 public:

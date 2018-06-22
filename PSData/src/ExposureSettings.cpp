@@ -122,36 +122,36 @@ ExposureSettings* ExposureSettings::makeIndependentlyConsistent() {
 //		return options;
 //	}
 
-//void ExposureSettings::toLibRawOptions(LibRaw* pCommandOptions) {
-//    switch(mBrightMode) {
-//        default:
-//        case BRIGHT_MODE_AUTO_HISTOGRAM: break;
+void ExposureSettings::toLibRawOptions(LibRaw* pCommandOptions) {
+    switch(mBrightMode) {
+        default:
+        case BRIGHT_MODE_AUTO_HISTOGRAM: break;
 
-//        case BRIGHT_MODE_DISABLED:
-//            pCommandOptions->imgdata.params.no_auto_bright = 1;
-//            break;
-//        case BRIGHT_MODE_SCALED:
-//            pCommandOptions->imgdata.params.no_auto_bright = 1;
-//            pCommandOptions->imgdata.params.bright = (float)mBrightScale;
-//            break;
-//    }
+        case BRIGHT_MODE_DISABLED:
+            pCommandOptions->imgdata.params.no_auto_bright = 1;
+            break;
+        case BRIGHT_MODE_SCALED:
+            pCommandOptions->imgdata.params.no_auto_bright = 1;
+            pCommandOptions->imgdata.params.bright = (float)mBrightScale;
+            break;
+    }
 
-//    switch(mWBMode) {
-//        default:
-//        case WB_MODE_DEFAULT: break;
+    switch(mWBMode) {
+        default:
+        case WB_MODE_DEFAULT: break;
 
-//        case WB_MODE_CAMERA:
-//            pCommandOptions->imgdata.params.use_camera_wb = 1;
-//            break;
-//        case WB_MODE_AVERAGE:
-//            pCommandOptions->imgdata.params.use_auto_wb = 1;
-//            break;
-//        case WB_MODE_CUSTOM:
-//            pCommandOptions->imgdata.params.user_mul[0] = (float)mWBCustom[0];
-//            pCommandOptions->imgdata.params.user_mul[1] = (float)mWBCustom[1];
-//            pCommandOptions->imgdata.params.user_mul[2] = (float)mWBCustom[2];
-//            pCommandOptions->imgdata.params.user_mul[3] = (float)mWBCustom[3];
-//            break;
+        case WB_MODE_CAMERA:
+            pCommandOptions->imgdata.params.use_camera_wb = 1;
+            break;
+        case WB_MODE_AVERAGE:
+            pCommandOptions->imgdata.params.use_auto_wb = 1;
+            break;
+        case WB_MODE_CUSTOM:
+            pCommandOptions->imgdata.params.user_mul[0] = (float)mWBCustom[0];
+            pCommandOptions->imgdata.params.user_mul[1] = (float)mWBCustom[1];
+            pCommandOptions->imgdata.params.user_mul[2] = (float)mWBCustom[2];
+            pCommandOptions->imgdata.params.user_mul[3] = (float)mWBCustom[3];
+            break;
 
-//    }
-//}
+    }
+}

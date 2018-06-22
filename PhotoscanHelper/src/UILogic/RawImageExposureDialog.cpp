@@ -141,34 +141,6 @@ void RawImageExposureDialog::updateFromGUI() {
     }
 }
 
-QFileInfo RawImageExposureDialog::localDevelopRawImage(QFileInfo lRawFile) {
-    LibRaw lProcessor;
-    lProcessor.imgdata.params.output_tiff = 1;
-    lProcessor.imgdata.params.half_size = 1;
-    lProcessor.imgdata.params.user_qual = 0;
-
-    // Open file using c_str
-    lProcessor.open_file(lRawFile.filePath().toLocal8Bit().data());
-
-    // Unpack the image
-    lProcessor.unpack();
-
-    // Run DCRAW on the image
-    lProcessor.dcraw_process();
-
-    mTempFile.open();
-    qDebug() << "lTempFile location: " << mTempFile.fileName();
-
-
-    // Expose to .tiff
-    int lErr = lProcessor.dcraw_ppm_tiff_writer(mTempFile.fileName().toLocal8Bit().data());
-    if(lErr != LIBRAW_SUCCESS) {
-        qDebug() << "Failed to expose to tiff, error code = " << lErr;
-    }
-
-    return QFileInfo(mTempFile.fileName());
-}
-
 // TODO: Update to use libraw exposure
 void RawImageExposureDialog::asyncGeneratePreview() {
     if(mProjectData == NULL) return;
@@ -220,10 +192,10 @@ void RawImageExposureDialog::previewReady() {
     if(lResult.exists() && lResult.fileName() != "") {
         // Update Multipliers
         mBlockUpdateFromGUI = true;
-//        mGUI.RSpinBox.setValue(ImageProcessorIM4J.mMultipliers[0]);
-//        mGUI.G1SpinBox.setValue(ImageProcessorIM4J.mMultipliers[1]);
-//        mGUI.BSpinBox.setValue(ImageProcessorIM4J.mMultipliers[2]);
-//        mGUI.G2SpinBox.setValue(ImageProcessorIM4J.mMultipliers[3]);
+        mGUI->RSpinBox->setValue(ImageProcessor::mMultipliers[0]);
+        mGUI->G1SpinBox->setValue(ImageProcessor::mMultipliers[1]);
+        mGUI->BSpinBox->setValue(ImageProcessor::mMultipliers[2]);
+        mGUI->G2SpinBox->setValue(ImageProcessor::mMultipliers[3]);
         mBlockUpdateFromGUI = false;
 
         // Put in label

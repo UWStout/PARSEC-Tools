@@ -51,7 +51,6 @@ private:
     bool mBlockUpdateFromGUI;
 
     void setUpGUI();
-    QFileInfo localDevelopRawImage(QFileInfo lRawFile);
 
 public slots:
     void updateFromGUI();
