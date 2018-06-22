@@ -8,8 +8,13 @@
 
 #include <quazip/quazipfile.h>
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning( disable : 4100 )
+#elif
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
 
 #include <ply_impl.h>
 
@@ -28,7 +33,11 @@ namespace PLY {
 
 #include <io.h>
 
+#ifdef _WIN32
+#pragma warning(pop)
+#elif
 #pragma clang diagnostic pop
+#endif
 
 #include <PSProjectFileData.h>
 
