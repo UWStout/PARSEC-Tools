@@ -16,11 +16,11 @@
 
 #include "PSProjectInfoDialog.h"
 
-//#include "RawImageExposer.h"
+#include "RawImageExposer.h"
 #include "PLYMeshData.h"
 //#include "GLModelViewer.h"
-//#include "QueueableProcess.h"
-//#include "CancelableModalProgressDialog.h"
+#include "QueueableProcess.h"
+#include "CancelableModalProgressDialog.h"
 
 const QString PSHelperMainWindow::WINDOWS_PATH = "C:\\Windows;C:\\Program Files\\ImageMagick;C:\\Program Files\\GraphicsMagick;C:\\Program Files\\exiftool;C:\\Program Files\\dcraw";
 const QString PSHelperMainWindow::MAC_UNIX_PATH = "/usr/bin:/usr/local/bin:/opt/local/bin";
@@ -323,6 +323,27 @@ void PSHelperMainWindow::runExposeImagesAction() {
     RawImageExposureDialog* lExposureDialog = new RawImageExposureDialog(this);
     lExposureDialog->setProjectData(mLastData, mDataInfoStore);
     int result = lExposureDialog->exec();
+
+    if(result == 1) {
+        try {
+            mRawExposer = new RawImageExposer(mLastData, lExposureDialog->getExposureSettings(),
+                                              lExposureDialog->getDestinationPath());
+        } catch (std::exception e) {
+            qWarning() << e.what();
+        }
+
+        mRawExposureProgressDialog->setFuture(mRawExposer->runProcess());
+        mRawExposureProgressDialog->exec();
+
+        if(!mRawExposureProgressDialog->wasCanceled()) {
+            try {
+                mLastData->examineProjects(mDataInfoStore);
+            } catch (std::exception e) {
+                qWarning() << "Error: exception while rebuilding PS Project Data.";
+                qWarning() << e.what();
+            }
+        }
+    }
 
 //    if(result == 1) {
 //        try {

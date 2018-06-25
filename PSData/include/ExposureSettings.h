@@ -40,7 +40,7 @@ public:
     double getBrightScale() const { return mBrightScale; }
     const double* getWBCustom() const { return mWBCustom; }
 
-    ExposureSettings* makeIndependentlyConsistent();
+    ExposureSettings* makeIndependentlyConsistent() const;
 	
 //	ArrayList<String> argumentList();
 //	DCRAWOperation toIM4JOptions();

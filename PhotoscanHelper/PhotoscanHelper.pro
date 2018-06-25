@@ -32,13 +32,14 @@ SOURCES += \
         src/UILogic/CollectionSelectionDialog.cpp \
         src/UILogic/PSHelperMainWindow.cpp \
         src/UILogic/PSProjectInfoDialog.cpp \
-#        src/UILogic/CancelableModalProgressDialog.cpp \
+        src/UILogic/CancelableModalProgressDialog.cpp \
 #        src/UILogic/ProcessQueueProgressDialog.cpp \
 #        src/UILogic/ProgramPreferencesDialog.cpp \
         src/UILogic/GeneralSettingsDialog.cpp \
 #        src/UILogic/PSProjectInfoDialog.cpp
         src/UILogic/RawImageExposureDialog.cpp \
-    src/app/ImageProcessor.cpp
+        src/app/ImageProcessor.cpp \
+        src/app/RawImageExposer.cpp \
 
 HEADERS += \
         include/PSandPhotoScanner.h \
@@ -46,9 +47,9 @@ HEADERS += \
         include/CollectionSelectionDialog.h \
         include/PSHelperMainWindow.h \
         include/PSProjectInfoDialog.h \
-#        include/CancelableModalProgressDialog.h \
+        include/CancelableModalProgressDialog.h \
 #        include/ProcessQueueProgressDialog.h \
-#        include/QueueableProcess.h \
+        include/QueueableProcess.h \
 #        include/ProgramPreferencesDialog.h \
 #        include/ImageProcessorIM4J.h \
         include/GeneralSettingsDialog.h \
