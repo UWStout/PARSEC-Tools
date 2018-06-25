@@ -180,6 +180,15 @@ bool FaceTex::make_element(Element& elem) const {
     return result;
 }
 
+size_t FaceTex::size() const {
+    return Face::size();
+}
+
+void FaceTex::size(const size_t& size) {
+    Face::size(size);
+    texcoords.set_size(prop_tex, size*3);
+}
+
 float FaceTex::texcoord(const size_t& num) const {
     double coord;
     texcoords.get_item(prop_tex, num, coord);

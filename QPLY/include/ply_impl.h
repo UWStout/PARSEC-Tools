@@ -89,10 +89,10 @@ struct Face: public Object {
     Value* get_value(const Element& elem, const Property& prop);
     bool make_element(Element& elem) const;
 
-    size_t size() const;
+    virtual size_t size() const;
     size_t vertex(const size_t& num) const;
 
-    void size(const size_t& size);
+    virtual void size(const size_t& size);
     void vertex(const size_t& num, const size_t& index);
 
     static const char* name;
@@ -106,6 +106,9 @@ struct FaceTex: public Face {
     FaceTex(const size_t& size);
     FaceTex(const Face& f);
     FaceTex(const FaceTex& f);
+
+    size_t size() const;
+    void size(const size_t& size);
 
     Value* get_value(const Element& elem, const Property& prop);
     bool make_element(Element& elem) const;

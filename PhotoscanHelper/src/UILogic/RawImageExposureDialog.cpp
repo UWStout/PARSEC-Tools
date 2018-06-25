@@ -99,7 +99,7 @@ void RawImageExposureDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
             break;
 
         case QDialogButtonBox::Ok: {
-            int lResult = NULL;
+            int lResult = QMessageBox::Cancel;
             if(mEnqueueMode) {
                 lResult = QMessageBox::question(this, "Add to queue?", "Add to processing queue?", QMessageBox::Cancel | QMessageBox::Yes);
             } else {

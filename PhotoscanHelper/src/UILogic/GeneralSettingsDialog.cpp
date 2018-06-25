@@ -1,5 +1,7 @@
 #include "GeneralSettingsDialog.h"
 
+#include <QDialogButtonBox>
+
 GeneralSettingsDialog::GeneralSettingsDialog(PSSessionData* pData, QWidget* parent) : QDialog(parent), mProjectData(pData) {
     mGUI = new Ui_GeneralSettingsDialog();
     mGUI->setupUi(this);
@@ -35,11 +37,11 @@ void GeneralSettingsDialog::restoreSettings() {
 void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
     int statusIndex = mGUI->statusComboBox->currentIndex();
     switch(mGUI->buttonBox->standardButton(pButton)) {
-        case mGUI->buttonBox->RestoreDefaults:
+        case QDialogButtonBox::RestoreDefaults:
             restoreSettings();
         break;
 
-        case mGUI->buttonBox->Ok:
+        case QDialogButtonBox::Ok:
             mProjectData->setCustomStatus(statusIndex);
 
             mProjectData->setID(mGUI->IDLineEdit->text());
@@ -47,7 +49,7 @@ void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
             mProjectData->setSpecialNotes(mGUI->SpecialNotesTextEdit->toPlainText());
         break;
 
-        case mGUI->buttonBox->Cancel:
+        case QDialogButtonBox::Cancel:
             this->reject();
         break;
 

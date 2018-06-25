@@ -21,6 +21,7 @@ namespace PLY {
     const Property VertexColor::prop_r = Property("red", SCALAR, Float32);
     const Property VertexColor::prop_g = Property("green", SCALAR, Float32);
     const Property VertexColor::prop_b = Property("blue", SCALAR, Float32);
+
     const char* Face::name = "face";
     const Property Face::prop_ind = Property("vertex_indices", LIST, Uint32, Uint8);
     const Property FaceTex::prop_tex = Property("texcoord", LIST, Float32, Uint8);
@@ -501,6 +502,7 @@ void PSHTest_Test::plyZipTest()
     std::vector<PLY::VertexColor> vertColl;
     PLY::VCExternal vertices(vertColl);
     store.set_collection(header, vertex, vertices);
+
     std::vector<PLY::FaceTex> faceColl;
     PLY::FTExternal faces(faceColl);
     store.set_collection(header, face, faces);

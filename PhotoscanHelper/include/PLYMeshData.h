@@ -4,7 +4,17 @@
 #include <QString>
 #include <QFileInfo>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#include <ply_impl.h>
+#pragma clang diagnostic pop
+
 class QuaZipFile;
+class QOpenGLContext;
+class QOpenGLBuffer;
+class QOpenGLVertexArrayObject;
+class QOffscreenSurface;
+class QScreen;
 
 class PLYMeshData {
 public:
@@ -19,8 +29,8 @@ public:
     ~PLYMeshData();
 
     // Get model mesh counts
-    int getVertexCount() const { return mVertexCount; }
-    int getFaceCount() const { return mFaceCount; }
+    size_t getVertexCount() const { return mVertexCount; }
+    size_t getFaceCount() const { return mFaceCount; }
 
     // Unit size transformation
     const float* getCenter() const { return mVertexCenter; }
@@ -36,36 +46,36 @@ public:
     bool isMissingData() const { return (!mHasNormals || !mHasColors || !mHasTexCoords); }
 
     // Get VBO names
-    int getFaceVBO() const { return mFaceVBO; }
-    int getPackedVBO() const { return mPackedVBO; }
+    const QOpenGLBuffer* getFaceBuffer() const { return mFaceBuffer; }
+    const QOpenGLBuffer* getVertexBuffer() const { return mVertexBuffer; }
 
     // Read data from a PLY file
     bool readPLYFile(QFileInfo pProjectFile, QString pFilename = "model0.ply");
 
-    // Manage VBO construction
-//    void buildPackedData();
-//    void buildVBOs();
-//    void releaseVBOs();
+    // Manage vertex buffer construction
+    void buildBuffers();
+    void destroyBuffers();
+    void releaseBuffers();
 
 private:
-    // PLY PArsing helper functions
+    // Initialize all members back to a starting state
+    void initMembers();
+
+    // PLY Parsing helper functions
     bool parsePLYFileStream(QString pFilename = "", QuaZipFile* pInsideFile = NULL);
+    void processRawData(std::vector<PLY::VertexColor>& pVerts, std::vector<PLY::FaceTex>& pFaces);
 
-    // Names of our VBOs
-    int mFaceVBO, mPackedVBO;
+    // Buffers for the vertex and face data
+    QOpenGLBuffer *mVertexBuffer, *mFaceBuffer;
+    QOpenGLVertexArrayObject *mVAO;
 
-    // Sizes of the PLY data
-    int mVertexElementCount, mPackedElementCount;
-
-    // Raw, unpacked data arrays
-    float *mVertexData, *mFaceUVData;
-    int *mFace, *mFaceTexNum;
-
-    // Packed data
-    unsigned char *mPackedData;
+    // Packed data and metrics
+    void *mPackedData;
+    unsigned int mPackedElementCount, mDataStrideBytes;
+    unsigned int mColorOffsetBytes, mTexcoordOffsetBytes;
 
     // Mesh element sizes
-    int mVertexCount, mFaceCount;
+    size_t mVertexCount, mFaceCount;
 
     // Normalization data
     float mVertexMax[3], mVertexMin[3];
@@ -74,6 +84,11 @@ private:
 
     // Flags for presence of various mesh elements
     bool mHasNormals, mHasColors, mHasTexCoords, mHasMultiTex;
+
+    // An offscreen surface and OpenGL context for general use
+    static QOpenGLContext* msGLContext;
+    static QOffscreenSurface* msGLSurface;
+    static QScreen* mGLScreen;
 };
 
 #endif

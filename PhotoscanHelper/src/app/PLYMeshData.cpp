@@ -1,12 +1,10 @@
+#include <cfloat>
+
 #include "PLYMeshData.h"
 
 #include <quazip/quazipfile.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
-#include <ply_impl.h>
-
+// Defining the property names used by our PLY files
 namespace PLY {
     const char* Vertex::name = "vertex";
     const Property Vertex::prop_x = Property("x", SCALAR, Float32);
@@ -15,35 +13,79 @@ namespace PLY {
     const Property VertexColor::prop_r = Property("red", SCALAR, Float32);
     const Property VertexColor::prop_g = Property("green", SCALAR, Float32);
     const Property VertexColor::prop_b = Property("blue", SCALAR, Float32);
+
     const char* Face::name = "face";
     const Property Face::prop_ind = Property("vertex_indices", LIST, Uint32, Uint8);
     const Property FaceTex::prop_tex = Property("texcoord", LIST, Float32, Uint8);
 } // namespace PLY
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 #include <io.h>
-
 #pragma clang diagnostic pop
+
+#include <QApplication>
+#include <QScreen>
+#include <QOpenGLContext>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
+#include <QOffscreenSurface>
 
 const int PLYMeshData::ATTRIB_LOC_VERTEX = 0;
 const int PLYMeshData::ATTRIB_LOC_NORMAL = 1;
 const int PLYMeshData::ATTRIB_LOC_COLORS = 2;
 const int PLYMeshData::ATTRIB_LOC_TEXCOR = 3;
 
+// Static OpenGL offscreen context stuff
+QOffscreenSurface* PLYMeshData::msGLSurface = NULL;
+QOpenGLContext* PLYMeshData::msGLContext = new QOpenGLContext();
+
 PLYMeshData::PLYMeshData() {
-    mPackedVBO = mFaceVBO = -1;
-    mVertexElementCount = mPackedElementCount = 0;
-
-    mVertexData = mFaceUVData = NULL;
-    mFace = mFaceTexNum = NULL;
+    mVertexBuffer = mFaceBuffer = NULL;
     mPackedData = NULL;
-
-    mHasNormals = mHasColors = mHasMultiTex = true;
-    mHasTexCoords = true;
-    mVertexCount = mFaceCount = 0;
-    mVertexScale = 1.0f;
+    mVAO = NULL;
+    initMembers();
 }
 
-PLYMeshData::~PLYMeshData() {}
+PLYMeshData::~PLYMeshData() {
+    destroyBuffers();
+    free(mPackedData);
+    delete mVertexBuffer;
+    delete mFaceBuffer;
+    delete mVAO;
+}
+
+void PLYMeshData::initMembers() {
+    destroyBuffers();
+    free(mPackedData);
+
+    if (mVertexBuffer == NULL) {
+        mVertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    }
+
+    // TODO: Disabled until I'm sure we need this
+//    if (mFaceBuffer == NULL) {
+//        mFaceBuffer = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+//    }
+
+    if (mVAO == NULL) {
+        mVAO = new QOpenGLVertexArrayObject();
+    }
+
+    mPackedData = NULL;
+
+    mPackedElementCount = mDataStrideBytes = 0;
+    mColorOffsetBytes = mTexcoordOffsetBytes = 0;
+
+    mVertexCount = mFaceCount = 0;
+    mHasNormals = mHasColors = mHasMultiTex = mHasTexCoords = false;
+
+    mVertexMax[0] = mVertexMax[1] = mVertexMax[2] = -FLT_MAX;
+    mVertexMin[0] = mVertexMin[1] = mVertexMin[2] = FLT_MAX;
+    mVertexBBox[0] = mVertexBBox[1] = mVertexBBox[2] = 0.0f;
+    mVertexCenter[0] = mVertexCenter[1] = mVertexCenter[2] = 0.0f;
+    mVertexScale = 1.0f;
+}
 
 bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
 
@@ -68,86 +110,161 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
     return true;
 }
 
-//void PLYMeshData::buildPackedData() {
+void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vector<PLY::FaceTex>& pFaces) {
+    // Initialize all members
+    initMembers();
 
-//    mPackedElementCount = mVertexElementCount + (hasTexCoords?3:0);
-//    mPackedData = BufferUtils.createByteBuffer(mFaceCount * 3 * mPackedElementCount * 4);
+    // Setup mesh metrics
+    mVertexCount = pVerts.size();
+    mFaceCount = pFaces.size();
 
-//    int curTexNum = 0;
-//    for(int i=0; i<mFaceCount*3; i++) {
+    // Is there anything to process?
+    if (mVertexCount || mFaceCount == 0) {
+       return;
+    }
 
-//        // Add all the vertex elements first (coordinates, normals, colors)
-//        mVertexData.position(mFace.get()*mVertexElementCount);
-//        for(int j=0; j<mVertexElementCount; j++) {
-//            mPackedData.putFloat(mVertexData.get());
-//        }
+    // Re-alloc the packed data array
+    mPackedElementCount = 3 + (mHasTexCoords?3:0) + (mHasColors?1:0);
+    mDataStrideBytes = mPackedElementCount * 4;  // Elements are 4 bytes each, always
+    mPackedData = malloc(mFaceCount * 3 * mDataStrideBytes);
 
-//        // Add UV coordinates if present
-//        if(hasTexCoords) {
-//            mPackedData.putFloat(mFaceUVData.get());
-//            mPackedData.putFloat(mFaceUVData.get());
+    // Compute packed data stats in bytes
+    mColorOffsetBytes = (mHasColors?12:0);
+    mTexcoordOffsetBytes = (mHasColors?16:0);
 
-//            // Add texture index (will be 'z' of tex coord)
-//            if(hasMultiTex && i%3 == 0) {
-//                curTexNum = mFaceTexNum.get();
-//            }
-//            mPackedData.putFloat(curTexNum);
-//        }
-//    }
+    // Flatten the data into raw triangle buffer
+    float* lCur = (float*)mPackedData;
+    for(PLY::FaceTex& lF : pFaces) {
+        for(int i=0; i<3; i++) {
+            // Vertex position
+            PLY::VertexColor& lV = pVerts[lF.vertex(i)];
+            lCur[0] = lV.x();
+            lCur[1] = lV.y();
+            lCur[2] = lV.z();
 
-//    mPackedData.flip();
+            // Update max/min
+            if(lCur[0] < mVertexMin[0]) mVertexMin[0] = lCur[0];
+            if(lCur[1] < mVertexMin[1]) mVertexMin[1] = lCur[1];
+            if(lCur[2] < mVertexMin[2]) mVertexMin[2] = lCur[2];
 
-//    mFace.rewind();
-//    mFaceUVData.rewind();
-//    mFaceTexNum.rewind();
-//    mVertexData.rewind();
-//}
+            if(lCur[0] > mVertexMax[0]) mVertexMax[0] = lCur[0];
+            if(lCur[1] > mVertexMax[1]) mVertexMax[1] = lCur[1];
+            if(lCur[2] > mVertexMax[2]) mVertexMax[2] = lCur[2];
 
-//void PLYMeshData::buildVBOs() {
+            // Color values
+            if (mHasColors) {
+                unsigned char* lColor = (unsigned char*)lCur + 3;
+                lColor[0] = lV.r();
+                lColor[1] = lV.g();
+                lColor[2] = lV.b();
+            }
 
-//    // Make sure we have OpenGL capabilities before we proceed
-//    GL.createCapabilities(false);
+            // Texture coordinates
+            if (mHasTexCoords) {
+                lCur[4] = lF.texcoord(i*2);
+                lCur[5] = lF.texcoord(i*2+1);
+                lCur[6] = 0.0f;
+            }
 
-//    mPackedVBO = glGenBuffers();
-//    glBindBuffer(GL_ARRAY_BUFFER, mPackedVBO);
-//    glBufferData(GL_ARRAY_BUFFER, mPackedData, GL_STATIC_DRAW);
-//    GLException.openGLErrorCheckAndOutput(Thread.currentThread().getStackTrace());
+            // Advance to next vertex
+            lCur += mPackedElementCount;
+        }
+    }
 
-//    int stride = mPackedElementCount * 4;
+    // Compute the bounding box, center, and scale
+    for(unsigned char i = 0; i<3; i++) {
+        mVertexBBox[i] = mVertexMax[i] - mVertexMin[i];
+        mVertexCenter[i] = (mVertexMax[i] + mVertexMin[i])/2.0f;
+    }
 
-//    GLException.openGLErrorCheckAndOutput(Thread.currentThread().getStackTrace());
-//    glVertexAttribPointer(ATTRIB_LOC_VERTEX, 3, GL_FLOAT, false, stride, 0);
-//    int offset = 3;
+    mVertexScale = 2.0/std::max(mVertexBBox[0], std::max(mVertexBBox[1], mVertexBBox[2]));
+}
 
-//    if(hasNormals) {
-//        glVertexAttribPointer(ATTRIB_LOC_NORMAL, 3, GL_FLOAT, false, stride, offset*4);
-//        GLException.openGLErrorCheckAndOutput(Thread.currentThread().getStackTrace());
-//        offset += 3;
-//    }
+void PLYMeshData::buildBuffers() {
+    // Make sure we have OpenGL capabilities before we proceed
+    if (msGLSurface == NULL) {
+        msGLSurface = new QOffscreenSurface(QApplication::screens()[0]);
+        msGLSurface->create();
+    }
 
-//    if(hasColors) {
-//        glVertexAttribPointer(ATTRIB_LOC_COLORS, 3, GL_FLOAT, false, stride, offset*4);
-//        GLException.openGLErrorCheckAndOutput(Thread.currentThread().getStackTrace());
-//        offset += 3;
-//    }
+    if (!msGLSurface->isValid()) {
+        msGLSurface->setScreen(QApplication::screens()[0]);
+        msGLSurface->create();
+    }
 
-//    if(hasTexCoords) {
-//        glVertexAttribPointer(ATTRIB_LOC_TEXCOR, 3, GL_FLOAT, false, stride, offset*4);
-//        GLException.openGLErrorCheckAndOutput(Thread.currentThread().getStackTrace());
-//        offset += 3;
-//    }
+    if (!msGLSurface->isValid()) {
+        qWarning("Offscreen surface is not valid");
+    }
 
-//    mFaceVBO = glGenBuffers();
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceVBO);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mFace, GL_STATIC_DRAW);
-//    GLException.openGLErrorCheckAndOutput(Thread.currentThread().getStackTrace());
-//}
+    if (!msGLSurface->supportsOpenGL()) {
+        qWarning("Offscreen surface does not support OpenGL");
+    }
 
-//void releaseVBOs() {
-//    GL.createCapabilities();
-//    if(glIsBuffer(packedVBO)) { glDeleteBuffers(packedVBO); }
-//    if(glIsBuffer(faceVBO)) { glDeleteBuffers(faceVBO); }
-//}
+    if (!msGLContext->create() || !msGLContext->makeCurrent(msGLSurface)) {
+        qWarning("Could not get a current OpenGL Context");
+        return;
+    }
+
+    // This will only work if we have a current opengl context
+    mVertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    if(!mVertexBuffer->create()) {
+        qWarning("Could not create vertex buffer");
+        return;
+    }
+
+    // Copy data to video memory
+    mVertexBuffer->allocate(mPackedData, mDataStrideBytes * 3 * mFaceCount);
+
+    // Build the Vertex Array Object
+    if(!mVAO->create()) {
+        qWarning("Could not create vertex array object");
+        return;
+    }
+
+    // Setup VAO data layout
+    glVertexAttribPointer(ATTRIB_LOC_VERTEX, 3, GL_FLOAT, GL_FALSE,
+                          mDataStrideBytes, (void*)0);
+    size_t lOffset4Byte = 3;
+    if(mHasColors) {
+        glVertexAttribPointer(ATTRIB_LOC_COLORS, 4, GL_UNSIGNED_BYTE, GL_FALSE,
+                              mDataStrideBytes, (void*)(lOffset4Byte*4));
+        lOffset4Byte += 1;
+    }
+
+    if(mHasTexCoords) {
+        glVertexAttribPointer(ATTRIB_LOC_TEXCOR, 3, GL_FLOAT, GL_FALSE,
+                              mDataStrideBytes, (void*)(lOffset4Byte*4));
+        lOffset4Byte += 3;
+    }
+}
+
+void PLYMeshData::releaseBuffers() {
+    if (mVAO != NULL && mVAO->isCreated()) {
+        mVAO->release();
+    }
+
+    if (mVertexBuffer != NULL && mVertexBuffer->isCreated()) {
+        mVertexBuffer->release();
+    }
+
+    if (mFaceBuffer != NULL && mFaceBuffer->isCreated()) {
+        mFaceBuffer->release();
+    }
+}
+
+void PLYMeshData::destroyBuffers() {
+    if (mVAO != NULL && mVAO->isCreated()) {
+        mVAO->destroy();
+    }
+
+    if (mVertexBuffer != NULL && mVertexBuffer->isCreated()) {
+        mVertexBuffer->destroy();
+    }
+
+    if (mFaceBuffer != NULL && mFaceBuffer->isCreated()) {
+        mFaceBuffer->destroy();
+    }
+}
 
 bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile) { // throws IOException {
     // Open file and read header info
@@ -187,7 +304,8 @@ bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile)
         return false;
     }
 
-    qInfo("Read %lu vertices and %lu faces.", vertColl.size(), faceColl.size());
-
+    // Process the data and return success
+    processRawData(vertColl, faceColl);
+    buildBuffers();
     return true;
 }

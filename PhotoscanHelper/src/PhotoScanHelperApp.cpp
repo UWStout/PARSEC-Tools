@@ -7,6 +7,7 @@
 #include <QFutureWatcher>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QLoggingCategory>
 
 #include <string>
 #include <iostream>
@@ -24,7 +25,10 @@ int main(int argc, char *argv[]) {
 
 //    // As far as I can tell, the OS X native menu bar doesn't work in Qt Jambi
 //    // The Java process owns the native menu bar and won't relinquish it to Qt
-//    QApplication.setAttribute(ApplicationAttribute.AA_DontUseNativeMenuBar);
+//    QApplication::setAttribute(ApplicationAttribute.AA_DontUseNativeMenuBar);
+    QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+
+    QLoggingCategory::setFilterRules(QStringLiteral("qt.qpa.gl=true"));
 
     // Determine the path to the collection
     QString collectionPath = "";

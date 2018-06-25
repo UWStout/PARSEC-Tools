@@ -296,6 +296,10 @@ void PSHelperMainWindow::on_RunQueueButton_clicked() {
 void PSHelperMainWindow::viewModel() {
     PLYMeshData* lMeshData = new PLYMeshData();
     lMeshData->readPLYFile(mLastData->getPSProjectFile());
+    qInfo("Mesh: %lu verts, %lu faces", lMeshData->getVertexCount(), lMeshData->getFaceCount());
+    qInfo("Center: (%.2f, %.2f, %.2f)", lMeshData->getCenter()[0], lMeshData->getCenter()[1], lMeshData->getCenter()[2]);
+    qInfo("Scale: %.3f", lMeshData->getUnitScale());
+
 //    if(mModelViewer == NULL) {
 //        mModelViewer = new GLModelViewer(mLastData, NULL);
 //        mModelViewer.show();
@@ -303,6 +307,7 @@ void PSHelperMainWindow::viewModel() {
 //        mModelViewer.loadNewModel(mLastData);
 //        mModelViewer.show();
 //    }
+    delete lMeshData;
 }
 
 void PSHelperMainWindow::editGeneralSettings() {
