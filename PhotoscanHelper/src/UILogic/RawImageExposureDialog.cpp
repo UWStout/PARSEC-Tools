@@ -6,10 +6,13 @@
 #include <QFutureWatcher>
 #include <QAbstractButton>
 #include <QSettings>
+#include <QtConcurrent>
 
 #include "ui_RawImageExposureDialog.h"
+#include "ImageProcessor.h"
 #include <PSSessionData.h>
 #include <ExposureSettings.h>
+#include <libraw/libraw.h>
 
 RawImageExposureDialog::RawImageExposureDialog(QWidget *parent) : QDialog(parent) {
     mDefaultSettings = new ExposureSettings(ExposureSettings::DEFAULT_EXPOSURE);
@@ -23,6 +26,7 @@ RawImageExposureDialog::RawImageExposureDialog(QWidget *parent) : QDialog(parent
 
 RawImageExposureDialog::~RawImageExposureDialog() {
     delete mPreviewFileWatcher;
+    qDebug() << "Destructor called";
 }
 
 void RawImageExposureDialog::setUpGUI() {
@@ -151,15 +155,32 @@ void RawImageExposureDialog::asyncGeneratePreview() {
         QFileInfo lRawFile = mProjectData->getRawFileList()[lIndex];
 
         try {
-//            Method lMeth = ImageProcessorIM4J.class.getMethod("developRawImage",
-//                                        File.class, ExposureSettings.class, boolean.class);
-
-//            QFuture<Object> lPreviewResult = QtConcurrent.run(this, lMeth, lRawFile, lSettings, true);
-//            mPreviewFileWatcher.setFuture(lPreviewResult);
+            QFuture<QFileInfo> lPreviewResult = QtConcurrent::run(&ImageProcessor::developRawImage, lRawFile, lSettings, true);
+            mPreviewFileWatcher->setFuture(lPreviewResult);
         } catch(std::exception e) {
             qWarning("Exception occured: %s", e.what());
         }
     }
+
+//    qInfo() << "Generating preview.";
+//    mGUI->PreviewButton->setEnabled(false);
+//    mGUI->PreviewButton->setText("Wait...");
+//    ExposureSettings lSettings(*getExposureSettings());
+
+//    int lIndex = mGUI->PreviewImageComboBox->currentIndex();
+//    if(lIndex >= 0 && lIndex < mProjectData->getRawFileList().length()) {
+//        QFileInfo lRawFile = mProjectData->getRawFileList()[lIndex];
+
+//        try {
+////            Method lMeth = ImageProcessorIM4J.class.getMethod("developRawImage",
+////                                        File.class, ExposureSettings.class, boolean.class);
+
+////            QFuture<Object> lPreviewResult = QtConcurrent.run(this, lMeth, lRawFile, lSettings, true);
+////            mPreviewFileWatcher.setFuture(lPreviewResult);
+//        } catch(std::exception e) {
+//            qWarning("Exception occured: %s", e.what());
+//        }
+//    }
 }
 
 // TODO: Update to use results of libraw exposure
@@ -171,10 +192,10 @@ void RawImageExposureDialog::previewReady() {
     if(lResult.exists() && lResult.fileName() != "") {
         // Update Multipliers
         mBlockUpdateFromGUI = true;
-//        mGUI.RSpinBox.setValue(ImageProcessorIM4J.mMultipliers[0]);
-//        mGUI.G1SpinBox.setValue(ImageProcessorIM4J.mMultipliers[1]);
-//        mGUI.BSpinBox.setValue(ImageProcessorIM4J.mMultipliers[2]);
-//        mGUI.G2SpinBox.setValue(ImageProcessorIM4J.mMultipliers[3]);
+        mGUI->RSpinBox->setValue(ImageProcessor::mMultipliers[0]);
+        mGUI->G1SpinBox->setValue(ImageProcessor::mMultipliers[1]);
+        mGUI->BSpinBox->setValue(ImageProcessor::mMultipliers[2]);
+        mGUI->G2SpinBox->setValue(ImageProcessor::mMultipliers[3]);
         mBlockUpdateFromGUI = false;
 
         // Put in label
@@ -200,8 +221,10 @@ void RawImageExposureDialog::projectDataChanged() {
 }
 
 void RawImageExposureDialog::updatePreviewImage() {
-    if(mPreviewImage.isNull()) return;
-
+    if(mPreviewImage.isNull()) {
+        qDebug() << "Image is null";
+        return;
+    }
     // get label dimensions
     int w = mGUI->ImagePreviewLabel->width();
     int h = mGUI->ImagePreviewLabel->height();

@@ -10,7 +10,8 @@ TARGET = QPLY
 TEMPLATE = lib
 CONFIG += staticlib
 
-QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+unix:QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+win32:QMAKE_CXXFLAGS_WARN_ON += /wd4100
 
 # Shared Project Configuration
 include(../config.pri)

@@ -1,6 +1,7 @@
 #include <QDialog>
 #include <QFileInfo>
 #include <QPixmap>
+#include <QTemporaryFile>
 
 // Forward declarations
 namespace Ui {
@@ -20,7 +21,7 @@ class RawImageExposureDialog : public QDialog {
 
 public:
     RawImageExposureDialog(QWidget* parent);
-    ~RawImageExposureDialog();
+    virtual ~RawImageExposureDialog();
 
     QFileInfo getDestinationPath() const;
     ExposureSettings* getExposureSettings() const;
@@ -30,7 +31,6 @@ public:
     void applySettings(const ExposureSettings* pSettings);
     void setWBCustomEnabled(bool pEnable);
 
-    void updateFromGUI();
     void asyncGeneratePreview();
     void projectDataChanged();
     void updatePreviewImage();
@@ -44,6 +44,7 @@ private:
     QPixmap mPreviewImage;
     QFutureWatcher<QFileInfo>* mPreviewFileWatcher;
     QSettings* mProjectInfoStore;
+    QTemporaryFile mTempFile;
 
     ExposureSettings* mDefaultSettings;
     bool mEnqueueMode;
@@ -52,6 +53,7 @@ private:
     void setUpGUI();
 
 public slots:
+    void updateFromGUI();
     void on_PreviewButton_clicked();
     void on_WBModeComboBox_currentIndexChanged(int pNewIndex);
     void on_BrightModeComboBox_currentIndexChanged(int pNewIndex);

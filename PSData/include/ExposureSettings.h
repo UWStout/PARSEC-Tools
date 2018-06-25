@@ -3,6 +3,8 @@
 
 #include "psdata_global.h"
 
+class LibRaw;
+
 // Note that instances of class are deliberately made immutable
 class PSDATASHARED_EXPORT ExposureSettings {
 public:
@@ -42,6 +44,8 @@ public:
 	
 //	ArrayList<String> argumentList();
 //	DCRAWOperation toIM4JOptions();
+
+    void toLibRawOptions(LibRaw* pCommandOptions);
 
 private:
     const WhiteBalanceMode mWBMode;
