@@ -1,16 +1,16 @@
-//#include "CancelableModalProgressDialog.h"
+#include "CancelableModalProgressDialog.h"
 
-//template<class T>
-//CancelableModalProgressDialog<T>::CancelableModalProgressDialog(QString pLabelText, QWidget parent) : QWidget(parent) {
-//    // Setup the GUI
-//    mGUI = new Ui_CancelableProgressDialog();
-//    mGUI->setupUi(this);
+template<class T>
+CancelableModalProgressDialog<T>::CancelableModalProgressDialog(QString pLabelText, QWidget parent) : QWidget(parent) {
+    // Setup the GUI
+    mGUI = new Ui_CancelableProgressDialog();
+    mGUI->setupUi(this);
 
-//    mGUI->ProgressBar->reset();
-//    mGUI->DescriptionLabel->setText(pLabelText);
-//    setWindowFlags(new windowFlags(windowType().Window,
-//                                   windowType().WindowTitleHint,
-//                                   windowType().CustomizeWindowHint));
+    mGUI->ProgressBar->reset();
+    mGUI->DescriptionLabel->setText(pLabelText);
+    setWindowFlags(new windowFlags(windowType().Window,
+                                   windowType().WindowTitleHint,
+                                   windowType().CustomizeWindowHint));
 
     // Setup the future watcher
     mWatcher = new QFutureWatcher<T>(this);

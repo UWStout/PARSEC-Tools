@@ -55,10 +55,8 @@ ExposureSettings::ExposureSettings(WhiteBalanceMode pWBMode, const double* pWBCu
       mWBCustom{pWBCustom[0], pWBCustom[1], pWBCustom[2], pWBCustom[3]} {
 }
 
-ExposureSettings* ExposureSettings::makeIndependentlyConsistent() {
-    try {
-        return new ExposureSettings(WB_MODE_CUSTOM, mWBCustom, BRIGHT_MODE_SCALED, mBrightScale);
-    } catch (...) { return NULL; }
+ExposureSettings* ExposureSettings::makeIndependentlyConsistent() const {
+    return new ExposureSettings(WB_MODE_CUSTOM, mWBCustom, BRIGHT_MODE_SCALED, mBrightScale);
 }
 
 //	ArrayList<String> argumentList() {

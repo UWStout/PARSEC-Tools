@@ -1,17 +1,18 @@
-#include <QtConcurrent>
-#include <QFile>
 #include <QFileInfo>
-#include <QVector>
+#include <QList>
 #include <QString>
 #include <QFuture>
 
 #include "QueueableProcess.h"
-#include "ExposureSettings.h"
-#include "PSSessionData.h"
 
-class RawImageExposer : QueueableProcess<QFile*> {
+class ExposureSettings;
+class PSSessionData;
+
+class RawImageExposer : public QueueableProcess<QFileInfo> {
 public:
-    RawImageExposer(PSSessionData pProject, ExposureSettings pSettings, QFileInfo pDestination);
+    RawImageExposer(const PSSessionData &pProject, const ExposureSettings& pSettings, const QFileInfo& pDestination);
+    RawImageExposer(const PSSessionData &pProject, const ExposureSettings& pSettings);
+
     ~RawImageExposer();
 
     QString describeProcess();
@@ -20,7 +21,7 @@ public:
 
 private:
     const QFileInfo mDestination;
-    const ExposureSettings mSettings;
+    const ExposureSettings* mSettings;
     const QString mProjectName;
-    QVector<QFileInfo> mRawFiles;
+    QList<QFileInfo> mRawFiles;
 };
