@@ -36,16 +36,16 @@ void PSModelData::addTextureFile(int pId, QString pFilepath) {
     textureFiles.insert(pId, pFilepath);
 }
 
-QFileInfo PSModelData::getArchiveFile() { return mZipFile; }
+QFileInfo PSModelData::getArchiveFile() const { return mZipFile; }
 
-long PSModelData::getFaceCount() { return mFaceCount; }
-long PSModelData::getVertexCount() { return mVertexCount; }
-QString PSModelData::getMeshFilename() { return mMeshFilepath; }
-bool PSModelData::hasVtxColors() { return mHasVtxColors; }
-bool PSModelData::hasUV() { return mHasUV; }
+long PSModelData::getFaceCount() const { return mFaceCount; }
+long PSModelData::getVertexCount() const { return mVertexCount; }
+QString PSModelData::getMeshFilename() const { return mMeshFilepath; }
+bool PSModelData::hasVtxColors() const { return mHasVtxColors; }
+bool PSModelData::hasUV() const { return mHasUV; }
 
-QMap<int, QString> PSModelData::getTextureFiles() { return textureFiles; }
-QString PSModelData::getTextureFile(int id) { return textureFiles.value(id); }
+QMap<int, QString> PSModelData::getTextureFiles() const { return textureFiles; }
+QString PSModelData::getTextureFile(int id) const { return textureFiles.value(id); }
 
 PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile, PSChunkData* pParent) {
     // If this is a fresh XML doc, push to first non-document tag.

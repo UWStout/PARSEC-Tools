@@ -1,6 +1,4 @@
-//#include "PSHelperMainWindow.h"
-#include "CollectionSelectionDialog.h"
-#include "PSHelperMainWindow.h"
+#include <cmath>
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -13,6 +11,9 @@
 #include <string>
 #include <iostream>
 using namespace std;
+
+#include "CollectionSelectionDialog.h"
+#include "PSHelperMainWindow.h"
 
 #include "PSandPhotoScanner.h"
 
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
 
     QLoggingCategory::setFilterRules(QStringLiteral("qt.qpa.gl=true"));
 
-    int n = floor(QThreadPool::globalInstance()->maxThreadCount() * 0.75);
+    int n = floor(QThreadPool::globalInstance()->maxThreadCount() * 0.75f);
     QThreadPool::globalInstance()->setMaxThreadCount(n);
     qInfo("Setup to use %d threads.", n);
 

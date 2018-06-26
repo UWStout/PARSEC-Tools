@@ -28,16 +28,16 @@ public:
 	
     void addTextureFile(int pId, QString pFilepath);
 
-    QFileInfo getArchiveFile();
+    QFileInfo getArchiveFile() const;
 
-    long getFaceCount();
-    long getVertexCount();
-    QString getMeshFilename();
-    bool hasVtxColors();
-    bool hasUV();
+    long getFaceCount() const;
+    long getVertexCount() const;
+    QString getMeshFilename() const;
+    bool hasVtxColors() const;
+    bool hasUV() const;
 
-    QMap<int, QString> getTextureFiles();
-    QString getTextureFile(int id);
+    QMap<int, QString> getTextureFiles() const;
+    QString getTextureFile(int id) const;
 	
 private:
     long mFaceCount, mVertexCount;
