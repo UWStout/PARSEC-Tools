@@ -1,6 +1,8 @@
 #ifndef PLY_MESH_DATA_H
 #define PLY_MESH_DATA_H
 
+#include "psdata_global.h"
+
 #include <QString>
 #include <QFileInfo>
 
@@ -27,7 +29,7 @@ class QOpenGLVertexArrayObject;
 class QOffscreenSurface;
 class QScreen;
 
-class PLYMeshData {
+class PSDATASHARED_EXPORT PLYMeshData {
 public:
     // OpenGL vertex attribute names
     static const int ATTRIB_LOC_VERTEX;

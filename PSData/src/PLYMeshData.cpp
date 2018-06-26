@@ -35,11 +35,11 @@ namespace PLY {
 #pragma clang diagnostic pop
 #endif
 
-#include <QApplication>
 #include <QScreen>
 #include <QOpenGLContext>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
+#include <QOpenGLFunctions>
 #include <QOffscreenSurface>
 
 const int PLYMeshData::ATTRIB_LOC_VERTEX = 0;
@@ -194,12 +194,12 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
 void PLYMeshData::buildBuffers() {
     // Make sure we have OpenGL capabilities before we proceed
     if (msGLSurface == NULL) {
-        msGLSurface = new QOffscreenSurface(QApplication::screens()[0]);
+        msGLSurface = new QOffscreenSurface();
         msGLSurface->create();
     }
 
     if (!msGLSurface->isValid()) {
-        msGLSurface->setScreen(QApplication::screens()[0]);
+//        msGLSurface->setScreen();
         msGLSurface->create();
     }
 
@@ -213,6 +213,12 @@ void PLYMeshData::buildBuffers() {
 
     if (!msGLContext->create() || !msGLContext->makeCurrent(msGLSurface)) {
         qWarning("Could not get a current OpenGL Context");
+        return;
+    }
+
+    QOpenGLFunctions* GL = msGLContext->functions();
+    if (GL == NULL) {
+        qWarning("Could not get GL Functions object");
         return;
     }
 
@@ -233,17 +239,17 @@ void PLYMeshData::buildBuffers() {
     }
 
     // Setup VAO data layout
-    glVertexAttribPointer(ATTRIB_LOC_VERTEX, 3, GL_FLOAT, GL_FALSE,
+    GL->glVertexAttribPointer(ATTRIB_LOC_VERTEX, 3, GL_FLOAT, GL_FALSE,
                           mDataStrideBytes, (void*)0);
     size_t lOffset4Byte = 3;
     if(mHasColors) {
-        glVertexAttribPointer(ATTRIB_LOC_COLORS, 4, GL_UNSIGNED_BYTE, GL_FALSE,
+        GL->glVertexAttribPointer(ATTRIB_LOC_COLORS, 4, GL_UNSIGNED_BYTE, GL_FALSE,
                               mDataStrideBytes, (void*)(lOffset4Byte*4));
         lOffset4Byte += 1;
     }
 
     if(mHasTexCoords) {
-        glVertexAttribPointer(ATTRIB_LOC_TEXCOR, 3, GL_FLOAT, GL_FALSE,
+        GL->glVertexAttribPointer(ATTRIB_LOC_TEXCOR, 3, GL_FLOAT, GL_FALSE,
                               mDataStrideBytes, (void*)(lOffset4Byte*4));
         lOffset4Byte += 3;
     }

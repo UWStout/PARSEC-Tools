@@ -17,7 +17,7 @@
 #include "PSProjectInfoDialog.h"
 
 #include "RawImageExposer.h"
-#include "PLYMeshData.h"
+#include <PLYMeshData.h>
 //#include "GLModelViewer.h"
 #include "QueueableProcess.h"
 #include "CancelableModalProgressDialog.h"

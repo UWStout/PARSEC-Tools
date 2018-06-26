@@ -15,13 +15,17 @@ public:
 
     ~RawImageExposer();
 
+    static void updateSettings(ExposureSettings* pNewSettings);
+
     QString describeProcess();
     QFuture<QFileInfo> runProcess();
-    QFileInfo map(QFileInfo pRawFile);
 
-private:
-    const QFileInfo mDestination;
-    const ExposureSettings* mSettings;
+    static QFileInfo map(QFileInfo pRawFile);
+
+private:    
     const QString mProjectName;
     QList<QFileInfo> mRawFiles;
+
+    static QFileInfo msDestination;
+    static ExposureSettings* msSettings;
 };

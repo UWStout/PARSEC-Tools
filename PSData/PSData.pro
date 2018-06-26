@@ -6,6 +6,7 @@
 
 TARGET = psdata
 TEMPLATE = lib
+QT += core gui
 
 DEFINES += PSDATA_LIBRARY
 
@@ -16,6 +17,7 @@ include(../config.pri)
 LIBS += -lquazip
 
 SOURCES += \
+    src/PLYMeshData.cpp \
     src/PSCameraData.cpp \
     src/PSChunkData.cpp \
     src/PSImageData.cpp \
@@ -32,6 +34,7 @@ SOURCES += \
 HEADERS += \
     psdata_global.h \
     include/EnumFactory.h \
+    include/PLYMeshData.h \
     include/PSCameraData.h \
     include/PSChunkData.h \
     include/PSImageData.h \
@@ -46,3 +49,17 @@ HEADERS += \
     include/DirLister.h
 
 DISTFILES +=
+
+# Add in the QPLY library
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QPLY/release/ -lQPLY
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QPLY/debug/ -lQPLY
+else:macx: LIBS += -L$$OUT_PWD/../QPLY/ -lQPLY
+
+INCLUDEPATH += $$PWD/../QPLY/include
+DEPENDPATH += $$PWD/../QPLY/include
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QPLY/release/libQPLY.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QPLY/debug/libQPLY.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QPLY/release/QPLY.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QPLY/debug/QPLY.lib
+else:macx: PRE_TARGETDEPS += $$OUT_PWD/../QPLY/libQPLY.a

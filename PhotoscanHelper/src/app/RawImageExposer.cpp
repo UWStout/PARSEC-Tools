@@ -23,16 +23,28 @@
 #include "RawImageExposer.h"
 #include "ImageProcessor.h"
 
+QFileInfo RawImageExposer::msDestination;
+ExposureSettings* RawImageExposer::msSettings = NULL;
+
 RawImageExposer::RawImageExposer(const PSSessionData& pProject, const ExposureSettings &pSettings, const QFileInfo &pDestination) :
-    mProjectName(pProject.getName()), mSettings(pSettings.makeIndependentlyConsistent()), mDestination(pDestination)
+    mProjectName(pProject.getName())
 {
+    updateSettings(pSettings.makeIndependentlyConsistent());
+    msDestination = pDestination;
     mRawFiles = pProject.getRawFileList();
 }
 
 RawImageExposer::RawImageExposer(const PSSessionData& pProject, const ExposureSettings &pSettings) :
-    mProjectName(pProject.getName()), mSettings(pSettings.makeIndependentlyConsistent()), mDestination()
+    mProjectName(pProject.getName())
 {
+    updateSettings(pSettings.makeIndependentlyConsistent());
+    msDestination = QFileInfo();
     mRawFiles = pProject.getRawFileList();
+}
+
+void RawImageExposer::updateSettings(ExposureSettings* pNewSettings) {
+    delete msSettings;
+    msSettings = pNewSettings;
 }
 
 QString RawImageExposer::describeProcess() {
@@ -46,7 +58,7 @@ QFuture<QFileInfo> RawImageExposer::runProcess() {
 QFileInfo RawImageExposer::map(QFileInfo pRawFile) {
     QFileInfo lDevelopedImage;
     try {
-        lDevelopedImage = ImageProcessor::developRawImage(pRawFile, *mSettings, false);
+        lDevelopedImage = ImageProcessor::developRawImage(pRawFile, *msSettings, false);
         QThread::currentThread()->wait(100);
         //ImageProcessor::compressTIFF(lDevelopedImage);
         QThread::currentThread()->wait(100);
@@ -55,10 +67,10 @@ QFileInfo RawImageExposer::map(QFileInfo pRawFile) {
         qWarning() << e.what();
     }
 
-    if(mDestination.filePath() != "" && lDevelopedImage.filePath() != "") {
+    if(msDestination.filePath() != "" && lDevelopedImage.filePath() != "") {
         try {
             QDir lDir(lDevelopedImage.filePath());
-            lDir.rename(lDevelopedImage.filePath(), mDestination.filePath());
+            lDir.rename(lDevelopedImage.filePath(), msDestination.filePath());
             return lDevelopedImage;
         } catch (std::exception e) {
             qWarning() << "Error: could not move developed image.";
