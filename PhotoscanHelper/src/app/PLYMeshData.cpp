@@ -19,10 +19,21 @@ namespace PLY {
     const Property FaceTex::prop_tex = Property("texcoord", LIST, Float32, Uint8);
 } // namespace PLY
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable: 4100)
+#else
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <io.h>
+
+#ifdef _WIN32
+#pragma warning(pop)
+#else
 #pragma clang diagnostic pop
+#endif
 
 #include <QApplication>
 #include <QScreen>

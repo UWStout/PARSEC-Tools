@@ -4,10 +4,21 @@
 #include <QString>
 #include <QFileInfo>
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable: 4100)
+#else
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
+
 #include <ply_impl.h>
+
+#ifdef _WIN32
+#pragma warning(pop)
+#else
 #pragma clang diagnostic pop
+#endif
 
 class QuaZipFile;
 class QOpenGLContext;
