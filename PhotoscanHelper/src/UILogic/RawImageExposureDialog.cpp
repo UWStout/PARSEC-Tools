@@ -200,6 +200,7 @@ void RawImageExposureDialog::previewReady() {
 
         // Put in label
         mPreviewImage = QPixmap::fromImage(QImage(lResult.filePath()));
+        QFile::remove(lResult.filePath());
         updatePreviewImage();
     } else {
         qWarning() << "\tPreview output is null or does not exist";

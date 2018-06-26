@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QLoggingCategory>
+#include <QThreadPool>
 
 #include <string>
 #include <iostream>
@@ -29,6 +30,10 @@ int main(int argc, char *argv[]) {
     QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 
     QLoggingCategory::setFilterRules(QStringLiteral("qt.qpa.gl=true"));
+
+    int n = floor(QThreadPool::globalInstance()->maxThreadCount() * 0.75);
+    QThreadPool::globalInstance()->setMaxThreadCount(n);
+    qInfo("Setup to use %d threads.", n);
 
     // Determine the path to the collection
     QString collectionPath = "";

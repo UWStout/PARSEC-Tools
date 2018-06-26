@@ -59,9 +59,9 @@ QFileInfo RawImageExposer::map(QFileInfo pRawFile) {
     QFileInfo lDevelopedImage;
     try {
         lDevelopedImage = ImageProcessor::developRawImage(pRawFile, *msSettings, false);
-        QThread::currentThread()->wait(100);
+//        QThread::msleep(100);
         //ImageProcessor::compressTIFF(lDevelopedImage);
-        QThread::currentThread()->wait(100);
+//        QThread::msleep(100);
         //ImageProcessor::copyMetadataTags(lDevelopedImage, pRawFile);
     } catch (std::exception e) {
         qWarning() << e.what();

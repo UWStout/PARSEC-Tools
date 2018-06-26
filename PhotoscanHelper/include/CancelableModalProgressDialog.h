@@ -24,10 +24,10 @@ public:
     InternalModalProgressDialog(QString pLabelText, QWidget* parent);
     virtual ~InternalModalProgressDialog();
 
-private:
+protected:
     Ui_CancelableProgressDialog* mGUI;
 
-private slots:
+protected slots:
     virtual void processFinished();
     virtual void on_CancelButtonClicked();
 
@@ -59,7 +59,6 @@ private:
     void on_CancelButtonClicked();
 
 private:
-    Ui_CancelableProgressDialog* mGUI;
     QFutureWatcher<T>* mWatcher;
 };
 
@@ -75,12 +74,12 @@ CancelableModalProgressDialog<T>::CancelableModalProgressDialog(QString pLabelTe
 
     connect(
         mWatcher, &QFutureWatcher<T>::progressRangeChanged,
-        mGui->ProgressBar, &QProgressBar::setRange
+        mGUI->ProgressBar, &QProgressBar::setRange
     );
 
     connect(
         mWatcher, &QFutureWatcher<T>::progressValueChanged,
-        mGui->ProgressBar, &QProgressBar::setValue
+        mGUI->ProgressBar, &QProgressBar::setValue
     );
 }
 

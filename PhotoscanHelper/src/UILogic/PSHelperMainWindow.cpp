@@ -45,7 +45,7 @@ PSHelperMainWindow::PSHelperMainWindow(QWidget* parent) : QMainWindow(parent) {
     mModelViewer = NULL;
 
     mRawExposer = NULL;
-    mRawExposureProgressDialog = NULL; // new CancelableModalProgressDialog<QFileInfo>("Exposing Raw Images", this); // Help
+    mRawExposureProgressDialog = new CancelableModalProgressDialog<QFileInfo>("Exposing Raw Images", this);
 //    mProcessQueue = new LinkedList<QueueableProcess<? extends Object>>();
 
     readSettings();
