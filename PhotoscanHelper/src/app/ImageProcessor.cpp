@@ -1,12 +1,13 @@
 #include <libraw/libraw.h>
 #include <QDebug>
+#include <QFile>
 
 #include "ImageProcessor.h"
 
 double ImageProcessor::mMultipliers[] = {1.0, 1.0, 1.0, 1.0};
 QTemporaryFile ImageProcessor::mTempFile;
 
-QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, ExposureSettings pSettings, bool pAsPreview) {
+QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSettings& pSettings, bool pAsPreview) {
     // Check the file
     if(!pImageFile.exists() || pImageFile.isDir()) {
         qWarning() << "Error: file given for LibRaw does not exist or is not a file";
@@ -46,7 +47,13 @@ QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, ExposureSettings
     // Get output results
     extractMultipliers(commandOptions);
 
-    return QFileInfo(mTempFile.fileName());
+    if(pAsPreview) {
+        return QFileInfo(mTempFile.fileName());
+    } else {
+        QFile lFile(mTempFile.fileName());
+        lFile.rename(pImageFile.baseName() + ".tiff");
+        return QFileInfo(lFile);
+    }
 }
 
 void ImageProcessor::extractMultipliers(LibRaw* pCommandOptions) {

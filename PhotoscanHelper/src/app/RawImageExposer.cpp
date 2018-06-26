@@ -46,8 +46,7 @@ QFuture<QFileInfo> RawImageExposer::runProcess() {
 QFileInfo RawImageExposer::map(QFileInfo pRawFile) {
     QFileInfo lDevelopedImage;
     try {
-        lDevelopedImage = ImageProcessor::developRawImage(pRawFile, mSettings, false);
-        // HELP: Is this right? Should it be mSleep or uSleep?
+        lDevelopedImage = ImageProcessor::developRawImage(pRawFile, *mSettings, false);
         QThread::currentThread()->wait(100);
         //ImageProcessor::compressTIFF(lDevelopedImage);
         QThread::currentThread()->wait(100);
