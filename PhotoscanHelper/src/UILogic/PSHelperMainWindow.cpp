@@ -326,7 +326,7 @@ void PSHelperMainWindow::runExposeImagesAction() {
 
     if(result == 1) {
         try {
-            mRawExposer = new RawImageExposer(mLastData, lExposureDialog->getExposureSettings(),
+            mRawExposer = new RawImageExposer(*mLastData, *lExposureDialog->getExposureSettings(),
                                               lExposureDialog->getDestinationPath());
         } catch (std::exception e) {
             qWarning() << e.what();

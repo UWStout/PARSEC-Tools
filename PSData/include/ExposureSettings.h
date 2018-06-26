@@ -45,7 +45,7 @@ public:
 //	ArrayList<String> argumentList();
 //	DCRAWOperation toIM4JOptions();
 
-    void toLibRawOptions(LibRaw* pCommandOptions);
+    void toLibRawOptions(LibRaw* pCommandOptions) const;
 
 private:
     const WhiteBalanceMode mWBMode;

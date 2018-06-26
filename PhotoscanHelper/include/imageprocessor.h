@@ -13,7 +13,7 @@ class ImageProcessor {
 public:
     static double mMultipliers[];
 
-    static QFileInfo developRawImage(QFileInfo pImageFile, ExposureSettings pSettings, bool pAsPreview);
+    static QFileInfo developRawImage(QFileInfo pImageFile, const ExposureSettings& pSettings, bool pAsPreview);
     static bool compressTIFF(QFileInfo pImageFile);
     static bool copyMetadataTags(QFileInfo pDestinationFile, QFileInfo pSourceFile);
     static QDateTime getDateFromMetadata(QFileInfo pImageFile);

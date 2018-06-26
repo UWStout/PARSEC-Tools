@@ -120,7 +120,7 @@ ExposureSettings* ExposureSettings::makeIndependentlyConsistent() const {
 //		return options;
 //	}
 
-void ExposureSettings::toLibRawOptions(LibRaw* pCommandOptions) {
+void ExposureSettings::toLibRawOptions(LibRaw* pCommandOptions) const {
     switch(mBrightMode) {
         default:
         case BRIGHT_MODE_AUTO_HISTOGRAM: break;
