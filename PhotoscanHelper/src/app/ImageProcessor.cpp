@@ -34,13 +34,11 @@ QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSe
     commandOptions->dcraw_process();
 
     // Create a temporary file to store the image
-    QTemporaryFile lTempFile("XXXXXX.tiff");
-    lTempFile.setAutoRemove(false);
-    lTempFile.open();
-    qDebug() << "lTempFile location: " << lTempFile.fileName();
+    QFile lFile(pImageFile.baseName() + ".tiff");
+    //qDebug() << "lTempFile location: " << lTempFile.fileName();
 
     // Expose to .tiff
-    int lErr = commandOptions->dcraw_ppm_tiff_writer(lTempFile.fileName().toLocal8Bit().data());
+    int lErr = commandOptions->dcraw_ppm_tiff_writer(lFile.fileName().toLocal8Bit().data());
     if(lErr != LIBRAW_SUCCESS) {
         qDebug() << "Failed to expose to tiff, error code = " << lErr;
     }
@@ -48,13 +46,7 @@ QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSe
     // Get output results
     extractMultipliers(commandOptions);
 
-    if(pAsPreview) {
-        return QFileInfo(lTempFile.fileName());
-    } else {
-        QString lNewName = pImageFile.baseName() + ".tiff";
-        QFile::rename(lTempFile.fileName(), lNewName);
-        return QFileInfo(lNewName);
-    }
+    return QFileInfo(lFile);
 }
 
 void ImageProcessor::extractMultipliers(LibRaw* pCommandOptions) {

@@ -17,10 +17,6 @@ public:
     static bool compressTIFF(QFileInfo pImageFile);
     static bool copyMetadataTags(QFileInfo pDestinationFile, QFileInfo pSourceFile);
     static QDateTime getDateFromMetadata(QFileInfo pImageFile);
-
-private:
-    static QTemporaryFile mTempFile;
-
     static void extractMultipliers(LibRaw* pCommandOptions);
 };
 

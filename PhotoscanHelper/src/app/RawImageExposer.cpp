@@ -16,6 +16,7 @@
 #include <QThread>
 #include <QtConcurrent>
 #include <QDir>
+#include <QDebug>
 
 #include "PSSessionData.h"
 #include "ExposureSettings.h"
@@ -69,8 +70,7 @@ QFileInfo RawImageExposer::map(QFileInfo pRawFile) {
 
     if(msDestination.filePath() != "" && lDevelopedImage.filePath() != "") {
         try {
-            QDir lDir(lDevelopedImage.filePath());
-            lDir.rename(lDevelopedImage.filePath(), msDestination.filePath());
+            qDebug() << QFile::rename(lDevelopedImage.filePath(), msDestination.filePath() + QDir::separator() + lDevelopedImage.fileName());
             return lDevelopedImage;
         } catch (std::exception e) {
             qWarning() << "Error: could not move developed image.";
