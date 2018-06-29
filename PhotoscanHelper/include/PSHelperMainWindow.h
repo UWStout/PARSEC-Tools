@@ -75,6 +75,7 @@ private slots:
     void editGeneralSettings();
 
     void runExposeImagesAction();
+    void runQuickPreviewAction();
     void runPhotoScanPhase1Action() {}
     void runPhotoScanPhase2Action() {}
 
