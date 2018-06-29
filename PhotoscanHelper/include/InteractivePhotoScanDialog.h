@@ -27,7 +27,6 @@ private:
 
 protected slots:
     void inputFromPS();
-    void errorFromPS();
     void onSendOutput(const QByteArray &data);
 
     void onStarted();

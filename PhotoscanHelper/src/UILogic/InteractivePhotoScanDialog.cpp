@@ -3,11 +3,14 @@
 
 #include <QDebug>
 #include <QTextStream>
+#include <QPushButton>
 
 InteractivePhotoScanDialog::InteractivePhotoScanDialog(QWidget *parent) : QDialog(parent) {
     mGUI = new Ui::InteractivePhotoScanDialog();
     mGUI->setupUi(this);
     mGUI->photoScanPythonConsole->setLocalEchoEnabled(true);
+    mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
     startPhotoScan();
 }
 
@@ -32,7 +35,6 @@ void InteractivePhotoScanDialog::startPhotoScan() {
     // Setup execution environment
     lEnv.remove("QTDIR");
     lEnv.insert("QT_PLUGIN_PATH", "C:/Program Files/Agisoft/PhotoScan Pro/plugins");
-//    mPSProc.setWorkingDirectory("C:/Program Files/Agisoft/PhotoScan Pro/");
 #elif defined(Q_OS_MAC)
     // Command to run
     lCommand = "/Applications/PhotoScan Pro/PhotoScanPro.app/Contents/MacOS/PhotoScanPro";
@@ -47,14 +49,7 @@ void InteractivePhotoScanDialog::startPhotoScan() {
 
     lEnv.insert("QT_PLUGIN_PATH", "/Applications/PhotoScan Pro/PhotoScanPro.app/Contents/PlugIns");
     mPSProc.setProcessEnvironment(lEnv);
-//    mPSProc.setWorkingDirectory("/Applications/PhotoScan Pro/PhotoScanPro.app/Contents/MacOS/");
 #endif
-
-    for(auto val: lEnv.toStringList()) {
-        qInfo() << "===============================";
-        qInfo() << val;
-    }
-    qInfo() << "===============================";
 
     // Create and start the other process
     mPSProc.setProcessEnvironment(lEnv);
@@ -62,38 +57,36 @@ void InteractivePhotoScanDialog::startPhotoScan() {
     connect(&mPSProc, &QProcess::started, this, &InteractivePhotoScanDialog::onStarted);
     connect(&mPSProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &InteractivePhotoScanDialog::onFinished);
+
     connect(&mPSProc, &QProcess::errorOccurred, this, &InteractivePhotoScanDialog::onErrorOccurred);
 
     connect(&mPSProc, &QProcess::readyReadStandardOutput, this, &InteractivePhotoScanDialog::inputFromPS);
-    connect(&mPSProc, &QProcess::readyReadStandardError, this, &InteractivePhotoScanDialog::errorFromPS);
+    connect(&mPSProc, &QProcess::readyReadStandardError, this, &InteractivePhotoScanDialog::inputFromPS);
     connect(mGUI->photoScanPythonConsole, &QtConsole::getData, this, &InteractivePhotoScanDialog::onSendOutput);
 }
 
 void InteractivePhotoScanDialog::inputFromPS() {
-//    qInfo() << "Standard output received from PhotoScan" << endl;
-    mGUI->photoScanPythonConsole->putData(
-        mPSProc.readAllStandardOutput());
-}
-
-void InteractivePhotoScanDialog::errorFromPS() {
-//    qInfo() << "Standard error received from PhotoScan" << endl;
-    mGUI->photoScanPythonConsole->putData(
-        mPSProc.readAllStandardError());
+    mGUI->photoScanPythonConsole->putData(mPSProc.readAllStandardOutput());
+    mGUI->photoScanPythonConsole->putSecondaryData(mPSProc.readAllStandardError());
 }
 
 void InteractivePhotoScanDialog::onSendOutput(const QByteArray &data) {
     mPSProc.write(data);
+    mPSProc.write("\n");
 }
 
 void InteractivePhotoScanDialog::onStarted() {
-    qInfo() << "Interactive PhotoScan Started" << endl;
+    qInfo() << "Interactive PhotoScan Started";
     mGUI->photoScanPythonConsole->putData("");
 }
 
 void InteractivePhotoScanDialog::onFinished(int pExitCode, QProcess::ExitStatus pExitStatus) {
-    qInfo() << "PhotoScan Finished: exit code '" << pExitCode << "', exit status '" << pExitStatus << "'" << endl;
+    qInfo() << "PhotoScan Finished: exit code '" << pExitCode << "', exit status '" << pExitStatus << "'";
+    mGUI->photoScanPythonConsole->putData("\n[Process Ended]");
+    mGUI->photoScanPythonConsole->setEnabled(false);
+    mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
 void InteractivePhotoScanDialog::onErrorOccurred(QProcess::ProcessError pError) {
-    qInfo() << "PhotoScan Error: error code '" << pError << "'" << endl;
+    qInfo() << "PhotoScan Error: error code '" << pError << "'";
 }
