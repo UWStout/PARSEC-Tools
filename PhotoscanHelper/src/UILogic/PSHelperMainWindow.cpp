@@ -12,6 +12,7 @@
 //#include "ProgramPreferencesDialog.h"
 #include "RawImageExposureDialog.h"
 #include "GeneralSettingsDialog.h"
+#include "InteractivePhotoScanDialog.h"
 
 #include "ui_AboutDialog.h"
 
@@ -370,15 +371,17 @@ void PSHelperMainWindow::runExposeImagesAction() {
 void PSHelperMainWindow::runQuickPreviewAction()
 {
     QMessageBox::StandardButton result = QMessageBox::question(this, "Quick Preview",
-                                                               "Are you sure you want to get a quick preview?\n\nNote: This will run Agisoft PhotoScan.",
-                                                               QMessageBox::Yes | QMessageBox::No);
+       "Are you sure you want to get a quick preview?\n\nNote: This will run Agisoft PhotoScan.",
+       QMessageBox::Yes | QMessageBox::No);
 
     if(result == QMessageBox::Yes) {
-        QProcess lProcess;
-        QStringList lList;
-        lList << "python C:\\Users\\kingd0559\\Documents\\Python\\PhotoScanTest.py";
-        lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
-        lProcess.waitForFinished();
+//        QProcess lProcess;
+//        QStringList lList;
+//        lList << "python C:\\Users\\kingd0559\\Documents\\Python\\PhotoScanTest.py";
+//        lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
+//        lProcess.waitForFinished();
+        InteractivePhotoScanDialog lDialog(this);
+        lDialog.exec();
     }
 }
 

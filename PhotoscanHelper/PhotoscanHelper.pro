@@ -28,6 +28,8 @@ ICON = resources/icons/PhotoScanHelper.icns
 SOURCES += \
         src/PhotoScanHelperApp.cpp \
         src/app/PSandPhotoScanner.cpp \
+        src/UILogic/InteractivePhotoScanDialog.cpp \
+        src/UILogic/QtConsole.cpp \
         src/UILogic/CollectionSelectionDialog.cpp \
         src/UILogic/PSHelperMainWindow.cpp \
         src/UILogic/PSProjectInfoDialog.cpp \
@@ -55,6 +57,8 @@ HEADERS += \
         include/RawImageExposureDialog.h \
         include/ImageProcessor.h \
         include/RawImageExposer.h \
+        include/InteractivePhotoScanDialog.h \
+        include/QtConsole.h \
 
 FORMS += \
         forms/AboutDialog.ui \
@@ -67,7 +71,8 @@ FORMS += \
         forms/PSHelperMain.ui \
         forms/PSProjectInfo.ui \
         forms/RawImageExposureDialog.ui \
-        forms/StageProgressDialog.ui
+        forms/StageProgressDialog.ui \
+        forms/InteractivePhotoScanDialog.ui \
 
 RESOURCES += \
     PSHelper.qrc
