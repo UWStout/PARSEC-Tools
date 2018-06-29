@@ -12,6 +12,7 @@
 //#include "ProgramPreferencesDialog.h"
 #include "RawImageExposureDialog.h"
 #include "GeneralSettingsDialog.h"
+#include "InteractivePhotoScanDialog.h"
 
 #include "ui_AboutDialog.h"
 
@@ -370,21 +371,24 @@ void PSHelperMainWindow::runExposeImagesAction() {
 void PSHelperMainWindow::runQuickPreviewAction()
 {
     QMessageBox::StandardButton result = QMessageBox::question(this, "Quick Preview",
-                                                               "Are you sure you want to get a quick preview?\n\nNote: This will run Agisoft PhotoScan.",
-                                                               QMessageBox::Yes | QMessageBox::No);
+       "Are you sure you want to get a quick preview?\n\nNote: This will run Agisoft PhotoScan.",
+       QMessageBox::Yes | QMessageBox::No);
 
     if(result == QMessageBox::Yes) {
-        QProcess lProcess;
-        QStringList lList;
-        lList << "C:\\Users\\kingd0559\\Documents\\Python\\NonGUIPhotoScan.py";
-        lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
-        lProcess.waitForFinished(-1);
+        // QProcess lProcess;
+        // QStringList lList;
+        // lList << "C:\\Users\\kingd0559\\Documents\\Python\\NonGUIPhotoScan.py";
+        // lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
+        // lProcess.waitForFinished(-1);
 
-        QString p_stdout = lProcess.readAll();
-        QString p_stderr = lProcess.readAllStandardError();
-        if(!p_stderr.isEmpty())
-           qDebug()<<"Python error:"<<p_stderr;
-        qDebug()<<"Python result="<<p_stdout;
+        // QString p_stdout = lProcess.readAll();
+        // QString p_stderr = lProcess.readAllStandardError();
+        // if(!p_stderr.isEmpty())
+        //    qDebug()<<"Python error:"<<p_stderr;
+        // qDebug()<<"Python result="<<p_stdout;
+
+        InteractivePhotoScanDialog lDialog(this);
+        lDialog.exec();
     }
 }
 
