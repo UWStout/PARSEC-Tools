@@ -7,6 +7,7 @@
 InteractivePhotoScanDialog::InteractivePhotoScanDialog(QWidget *parent) : QDialog(parent) {
     mGUI = new Ui::InteractivePhotoScanDialog();
     mGUI->setupUi(this);
+    mGUI->photoScanPythonConsole->setLocalEchoEnabled(true);
     startPhotoScan();
 }
 
@@ -30,7 +31,7 @@ void InteractivePhotoScanDialog::startPhotoScan() {
 
     // Setup execution environment
     lEnv.remove("QTDIR");
-    lEnv.insert("QT_PLUGIN_PATH", "C:/Program Files/Agisoft/PhotoScan Pro/PlugIns");
+    lEnv.insert("QT_PLUGIN_PATH", "C:/Program Files/Agisoft/PhotoScan Pro/plugins");
 //    mPSProc.setWorkingDirectory("C:/Program Files/Agisoft/PhotoScan Pro/");
 #elif defined(Q_OS_MAC)
     // Command to run
@@ -65,18 +66,23 @@ void InteractivePhotoScanDialog::startPhotoScan() {
 
     connect(&mPSProc, &QProcess::readyReadStandardOutput, this, &InteractivePhotoScanDialog::inputFromPS);
     connect(&mPSProc, &QProcess::readyReadStandardError, this, &InteractivePhotoScanDialog::errorFromPS);
+    connect(mGUI->photoScanPythonConsole, &QtConsole::getData, this, &InteractivePhotoScanDialog::onSendOutput);
 }
 
 void InteractivePhotoScanDialog::inputFromPS() {
-    qInfo() << "Standard output received from PhotoScan" << endl;
+//    qInfo() << "Standard output received from PhotoScan" << endl;
     mGUI->photoScanPythonConsole->putData(
         mPSProc.readAllStandardOutput());
 }
 
 void InteractivePhotoScanDialog::errorFromPS() {
-    qInfo() << "Standard error received from PhotoScan" << endl;
+//    qInfo() << "Standard error received from PhotoScan" << endl;
     mGUI->photoScanPythonConsole->putData(
         mPSProc.readAllStandardError());
+}
+
+void InteractivePhotoScanDialog::onSendOutput(const QByteArray &data) {
+    mPSProc.write(data);
 }
 
 void InteractivePhotoScanDialog::onStarted() {

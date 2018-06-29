@@ -28,6 +28,7 @@ private:
 protected slots:
     void inputFromPS();
     void errorFromPS();
+    void onSendOutput(const QByteArray &data);
 
     void onStarted();
     void onFinished(int pExitCode, QProcess::ExitStatus pExitStatus);
