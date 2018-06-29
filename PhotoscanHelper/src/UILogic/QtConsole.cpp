@@ -8,6 +8,10 @@ QtConsole::QtConsole(QWidget *parent) : QPlainTextEdit(parent) {
     p.setColor(QPalette::Base, Qt::black);
     p.setColor(QPalette::Text, Qt::white);
     setPalette(p);
+
+    QFont f("unknown");
+    f.setStyleHint(QFont::Monospace);
+    setFont(f);
 }
 
 void QtConsole::putData(const QByteArray &data) {

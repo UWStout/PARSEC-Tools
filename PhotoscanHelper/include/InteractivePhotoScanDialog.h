@@ -2,6 +2,7 @@
 #define INTERACTIVEPHOTOSCANDIALOG_H
 
 #include <QDialog>
+#include <QProcess>
 
 class QProcess;
 class QTextStream;
@@ -19,7 +20,7 @@ public:
 
 private:
     Ui::InteractivePhotoScanDialog *mGUI;
-    QProcess* mPSProc;
+    QProcess mPSProc;
     QTextStream* mPSIO;
 
     void startPhotoScan();
@@ -27,6 +28,10 @@ private:
 protected slots:
     void inputFromPS();
     void errorFromPS();
+
+    void onStarted();
+    void onFinished(int pExitCode, QProcess::ExitStatus pExitStatus);
+    void onErrorOccurred(QProcess::ProcessError pError);
 };
 
 #endif // INTERACTIVEPHOTOSCANDIALOG_H
