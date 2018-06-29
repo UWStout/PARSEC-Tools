@@ -376,9 +376,15 @@ void PSHelperMainWindow::runQuickPreviewAction()
     if(result == QMessageBox::Yes) {
         QProcess lProcess;
         QStringList lList;
-        lList << "python C:\\Users\\kingd0559\\Documents\\Python\\PhotoScanTest.py";
+        lList << "C:\\Users\\kingd0559\\Documents\\Python\\NonGUIPhotoScan.py";
         lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
-        lProcess.waitForFinished();
+        lProcess.waitForFinished(-1);
+
+        QString p_stdout = lProcess.readAll();
+        QString p_stderr = lProcess.readAllStandardError();
+        if(!p_stderr.isEmpty())
+           qDebug()<<"Python error:"<<p_stderr;
+        qDebug()<<"Python result="<<p_stdout;
     }
 }
 
