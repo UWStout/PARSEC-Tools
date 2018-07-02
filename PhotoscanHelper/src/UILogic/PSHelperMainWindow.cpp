@@ -387,7 +387,7 @@ void PSHelperMainWindow::runQuickPreviewAction()
         //    qDebug()<<"Python error:"<<p_stderr;
         // qDebug()<<"Python result="<<p_stdout;
 
-        InteractivePhotoScanDialog lDialog(this);
+        InteractivePhotoScanDialog lDialog(mLastData->getPSProjectFile(), this);
         lDialog.exec();
     }
 }

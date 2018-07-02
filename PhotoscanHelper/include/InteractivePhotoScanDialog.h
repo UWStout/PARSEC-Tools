@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QProcess>
+#include <QFileInfo>
 
 class QProcess;
 class QTextStream;
@@ -16,18 +17,20 @@ class InteractivePhotoScanDialog : public QDialog {
 
 public:
     explicit InteractivePhotoScanDialog(QWidget *parent = nullptr);
+    InteractivePhotoScanDialog(const QFileInfo& pProjectFile, QWidget *parent = nullptr);
     ~InteractivePhotoScanDialog();
 
 private:
     Ui::InteractivePhotoScanDialog *mGUI;
     QProcess mPSProc;
-    QTextStream* mPSIO;
+    QFileInfo mActiveProjctFile;
+    int mIgnoreStdErr;
 
-    void startPhotoScan();
+    void startPhotoScan(QFileInfo pProjectFile = QFileInfo());
 
 protected slots:
     void inputFromPS();
-    void onSendOutput(const QByteArray &data);
+    void runCommand(const QByteArray &data);
 
     void onStarted();
     void onFinished(int pExitCode, QProcess::ExitStatus pExitStatus);

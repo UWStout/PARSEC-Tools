@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QTextStream>
 #include <QPushButton>
+#include <QThread>
 
 InteractivePhotoScanDialog::InteractivePhotoScanDialog(QWidget *parent) : QDialog(parent) {
     mGUI = new Ui::InteractivePhotoScanDialog();
@@ -11,7 +12,18 @@ InteractivePhotoScanDialog::InteractivePhotoScanDialog(QWidget *parent) : QDialo
     mGUI->photoScanPythonConsole->setLocalEchoEnabled(true);
     mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
+    mIgnoreStdErr = 0;
     startPhotoScan();
+}
+
+InteractivePhotoScanDialog::InteractivePhotoScanDialog(const QFileInfo &pProjectFile, QWidget *parent) : QDialog(parent) {
+    mGUI = new Ui::InteractivePhotoScanDialog();
+    mGUI->setupUi(this);
+    mGUI->photoScanPythonConsole->setLocalEchoEnabled(true);
+    mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
+    mIgnoreStdErr = 0;
+    startPhotoScan(QFileInfo(pProjectFile));
 }
 
 InteractivePhotoScanDialog::~InteractivePhotoScanDialog() {
@@ -19,7 +31,10 @@ InteractivePhotoScanDialog::~InteractivePhotoScanDialog() {
     delete mGUI;
 }
 
-void InteractivePhotoScanDialog::startPhotoScan() {
+void InteractivePhotoScanDialog::startPhotoScan(QFileInfo pProjectFile) {
+    // Initialize members
+    mActiveProjctFile = pProjectFile;
+
     // Command and arguments;
     QString lCommand;
     QStringList lArgs;
@@ -62,22 +77,35 @@ void InteractivePhotoScanDialog::startPhotoScan() {
 
     connect(&mPSProc, &QProcess::readyReadStandardOutput, this, &InteractivePhotoScanDialog::inputFromPS);
     connect(&mPSProc, &QProcess::readyReadStandardError, this, &InteractivePhotoScanDialog::inputFromPS);
-    connect(mGUI->photoScanPythonConsole, &QtConsole::getData, this, &InteractivePhotoScanDialog::onSendOutput);
+    connect(mGUI->photoScanPythonConsole, &QtConsole::getData, this, &InteractivePhotoScanDialog::runCommand);
 }
 
 void InteractivePhotoScanDialog::inputFromPS() {
     mGUI->photoScanPythonConsole->putData(mPSProc.readAllStandardOutput());
-    mGUI->photoScanPythonConsole->putSecondaryData(mPSProc.readAllStandardError());
+
+    QByteArray stdErr = mPSProc.readAllStandardError();
+    if (!stdErr.isEmpty()) {
+        if (mIgnoreStdErr <= 0) {
+            mGUI->photoScanPythonConsole->putSecondaryData(stdErr);
+        } else {
+            mIgnoreStdErr--;
+        }
+    }
 }
 
-void InteractivePhotoScanDialog::onSendOutput(const QByteArray &data) {
+void InteractivePhotoScanDialog::runCommand(const QByteArray &data) {
     mPSProc.write(data);
     mPSProc.write("\n");
 }
 
 void InteractivePhotoScanDialog::onStarted() {
     qInfo() << "Interactive PhotoScan Started";
-    mGUI->photoScanPythonConsole->putData("");
+    if (mActiveProjctFile.filePath() != "") {
+        runCommand("doc = PhotoScan.app.document");
+        QString lOpenCMD = QString::asprintf("doc.open('%s')", mActiveProjctFile.filePath().toLocal8Bit().data());
+        runCommand(lOpenCMD.toLocal8Bit());
+        mIgnoreStdErr++;
+    }
 }
 
 void InteractivePhotoScanDialog::onFinished(int pExitCode, QProcess::ExitStatus pExitStatus) {
