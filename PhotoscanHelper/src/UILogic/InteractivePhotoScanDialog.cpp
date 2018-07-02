@@ -66,9 +66,7 @@ void InteractivePhotoScanDialog::startPhotoScan(QFileInfo pProjectFile) {
     mPSProc.setProcessEnvironment(lEnv);
 #endif
 
-    // Create and start the other process
-    mPSProc.setProcessEnvironment(lEnv);
-    mPSProc.start(lCommand, lArgs);
+    // Connect signals and slots
     connect(&mPSProc, &QProcess::started, this, &InteractivePhotoScanDialog::onStarted);
     connect(&mPSProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &InteractivePhotoScanDialog::onFinished);
@@ -78,6 +76,10 @@ void InteractivePhotoScanDialog::startPhotoScan(QFileInfo pProjectFile) {
     connect(&mPSProc, &QProcess::readyReadStandardOutput, this, &InteractivePhotoScanDialog::inputFromPS);
     connect(&mPSProc, &QProcess::readyReadStandardError, this, &InteractivePhotoScanDialog::inputFromPS);
     connect(mGUI->photoScanPythonConsole, &QtConsole::getData, this, &InteractivePhotoScanDialog::runCommand);
+
+    // Create and start the other process
+    mPSProc.setProcessEnvironment(lEnv);
+    mPSProc.start(lCommand, lArgs);
 }
 
 void InteractivePhotoScanDialog::inputFromPS() {
