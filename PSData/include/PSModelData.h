@@ -13,7 +13,7 @@ class PSChunkData;
 
 class PSDATASHARED_EXPORT PSModelData {
 public:
-    PSModelData(QFileInfo pZipFile);
+    PSModelData(QFileInfo pFilename);
     ~PSModelData();
 	
     static PSModelData* makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile,

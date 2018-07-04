@@ -16,7 +16,6 @@ include(../config.pri)
 
 # Link in 3rd party libs
 macx:LIBS += -lraw -lquazip -ljpeg
-
 win32:CONFIG(debug, debug|release): LIBS += -llibrawd -llibjpegd -lquazipd -lopengl32 -lglu32
 else:win32:CONFIG(debug, debug|release): LIBS += -llibraw -llibjpeg -lquazip -lopengl32 -lglu32
 win32:DEFINES += LIBRAW_NODLL

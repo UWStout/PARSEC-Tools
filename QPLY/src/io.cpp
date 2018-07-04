@@ -49,8 +49,13 @@ namespace PLY {
         // Ensure device is open and ready for reading
         if (!dev->isOpen() || !dev->isReadable()) {
             dev->open(QFile::ReadOnly);
-            if (!dev->isOpen() || !dev->isReadable())
+            if (!dev->isOpen() || !dev->isReadable()) {
+                if(srcOwned) {
+                    delete dev;
+                    srcOwned = false;
+                }
                 HANDLE_FAULT("Reader::use_io_device : invalid stream");
+            }
         }
 
         // Save reference for later
@@ -64,6 +69,10 @@ namespace PLY {
     bool Reader::open_file(QString file_name) {
         // Crate a QFile for use as our QIODevice
         QFile* file = new QFile(file_name);
+        if (!file->exists()) {
+            delete file;
+            HANDLE_FAULT("Reader::open_file : file does not exist");
+        }
         srcOwned = true;
         return use_io_device(file);
 	}

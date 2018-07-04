@@ -5,11 +5,15 @@
 #include <QXmlStreamReader>
 #include <QFile>
 
-PSModelData::PSModelData(QFileInfo pZipFile) {
-    setArchiveFile(pZipFile);
+PSModelData::PSModelData(QFileInfo pFilename) {
+    if (pFilename.suffix() == "zip" || pFilename.suffix() == "psz") {
+        setArchiveFile(pFilename);
+        mMeshFilepath = "model0.ply";
+    } else {
+        mMeshFilepath = pFilename.filePath();
+    }
     mFaceCount = mVertexCount = -1;
     mHasVtxColors = mHasUV = false;
-    mMeshFilepath = "";
 }
 
 PSModelData::~PSModelData() { }
@@ -21,7 +25,10 @@ void PSModelData::setHasUV(bool pHasUV) { mHasUV = pHasUV; }
 void PSModelData::setMeshFilename(QString pMeshFilepath) { mMeshFilepath = pMeshFilepath; }
 
 void PSModelData::setArchiveFile(QFileInfo pArchiveFile) {
-    if (pArchiveFile.suffix() == ".zip" || pArchiveFile.suffix() == ".psz") {
+    qInfo("Setting archive to '%s' with suffix '%s'",
+          pArchiveFile.filePath().toLocal8Bit().data(),
+          pArchiveFile.suffix().toLocal8Bit().data());
+    if (pArchiveFile.suffix() == "zip" || pArchiveFile.suffix() == "psz") {
         mZipFile = pArchiveFile;
     } else {
         mZipFile = QFileInfo();

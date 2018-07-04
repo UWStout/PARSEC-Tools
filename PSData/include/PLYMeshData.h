@@ -58,15 +58,16 @@ public:
     // Check for missing data
     bool isMissingData() const { return (!mHasNormals || !mHasColors || !mHasTexCoords); }
 
-    // Get VBO names
-    const QOpenGLBuffer* getFaceBuffer() const { return mFaceBuffer; }
-    const QOpenGLBuffer* getVertexBuffer() const { return mVertexBuffer; }
+    // Get VBO/VAO objects
+    QOpenGLBuffer* getFaceBuffer() { return mFaceBuffer; }
+    QOpenGLBuffer* getVertexBuffer() { return mVertexBuffer; }
+    QOpenGLVertexArrayObject* getVAO() { return mVAO; }
 
     // Read data from a PLY file
     bool readPLYFile(QFileInfo pProjectFile, QString pFilename = "model0.ply");
 
     // Manage vertex buffer construction
-    void buildBuffers();
+    void buildBuffers(QOpenGLContext *pGLContext);
     void destroyBuffers();
     void releaseBuffers();
 
