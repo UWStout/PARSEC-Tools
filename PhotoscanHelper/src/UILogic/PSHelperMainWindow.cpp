@@ -375,17 +375,22 @@ void PSHelperMainWindow::runQuickPreviewAction()
        QMessageBox::Yes | QMessageBox::No);
 
     if(result == QMessageBox::Yes) {
-        // QProcess lProcess;
-        // QStringList lList;
-        // lList << "C:\\Users\\kingd0559\\Documents\\Python\\NonGUIPhotoScan.py";
-        // lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
-        // lProcess.waitForFinished(-1);
+//        QProcessEnvironment lEnv = QProcessEnvironment::systemEnvironment();
+//        lEnv.remove("QTDIR");
+//        lEnv.insert("QT_PLUGIN_PATH", "C:/Program Files/Agisoft/PhotoScan Pro/plugins");
 
-        // QString p_stdout = lProcess.readAll();
-        // QString p_stderr = lProcess.readAllStandardError();
-        // if(!p_stderr.isEmpty())
-        //    qDebug()<<"Python error:"<<p_stderr;
-        // qDebug()<<"Python result="<<p_stdout;
+//        QProcess lProcess;
+//        lProcess.setProcessEnvironment(lEnv);
+//        QStringList lList;
+//        lList << "C:\\Users\\kingd0559\\Documents\\Python\\QuickPreview.py" << "E:\\ArchivesData\\PhotoScan\\_Finished\\000001 SteamEngine" << " " << "False" << "False";
+//        lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
+//        lProcess.waitForFinished(-1);
+
+//        QString p_stdout = lProcess.readAll();
+//        QString p_stderr = lProcess.readAllStandardError();
+//        if(!p_stderr.isEmpty())
+//        qDebug()<<"Python error:"<<p_stderr;
+//        qDebug()<<"Python result="<<p_stdout;
 
         InteractivePhotoScanDialog lDialog(mLastData->getPSProjectFile(), this);
         lDialog.exec();

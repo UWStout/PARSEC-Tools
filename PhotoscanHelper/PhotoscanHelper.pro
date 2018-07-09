@@ -40,6 +40,7 @@ SOURCES += \
         src/UILogic/RawImageExposureDialog.cpp \
         src/app/ImageProcessor.cpp \
         src/app/RawImageExposer.cpp \
+    forms/QuickPreviewDialog.cpp
 
 HEADERS += \
         include/PSandPhotoScanner.h \
@@ -58,6 +59,7 @@ HEADERS += \
         include/RawImageExposer.h \
         include/InteractivePhotoScanDialog.h \
         include/QtConsole.h \
+    forms/QuickPreviewDialog.h
 
 FORMS += \
         forms/AboutDialog.ui \
@@ -72,6 +74,7 @@ FORMS += \
         forms/RawImageExposureDialog.ui \
         forms/StageProgressDialog.ui \
         forms/InteractivePhotoScanDialog.ui \
+    forms/QuickPreviewDialog.ui
 
 RESOURCES += \
     PSHelper.qrc
