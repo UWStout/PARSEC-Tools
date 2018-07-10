@@ -50,32 +50,124 @@ struct Vertex: public Object {
     static const Property prop_z;
 }; // struct Vertex
 
-struct VertexColor: public Vertex {
-    VertexColor();
-    VertexColor(float x, float y, float z);
-    VertexColor(float x, float y, float z,
-                unsigned char r, unsigned char g, unsigned char b);
+// Vertex that also has a normal
+struct VertexN: public Vertex {
+    VertexN();
+    VertexN(float x, float y, float z);
+    VertexN(float x, float y, float z,
+            float nx, float ny, float nz);
 
     Value* get_value(const Element& elem, const Property& prop);
     bool make_element(Element& elem) const;
 
     // Accessors
-    unsigned char r() const;
-    unsigned char g() const;
-    unsigned char b() const;
+    float nx() const;
+    float ny() const;
+    float nz() const;
 
     // Mutators
-    void r(unsigned char color);
-    void g(unsigned char color);
-    void b(unsigned char color);
+    void nx(float value);
+    void ny(float value);
+    void nz(float value);
 
     // Value members
-    UByteValue value_r, value_g, value_b;
+    FloatValue value_nx, value_ny, value_nz;
+
+    // Property descriptor members
+    static const Property prop_nx;
+    static const Property prop_ny;
+    static const Property prop_nz;
+};
+
+// Vertex that also has a normal and a color
+struct VertexNC: public VertexN {
+    VertexNC();
+    VertexNC(float x, float y, float z);
+    VertexNC(float x, float y, float z,
+             float nx, float ny, float nz);
+    VertexNC(float x, float y, float z,
+             float nx, float ny, float nz,
+             float r, float g, float b, float a);
+    VertexNC(float x, float y, float z,
+             float nx, float ny, float nz,
+             unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
+    Value* get_value(const Element& elem, const Property& prop);
+    bool make_element(Element& elem) const;
+
+    // Accessors
+    unsigned char red() const;
+    unsigned char green() const;
+    unsigned char blue() const;
+    unsigned char alpha() const;
+
+    float redF() const;
+    float greenF() const;
+    float blueF() const;
+    float alphaF() const;
+
+    // Mutators
+    void red(unsigned char color);
+    void green(unsigned char color);
+    void blue(unsigned char color);
+    void alpha(unsigned char color);
+
+    void redF(float color);
+    void greenF(float color);
+    void blueF(float color);
+    void alphaF(float color);
+
+    // Value members (always stored as floats)
+    FloatValue value_r, value_g, value_b, value_a;
 
     // Property descriptor members
     static const Property prop_r;
     static const Property prop_g;
     static const Property prop_b;
+    static const Property prop_a;
+};
+
+// Vertex that also has a normal, a color, and texture coordinates
+struct VertexNCT: public VertexNC {
+    VertexNCT();
+    VertexNCT(float x, float y, float z);
+    VertexNCT(float x, float y, float z,
+              float nx, float ny, float nz);
+    VertexNCT(float x, float y, float z,
+              float nx, float ny, float nz,
+              float r, float g, float b, float a);
+    VertexNCT(float x, float y, float z,
+              float nx, float ny, float nz,
+              unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    VertexNCT(float x, float y, float z,
+              float nx, float ny, float nz,
+              float r, float g, float b, float a,
+              float tu, float tv, float tn);
+    VertexNCT(float x, float y, float z,
+              float nx, float ny, float nz,
+              unsigned char r, unsigned char g, unsigned char b, unsigned char a,
+              float tu, float tv, float tn);
+
+    Value* get_value(const Element& elem, const Property& prop);
+    bool make_element(Element& elem) const;
+
+    // Accessors
+    float tu() const;
+    float tv() const;
+    float tn() const;
+
+    // Mutators
+    void tu(float value);
+    void tv(float value);
+    void tn(float value);
+
+    // Value members
+    FloatValue value_tu, value_tv, value_tn;
+
+    // Property descriptor members
+    static const Property prop_tu;
+    static const Property prop_tv;
+    static const Property prop_tn;
 };
 
 // Face with a list of vertex indices
@@ -143,15 +235,22 @@ struct ObjExternal: public Array {
 };
 
 // Typedefs for some template instantiations
-typedef ObjArray<Face> FaceArray;
 typedef ObjArray<Vertex> VertexArray;
+typedef ObjArray<VertexN> VNArray;
+typedef ObjArray<VertexNC> VNCArray;
+typedef ObjArray<VertexNCT> VNCTArray;
+
+typedef ObjArray<Face> FaceArray;
 typedef ObjArray<FaceTex> FTArray;
-typedef ObjArray<VertexColor> VCArray;
+
+typedef ObjExternal<Vertex> VertexExternal;
+typedef ObjExternal<VertexN> VNExternal;
+typedef ObjExternal<VertexNC> VNCExternal;
+typedef ObjExternal<VertexNCT> VNCTExternal;
 
 typedef ObjExternal<Face> FaceExternal;
-typedef ObjExternal<Vertex> VertexExternal;
 typedef ObjExternal<FaceTex> FTExternal;
-typedef ObjExternal<VertexColor> VCExternal;
+
 } // namespace PLY
 
 #endif // __PLY_IMPL_H__
