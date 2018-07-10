@@ -77,7 +77,7 @@ private:
 
     // PLY Parsing helper functions
     bool parsePLYFileStream(QString pFilename = "", QuaZipFile* pInsideFile = NULL);
-    void processRawData(std::vector<PLY::VertexColor>& pVerts, std::vector<PLY::FaceTex>& pFaces);
+    void processRawData();
 
     // Buffers for the vertex and face data
     QOpenGLBuffer *mVertexBuffer, *mFaceBuffer;
@@ -87,6 +87,10 @@ private:
     void *mPackedData;
     unsigned int mPackedElementCount, mDataStrideBytes;
     unsigned int mColorOffsetBytes, mTexcoordOffsetBytes;
+
+    // PLY Data Storage
+    std::vector<PLY::VertexNCT> mPLYVertCollection;
+    std::vector<PLY::FaceTex> mPLYFaceCollection;
 
     // Mesh element sizes
     size_t mVertexCount, mFaceCount;

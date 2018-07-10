@@ -11,9 +11,19 @@ namespace PLY {
     const Property Vertex::prop_x = Property("x", SCALAR, Float32);
     const Property Vertex::prop_y = Property("y", SCALAR, Float32);
     const Property Vertex::prop_z = Property("z", SCALAR, Float32);
-    const Property VertexColor::prop_r = Property("red", SCALAR, Float32);
-    const Property VertexColor::prop_g = Property("green", SCALAR, Float32);
-    const Property VertexColor::prop_b = Property("blue", SCALAR, Float32);
+
+    const Property VertexN::prop_nx = Property("nx", SCALAR, Float32);
+    const Property VertexN::prop_ny = Property("ny", SCALAR, Float32);
+    const Property VertexN::prop_nz = Property("nz", SCALAR, Float32);
+
+    const Property VertexNC::prop_r = Property("red", SCALAR, Float32);
+    const Property VertexNC::prop_g = Property("green", SCALAR, Float32);
+    const Property VertexNC::prop_b = Property("blue", SCALAR, Float32);
+    const Property VertexNC::prop_a = Property("alpha", SCALAR, Float32);
+
+    const Property VertexNCT::prop_tu = Property("tu", SCALAR, Float32);
+    const Property VertexNCT::prop_tv = Property("tv", SCALAR, Float32);
+    const Property VertexNCT::prop_tn = Property("tn", SCALAR, Float32);
 
     const char* Face::name = "face";
     const Property Face::prop_ind = Property("vertex_indices", LIST, Uint32, Uint8);
@@ -121,67 +131,31 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
     return true;
 }
 
-void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vector<PLY::FaceTex>& pFaces) {
+void PLYMeshData::processRawData() {
     // Setup mesh metrics
-    mVertexCount = pVerts.size();
-    mFaceCount = pFaces.size();
+    mVertexCount = mPLYVertCollection.size();
+    mFaceCount = mPLYFaceCollection.size();
 
     // Is there anything to process?
     if (mVertexCount  == 0 || mFaceCount == 0) {
-       return;
+        mPLYVertCollection.clear();
+        mPLYFaceCollection.clear();
+        return;
     }
 
-    // Re-alloc the packed data array (coords, norms, possibly a color)
-    mPackedElementCount = 3 + 3 + (mHasColors?3:0) + (mHasTexCoords?3:0);
-    mDataStrideBytes = mPackedElementCount * 4;  // Elements are 4 bytes each, always
-    size_t lVTXBytes = mVertexCount * mDataStrideBytes;
+    // Allocate space for a direct vertex buffer
+    if (mPackedData != NULL) { free(mPackedData); }
+    mPackedData = malloc(mFaceCount * 3 * sizeof(PLY::VertexNCT));
 
-    // each face is 3 unsigned ints which are 4 bytes each
-    size_t lFaceBytes = mFaceCount * 3 * 4;
-    if (mHasTexCoords) {
-        // Add 6 float values for each face (4 bytes each)
-       lFaceBytes += mFaceCount * 6 * 4;
-    }
+    // Build the min/max bounding box
+    for(PLY::VertexNCT& lVC : mPLYVertCollection) {
+        if(lVC.value_x.val < mVertexMin[0]) mVertexMin[0] = lVC.value_x.val;
+        if(lVC.value_y.val < mVertexMin[1]) mVertexMin[1] = lVC.value_y.val;
+        if(lVC.value_z.val < mVertexMin[2]) mVertexMin[2] = lVC.value_z.val;
 
-    // Also allocate room for the faces after the packed vertex data
-    mPackedData = malloc(lVTXBytes + lFaceBytes);
-
-    // Easy way to lookup vertices later
-    std::vector<float*> lPVertNorm;
-    lPVertNorm.reserve(pVerts.size());
-
-    // Build vertex data buffer
-    float* lCur = (float*)mPackedData;
-    for(PLY::VertexColor& lVC : pVerts) {
-        // Extract the coordinates
-        lCur[0] = lVC.x();
-        lCur[1] = lVC.y();
-        lCur[2] = lVC.z();
-
-        // Update max/min
-        if(lCur[0] < mVertexMin[0]) mVertexMin[0] = lCur[0];
-        if(lCur[1] < mVertexMin[1]) mVertexMin[1] = lCur[1];
-        if(lCur[2] < mVertexMin[2]) mVertexMin[2] = lCur[2];
-
-        if(lCur[0] > mVertexMax[0]) mVertexMax[0] = lCur[0];
-        if(lCur[1] > mVertexMax[1]) mVertexMax[1] = lCur[1];
-        if(lCur[2] > mVertexMax[2]) mVertexMax[2] = lCur[2];
-
-        // Add a fake normal (will compute real one later)
-        lPVertNorm.push_back(lCur + 3);
-        lCur[3] = 0.0f;
-        lCur[4] = 1.0f;
-        lCur[5] = 0.0f;
-
-        // Color values
-        if (mHasColors) {
-            lCur[6] = lVC.r()/255.0f;
-            lCur[7] = lVC.g()/255.0f;
-            lCur[8] = lVC.b()/255.0f;
-        }
-
-        // Advance the cursor into the packed data array
-        lCur += mPackedElementCount;
+        if(lVC.value_x.val > mVertexMax[0]) mVertexMax[0] = lVC.value_x.val;
+        if(lVC.value_y.val > mVertexMax[1]) mVertexMax[1] = lVC.value_y.val;
+        if(lVC.value_z.val > mVertexMax[2]) mVertexMax[2] = lVC.value_z.val;
     }
 
     // Compute the bounding box, center, and scale
@@ -193,22 +167,31 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
     mVertexScale = 2.0/std::max(mVertexBBox[0], std::max(mVertexBBox[1], mVertexBBox[2]));
 
     // Vertex and face computed info
-    std::vector<unsigned int>* lFaceLookup = new std::vector<unsigned int>[pVerts.size()];
+    std::vector<unsigned int>* lFaceLookup = new std::vector<unsigned int>[mPLYVertCollection.size()];
     std::vector<QVector3D> lFaceNorms;
-    lFaceNorms.reserve(pFaces.size());
+    lFaceNorms.reserve(mPLYFaceCollection.size());
 
-    // Add face data after packed vertex data
+    // Create direct list of vertices (three for each fact)
+    PLY::VertexNCT* lCur = (PLY::VertexNCT)mPackedData;
     unsigned int i = 0;
-    unsigned int* lFCur = (unsigned int*)lCur;
-    for(PLY::FaceTex& lF : pFaces) {
+    for(PLY::FaceTex& lF : mPLYFaceCollection) {
+        // Extract the face indices
         unsigned int A = lF.vertex(0);
         unsigned int B = lF.vertex(1);
         unsigned int C = lF.vertex(2);
 
-        lFCur[0] = A;
-        lFCur[1] = B;
-        lFCur[2] = C;
-        lFCur += 3;
+        // Copy the raw vertex information
+        memcpy(lCur + 0, &(mPLYVertCollection[A]), sizeof(PLY::VertexNCT));
+        memcpy(lCur + 1, &(mPLYVertCollection[B]), sizeof(PLY::VertexNCT));
+        memcpy(lCur + 2, &(mPLYVertCollection[C]), sizeof(PLY::VertexNCT));
+
+        // Update the texture coordinates
+        lCur[0].tu(lF.texcoord(0));
+        lCur[0].tv(lF.texcoord(1));
+        lCur[1].tu(lF.texcoord(2));
+        lCur[1].tv(lF.texcoord(3));
+        lCur[2].tu(lF.texcoord(4));
+        lCur[2].tv(lF.texcoord(5));
 
         // Update vertex reverse lookup table
         lFaceLookup[A].push_back(i);
@@ -217,28 +200,14 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
         i++;
 
         // Compute a face normal
-        QVector3D Av(pVerts[A].x(), pVerts[A].y(), pVerts[A].z());
-        QVector3D Bv(pVerts[B].x(), pVerts[B].y(), pVerts[B].z());
-        QVector3D Cv(pVerts[C].x(), pVerts[C].y(), pVerts[C].z());
+        QVector3D Av(mPLYVertCollection[A].x(), mPLYVertCollection[A].y(), mPLYVertCollection[A].z());
+        QVector3D Bv(mPLYVertCollection[B].x(), mPLYVertCollection[B].y(), mPLYVertCollection[B].z());
+        QVector3D Cv(mPLYVertCollection[C].x(), mPLYVertCollection[C].y(), mPLYVertCollection[C].z());
         lFaceNorms.push_back(QVector3D::crossProduct(Bv-Av, Cv-Av));
     }
 
-    if (mHasTexCoords) {
-        // Add face data after packed vertex data
-        float* lTCur = (float*)lFCur;
-        for(PLY::FaceTex& lF : pFaces) {
-            lTCur[0] = lF.texcoord(0);
-            lTCur[1] = lF.texcoord(1);
-            lTCur[2] = lF.texcoord(2);
-            lTCur[3] = lF.texcoord(3);
-            lTCur[4] = lF.texcoord(4);
-            lTCur[5] = lF.texcoord(5);
-            lTCur += 6;
-        }
-    }
-
     // Create smooth, per-vertex normals
-    for(size_t i=0; i<pVerts.size(); i++) {
+    for(size_t i=0; i<mPLYVertCollection.size(); i++) {
         // Sum of adjacent face cross products
         QVector3D lSum(0, 0, 0);
         for(auto lFIndex : lFaceLookup[i]) {
@@ -247,9 +216,9 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
 
         // Normalize and assign to this vertex
         lSum.normalize();
-        (lPVertNorm[i])[0] = lSum.x();
-        (lPVertNorm[i])[1] = lSum.y();
-        (lPVertNorm[i])[2] = lSum.z();
+        mPLYVertCollection[i].value_nx.val = lSum.x();
+        mPLYVertCollection[i].value_ny.val = lSum.y();
+        mPLYVertCollection[i].value_nz.val = lSum.z();
     }
 
     // Clean up dynamic memory
@@ -376,12 +345,12 @@ bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile)
     mHasTexCoords = false; // (face.props.size() > 1);
 
     // Prepare external arrays
-    std::vector<PLY::VertexColor> vertColl;
-    PLY::VCExternal vertices(vertColl);
+    mPLYVertCollection.clear();
+    PLY::VNCTExternal vertices(mPLYVertCollection);
     store.set_collection(header, vertex, vertices);
 
-    std::vector<PLY::FaceTex> faceColl;
-    PLY::FTExternal faces(faceColl);
+    mPLYFaceCollection.clear();
+    PLY::FTExternal faces(mPLYFaceCollection);
     store.set_collection(header, face, faces);
 
     // Read the data in the file into the storage.
@@ -393,6 +362,8 @@ bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile)
     }
 
     // Process the data and return success
-    processRawData(vertColl, faceColl);
+    mPLYVertCollection.shrink_to_fit();
+    mPLYFaceCollection.shrink_to_fit();
+    processRawData();
     return true;
 }

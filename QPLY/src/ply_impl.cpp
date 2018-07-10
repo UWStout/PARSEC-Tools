@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "ply_impl.h"
 
 namespace PLY {

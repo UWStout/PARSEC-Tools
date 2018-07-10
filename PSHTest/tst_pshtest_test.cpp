@@ -23,9 +23,19 @@ namespace PLY {
     const Property Vertex::prop_x = Property("x", SCALAR, Float32);
     const Property Vertex::prop_y = Property("y", SCALAR, Float32);
     const Property Vertex::prop_z = Property("z", SCALAR, Float32);
-    const Property VertexColor::prop_r = Property("red", SCALAR, Float32);
-    const Property VertexColor::prop_g = Property("green", SCALAR, Float32);
-    const Property VertexColor::prop_b = Property("blue", SCALAR, Float32);
+
+    const Property VertexN::prop_nx = Property("nx", SCALAR, Float32);
+    const Property VertexN::prop_ny = Property("ny", SCALAR, Float32);
+    const Property VertexN::prop_nz = Property("nz", SCALAR, Float32);
+
+    const Property VertexNC::prop_r = Property("red", SCALAR, Float32);
+    const Property VertexNC::prop_g = Property("green", SCALAR, Float32);
+    const Property VertexNC::prop_b = Property("blue", SCALAR, Float32);
+    const Property VertexNC::prop_a = Property("alpha", SCALAR, Float32);
+
+    const Property VertexNCT::prop_tu = Property("tu", SCALAR, Float32);
+    const Property VertexNCT::prop_tv = Property("tv", SCALAR, Float32);
+    const Property VertexNCT::prop_tn = Property("tn", SCALAR, Float32);
 
     const char* Face::name = "face";
     const Property Face::prop_ind = Property("vertex_indices", LIST, Uint32, Uint8);
@@ -419,7 +429,7 @@ void PSHTest_Test::plyZipTest_data()
 #endif
 }
 
-bool saveAsOBJ(QString pName, std::vector<PLY::VertexColor>& pVerts, std::vector<PLY::FaceTex>& pFaces) {
+bool saveAsOBJ(QString pName, std::vector<PLY::VertexNCT>& pVerts, std::vector<PLY::FaceTex>& pFaces) {
     QFile lOutput(pName);
     lOutput.open(QFile::WriteOnly);
     if (!lOutput.isOpen() || !lOutput.isWritable()) {
@@ -505,11 +515,11 @@ void PSHTest_Test::plyZipTest()
 
     // Prepare storage
     PLY::Storage store(header);
-    PLY::Element& vertex = *header.find_element(PLY::VertexColor::name);
+    PLY::Element& vertex = *header.find_element(PLY::VertexNCT::name);
     PLY::Element& face = *header.find_element(PLY::FaceTex::name);
 
-    std::vector<PLY::VertexColor> vertColl;
-    PLY::VCExternal vertices(vertColl);
+    std::vector<PLY::VertexNCT> vertColl;
+    PLY::VNCTExternal vertices(vertColl);
     store.set_collection(header, vertex, vertices);
 
     std::vector<PLY::FaceTex> faceColl;
