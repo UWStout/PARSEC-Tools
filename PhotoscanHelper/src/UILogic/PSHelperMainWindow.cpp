@@ -13,6 +13,7 @@
 #include "RawImageExposureDialog.h"
 #include "GeneralSettingsDialog.h"
 #include "InteractivePhotoScanDialog.h"
+#include "ScriptedPhotoScanDialog.h"
 
 #include "ui_AboutDialog.h"
 
@@ -23,6 +24,7 @@
 //#include "GLModelViewer.h"
 #include "QueueableProcess.h"
 #include "CancelableModalProgressDialog.h"
+#include "QuickPreviewDialog.h"
 
 const QString PSHelperMainWindow::WINDOWS_PATH = "C:\\Windows;C:\\Program Files\\ImageMagick;C:\\Program Files\\GraphicsMagick;C:\\Program Files\\exiftool;C:\\Program Files\\dcraw";
 const QString PSHelperMainWindow::MAC_UNIX_PATH = "/usr/bin:/usr/local/bin:/opt/local/bin";
@@ -370,30 +372,11 @@ void PSHelperMainWindow::runExposeImagesAction() {
 
 void PSHelperMainWindow::runQuickPreviewAction()
 {
-    QMessageBox::StandardButton result = QMessageBox::question(this, "Quick Preview",
-       "Are you sure you want to get a quick preview?\n\nNote: This will run Agisoft PhotoScan.",
-       QMessageBox::Yes | QMessageBox::No);
-
-    if(result == QMessageBox::Yes) {
-//        QProcessEnvironment lEnv = QProcessEnvironment::systemEnvironment();
-//        lEnv.remove("QTDIR");
-//        lEnv.insert("QT_PLUGIN_PATH", "C:/Program Files/Agisoft/PhotoScan Pro/plugins");
-
-//        QProcess lProcess;
-//        lProcess.setProcessEnvironment(lEnv);
-//        QStringList lList;
-//        lList << "C:\\Users\\kingd0559\\Documents\\Python\\QuickPreview.py" << "E:\\ArchivesData\\PhotoScan\\_Finished\\000001 SteamEngine" << " " << "False" << "False";
-//        lProcess.start("C:\\Program Files\\Agisoft\\PhotoScan Pro\\python\\python.exe", lList);
-//        lProcess.waitForFinished(-1);
-
-//        QString p_stdout = lProcess.readAll();
-//        QString p_stderr = lProcess.readAllStandardError();
-//        if(!p_stderr.isEmpty())
-//        qDebug()<<"Python error:"<<p_stderr;
-//        qDebug()<<"Python result="<<p_stdout;
-
-        InteractivePhotoScanDialog lDialog(mLastData->getPSProjectFile(), this);
-        lDialog.exec();
+    QuickPreviewDialog lQPDialog(this);
+    int lResult = lQPDialog.exec();
+    if (lResult == QDialog::Accepted) {
+        ScriptedPhotoScanDialog lSPSDialog(mLastData, lQPDialog.getMaskDir(), lQPDialog.getTextureSize(), this);
+        lSPSDialog.exec();
     }
 }
 
