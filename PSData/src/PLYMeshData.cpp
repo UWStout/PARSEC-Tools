@@ -132,17 +132,19 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
     }
 
     // Re-alloc the packed data array (coords, norms, possibly a color)
-    mPackedElementCount = 3 + 3 + (mHasColors?1:0); // + (mHasTexCoords?3:0)
+    mPackedElementCount = 3 + 3 + (mHasColors?3:0) + (mHasTexCoords?3:0);
     mDataStrideBytes = mPackedElementCount * 4;  // Elements are 4 bytes each, always
-
     size_t lVTXBytes = mVertexCount * mDataStrideBytes;
-    size_t lFaceBytes = mFaceCount * 3 * 4; // each face is 3 unsigned ints which are 4 bytes each
+
+    // each face is 3 unsigned ints which are 4 bytes each
+    size_t lFaceBytes = mFaceCount * 3 * 4;
+    if (mHasTexCoords) {
+        // Add 6 float values for each face (4 bytes each)
+       lFaceBytes += mFaceCount * 6 * 4;
+    }
 
     // Also allocate room for the faces after the packed vertex data
     mPackedData = malloc(lVTXBytes + lFaceBytes);
-
-    // Compute packed data stats in bytes
-    mColorOffsetBytes = (mHasColors?24:0);
 
     // Easy way to lookup vertices later
     std::vector<float*> lPVertNorm;
@@ -173,11 +175,9 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
 
         // Color values
         if (mHasColors) {
-            unsigned char* lColor = (unsigned char*)lCur + 6;
-            lColor[0] = lVC.r();
-            lColor[1] = lVC.g();
-            lColor[2] = lVC.b();
-            lColor[3] = 255;
+            lCur[6] = lVC.r()/255.0f;
+            lCur[7] = lVC.g()/255.0f;
+            lCur[8] = lVC.b()/255.0f;
         }
 
         // Advance the cursor into the packed data array
@@ -208,33 +208,42 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
         lFCur[0] = A;
         lFCur[1] = B;
         lFCur[2] = C;
+        lFCur += 3;
 
         // Update vertex reverse lookup table
         lFaceLookup[A].push_back(i);
         lFaceLookup[B].push_back(i);
         lFaceLookup[C].push_back(i);
+        i++;
 
-        // Compute a per-face normal
+        // Compute a face normal
         QVector3D Av(pVerts[A].x(), pVerts[A].y(), pVerts[A].z());
         QVector3D Bv(pVerts[B].x(), pVerts[B].y(), pVerts[B].z());
         QVector3D Cv(pVerts[C].x(), pVerts[C].y(), pVerts[C].z());
         lFaceNorms.push_back(QVector3D::crossProduct(Bv-Av, Cv-Av));
+    }
 
-        lFCur += 3;
-        i++;
+    if (mHasTexCoords) {
+        // Add face data after packed vertex data
+        float* lTCur = (float*)lFCur;
+        for(PLY::FaceTex& lF : pFaces) {
+            lTCur[0] = lF.texcoord(0);
+            lTCur[1] = lF.texcoord(1);
+            lTCur[2] = lF.texcoord(2);
+            lTCur[3] = lF.texcoord(3);
+            lTCur[4] = lF.texcoord(4);
+            lTCur[5] = lF.texcoord(5);
+            lTCur += 6;
+        }
     }
 
     // Create smooth, per-vertex normals
     for(size_t i=0; i<pVerts.size(); i++) {
-//        QString output = QString::asprintf("%9lu: ", i);
         // Sum of adjacent face cross products
         QVector3D lSum(0, 0, 0);
         for(auto lFIndex : lFaceLookup[i]) {
             lSum += lFaceNorms[lFIndex];
-//            output.append(QString::asprintf("%d, ", lFIndex));
         }
-
-//        qInfo("%s", output.toLocal8Bit().data());
 
         // Normalize and assign to this vertex
         lSum.normalize();
@@ -248,30 +257,6 @@ void PLYMeshData::processRawData(std::vector<PLY::VertexColor>& pVerts, std::vec
 }
 
 void PLYMeshData::buildBuffers(QOpenGLContext* pGLContext) {
-    // Make sure we have OpenGL capabilities before we proceed
-//    if (msGLSurface == NULL) {
-//        msGLSurface = new QOffscreenSurface();
-//        msGLSurface->create();
-//    }
-
-//    if (!msGLSurface->isValid()) {
-////        msGLSurface->setScreen();
-//        msGLSurface->create();
-//    }
-
-//    if (!msGLSurface->isValid()) {
-//        qWarning("Offscreen surface is not valid");
-//    }
-
-//    if (!msGLSurface->supportsOpenGL()) {
-//        qWarning("Offscreen surface does not support OpenGL");
-//    }
-
-//    if (!msGLContext->create() || !msGLContext->makeCurrent(msGLSurface)) {
-//        qWarning("Could not get a current OpenGL Context");
-//        return;
-//    }
-
     if (pGLContext == NULL) {
         qWarning("No current OpenGL Context for building VBs");
         return;
@@ -325,7 +310,7 @@ void PLYMeshData::buildBuffers(QOpenGLContext* pGLContext) {
     }
     if(mHasColors) {
         GL->glEnableVertexAttribArray(ATTRIB_LOC_COLORS);
-        GL->glVertexAttribPointer(ATTRIB_LOC_COLORS, 4, GL_UNSIGNED_BYTE, GL_FALSE, mDataStrideBytes, (void*)(lOffset4Byte*4));
+        GL->glVertexAttribPointer(ATTRIB_LOC_COLORS, 3, GL_FLOAT, GL_FALSE, mDataStrideBytes, (void*)(lOffset4Byte*4));
         lOffset4Byte += 1;
     }
 //    if(mHasTexCoords) {
@@ -386,9 +371,9 @@ bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile)
     PLY::Element& face = *header.find_element(PLY::Face::name);
 
     // Make some assumptions about properties
-    mHasColors = false; // (vertex.props.size() > 3);
+    mHasColors = (vertex.props.size() > 3);
     mHasNormals = true;
-    mHasTexCoords = false; //(face.props.size() > 1);
+    mHasTexCoords = false; // (face.props.size() > 1);
 
     // Prepare external arrays
     std::vector<PLY::VertexColor> vertColl;
