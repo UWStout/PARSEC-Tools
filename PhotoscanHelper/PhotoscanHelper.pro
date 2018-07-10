@@ -25,53 +25,59 @@ RC_ICONS = resources/icons/PhotoScanHelper.ico
 ICON = resources/icons/PhotoScanHelper.icns
 
 SOURCES += \
-        src/PhotoScanHelperApp.cpp \
-        src/app/PSandPhotoScanner.cpp \
-        src/UILogic/InteractivePhotoScanDialog.cpp \
-        src/UILogic/QtConsole.cpp \
-        src/UILogic/CollectionSelectionDialog.cpp \
-        src/UILogic/PSHelperMainWindow.cpp \
-        src/UILogic/PSProjectInfoDialog.cpp \
-        src/UILogic/CancelableModalProgressDialog.cpp \
-#        src/UILogic/ProcessQueueProgressDialog.cpp \
-#        src/UILogic/ProgramPreferencesDialog.cpp \
-        src/UILogic/GeneralSettingsDialog.cpp \
-#        src/UILogic/PSProjectInfoDialog.cpp
-        src/UILogic/RawImageExposureDialog.cpp \
-        src/app/ImageProcessor.cpp \
-        src/app/RawImageExposer.cpp \
+    src/PhotoScanHelperApp.cpp \
+    src/app/PSandPhotoScanner.cpp \
+    src/app/ImageProcessor.cpp \
+    src/app/RawImageExposer.cpp \
+    src/UILogic/InteractivePhotoScanDialog.cpp \
+    src/UILogic/QtConsole.cpp \
+    src/UILogic/CollectionSelectionDialog.cpp \
+    src/UILogic/PSHelperMainWindow.cpp \
+    src/UILogic/PSProjectInfoDialog.cpp \
+    src/UILogic/CancelableModalProgressDialog.cpp \
+#    src/UILogic/ProcessQueueProgressDialog.cpp \
+#    src/UILogic/ProgramPreferencesDialog.cpp \
+    src/UILogic/GeneralSettingsDialog.cpp \
+#    src/UILogic/PSProjectInfoDialog.cpp
+    src/UILogic/RawImageExposureDialog.cpp \
+    src/UILogic/QuickPreviewDialog.cpp \
+    src/UILogic/ScriptedPhotoScanDialog.cpp
 
 HEADERS += \
-        include/PSandPhotoScanner.h \
-        include/CollectionSelectionDialog.h \
-        include/PSHelperMainWindow.h \
-        include/PSProjectInfoDialog.h \
-        include/CancelableModalProgressDialog.h \
-#        include/ProcessQueueProgressDialog.h \
-        include/QueueableProcess.h \
-#        include/ProgramPreferencesDialog.h \
-#        include/ImageProcessorIM4J.h \
-        include/GeneralSettingsDialog.h \
-#        include/PSProjectInfoDialog.h \
-        include/RawImageExposureDialog.h \
-        include/ImageProcessor.h \
-        include/RawImageExposer.h \
-        include/InteractivePhotoScanDialog.h \
-        include/QtConsole.h \
+    include/PSandPhotoScanner.h \
+    include/ImageProcessor.h \
+    include/RawImageExposer.h \
+    include/CollectionSelectionDialog.h \
+    include/PSHelperMainWindow.h \
+    include/PSProjectInfoDialog.h \
+    include/CancelableModalProgressDialog.h \
+#    include/ProcessQueueProgressDialog.h \
+    include/QueueableProcess.h \
+#    include/ProgramPreferencesDialog.h \
+#    include/ImageProcessorIM4J.h \
+    include/GeneralSettingsDialog.h \
+#    include/PSProjectInfoDialog.h \
+    include/RawImageExposureDialog.h \
+    include/InteractivePhotoScanDialog.h \
+    include/QtConsole.h \
+    include/QuickPreviewDialog.h \
+    include/ScriptedPhotoScanDialog.h
 
 FORMS += \
-        forms/AboutDialog.ui \
-        forms/CancelableProgressDialog.ui \
-        forms/CollectionSelectionDialog.ui \
-        forms/GeneralSettingsDialog.ui \
-        forms/GLModelViewer.ui \
-        forms/ProgramPreferencesDialog.ui \
-        forms/PSChunkInfo.ui \
-        forms/PSHelperMain.ui \
-        forms/PSProjectInfo.ui \
-        forms/RawImageExposureDialog.ui \
-        forms/StageProgressDialog.ui \
-        forms/InteractivePhotoScanDialog.ui \
+    forms/AboutDialog.ui \
+    forms/CancelableProgressDialog.ui \
+    forms/CollectionSelectionDialog.ui \
+    forms/GeneralSettingsDialog.ui \
+    forms/GLModelViewer.ui \
+    forms/ProgramPreferencesDialog.ui \
+    forms/PSChunkInfo.ui \
+    forms/PSHelperMain.ui \
+    forms/PSProjectInfo.ui \
+    forms/RawImageExposureDialog.ui \
+    forms/StageProgressDialog.ui \
+    forms/InteractivePhotoScanDialog.ui \
+    forms/QuickPreviewDialog.ui \
+    forms/ScriptedPhotoScanDialog.ui
 
 RESOURCES += \
     PSHelper.qrc
