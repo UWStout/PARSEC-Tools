@@ -59,7 +59,6 @@ public:
     bool isMissingData() const { return (!mHasNormals || !mHasColors || !mHasTexCoords); }
 
     // Get VBO/VAO objects
-    QOpenGLBuffer* getFaceBuffer() { return mFaceBuffer; }
     QOpenGLBuffer* getVertexBuffer() { return mVertexBuffer; }
     QOpenGLVertexArrayObject* getVAO() { return mVAO; }
 
@@ -80,13 +79,11 @@ private:
     void processRawData();
 
     // Buffers for the vertex and face data
-    QOpenGLBuffer *mVertexBuffer, *mFaceBuffer;
+    QOpenGLBuffer *mVertexBuffer;
     QOpenGLVertexArrayObject *mVAO;
 
     // Packed data and metrics
     void *mPackedData;
-    unsigned int mPackedElementCount, mDataStrideBytes;
-    unsigned int mColorOffsetBytes, mTexcoordOffsetBytes;
 
     // PLY Data Storage
     std::vector<PLY::VertexNCT> mPLYVertCollection;
