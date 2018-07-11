@@ -15,11 +15,12 @@ ScriptedPhotoScanDialog::ScriptedPhotoScanDialog(QWidget *parent) : QDialog(pare
     mGUI->progressBar_2->setRange(0, 0);
 
     mTextureSize = 0;
+    mTolerance = 0;
     mSession = NULL;
 }
 
 ScriptedPhotoScanDialog::ScriptedPhotoScanDialog(PSSessionData* pSession, QFileInfo pMaskDir,
-                                                 int pTextureSize, QWidget *parent) : QDialog(parent) {
+                                                 int pTextureSize, int pTolerance, QWidget *parent) : QDialog(parent) {
     mGUI = new Ui::ScriptedPhotoScanDialog();
     mGUI->setupUi(this);
     mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -28,6 +29,7 @@ ScriptedPhotoScanDialog::ScriptedPhotoScanDialog(PSSessionData* pSession, QFileI
 
     mMaskDir = pMaskDir;
     mTextureSize = pTextureSize;
+    mTolerance = pTolerance;
     mSession = pSession;
     startPhotoScan();
 }
@@ -68,7 +70,9 @@ void ScriptedPhotoScanDialog::startPhotoScan() {
     lArgs << mMaskDir.filePath();
 
     (mMaskDir.filePath() == "" ? lArgs << "False" : lArgs << "True");
+    lArgs << QString::number(mTolerance);
     (mTextureSize <= 0 ? lArgs << "False" : lArgs << "True");
+    lArgs << QString::number(mTextureSize);
 
     // Connect signals and slots
     connect(&mPSProc, &QProcess::started, this, &ScriptedPhotoScanDialog::onStarted);

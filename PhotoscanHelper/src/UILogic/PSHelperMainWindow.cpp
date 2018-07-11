@@ -375,7 +375,7 @@ void PSHelperMainWindow::runQuickPreviewAction()
     QuickPreviewDialog lQPDialog(this);
     int lResult = lQPDialog.exec();
     if (lResult == QDialog::Accepted) {
-        ScriptedPhotoScanDialog lSPSDialog(mLastData, lQPDialog.getMaskDir(), lQPDialog.getTextureSize(), this);
+        ScriptedPhotoScanDialog lSPSDialog(mLastData, lQPDialog.getMaskDir(), lQPDialog.getTextureSize(), lQPDialog.getTolerance(), this);
         lSPSDialog.exec();
     }
 }

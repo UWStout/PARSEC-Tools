@@ -33,12 +33,16 @@ QFileInfo QuickPreviewDialog::getMaskDir() const {
     return QFileInfo(mGUI->pathLineEdit->text());
 }
 
-int QuickPreviewDialog::getTollerance() const {
+int QuickPreviewDialog::getTolerance() const {
     return mGUI->toleranceSpinBox->value();
 }
 
 int QuickPreviewDialog::getTextureSize() const {
-    return texSizeLookup[mGUI->texSizeComboBox->currentIndex()];
+    if (mGUI->checkBox->isChecked()) {
+        return texSizeLookup[mGUI->texSizeComboBox->currentIndex()];
+    } else {
+        return 0;
+    }
 }
 
 void QuickPreviewDialog::on_browseButton_clicked() {

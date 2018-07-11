@@ -17,7 +17,7 @@ class ScriptedPhotoScanDialog : public QDialog {
 public:
     explicit ScriptedPhotoScanDialog(QWidget *parent = nullptr);
     ScriptedPhotoScanDialog(PSSessionData* pSession, QFileInfo pMaskDir = QFileInfo(),
-                            int pTextureSize = 0, QWidget *parent = nullptr);
+                            int pTextureSize = 0, int pTolerance = 0, QWidget *parent = nullptr);
     ~ScriptedPhotoScanDialog();
 
 private:
@@ -26,6 +26,7 @@ private:
     PSSessionData* mSession;
     QFileInfo mMaskDir;
     int mTextureSize;
+    int mTolerance;
 
     void startPhotoScan();
     void updateStatusLine(QByteArray pData);
