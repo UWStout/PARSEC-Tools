@@ -17,7 +17,7 @@ public:
     ~QuickPreviewDialog();
 
     QFileInfo getMaskDir() const;
-    int getTollerance() const;
+    int getTolerance() const;
     int getTextureSize() const;
 
 private:
