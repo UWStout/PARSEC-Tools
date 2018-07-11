@@ -23,11 +23,11 @@
 #endif
 
 class QuaZipFile;
-class QOpenGLContext;
+
+class QOpenGLTexture;
 class QOpenGLBuffer;
+class QOpenGLContext;
 class QOpenGLVertexArrayObject;
-class QOffscreenSurface;
-class QScreen;
 
 class PSDATASHARED_EXPORT PLYMeshData {
 public:
@@ -40,6 +40,11 @@ public:
     // Constructor/Destructor
     PLYMeshData();
     ~PLYMeshData();
+
+    // Access texture file name and texture object
+    QFileInfo getTextureFile(int pIdx = 0) const { return mTextureFile[pIdx]; }
+    void setTextureFile(QFileInfo pTextureFile, int pIdx = 0) { mTextureFile[pIdx] = pTextureFile; }
+    void bindTextures();
 
     // Get model mesh counts
     size_t getVertexCount() const { return mVertexCount; }
@@ -63,7 +68,10 @@ public:
     QOpenGLVertexArrayObject* getVAO() { return mVAO; }
 
     // Read data from a PLY file
-    bool readPLYFile(QFileInfo pProjectFile, QString pFilename = "model0.ply");
+    bool readPLYFile(QFileInfo pProjectFile, QString pFilename = "model0.ply", QFileInfo pTextureFile = QFileInfo());
+
+    // Manage OpenGL Texture Construction
+    void buildTextures();
 
     // Manage vertex buffer construction
     void buildBuffers(QOpenGLContext *pGLContext);
@@ -82,6 +90,10 @@ private:
     QOpenGLBuffer *mVertexBuffer;
     QOpenGLVertexArrayObject *mVAO;
 
+    // Texture
+    QFileInfo mTextureFile[4];
+    QOpenGLTexture *mGLTexture[4];
+
     // Packed data and metrics
     void *mPackedData;
 
@@ -99,11 +111,6 @@ private:
 
     // Flags for presence of various mesh elements
     bool mHasNormals, mHasColors, mHasTexCoords, mHasMultiTex;
-
-    // An offscreen surface and OpenGL context for general use
-    static QOpenGLContext* msGLContext;
-    static QOffscreenSurface* msGLSurface;
-    static QScreen* mGLScreen;
 };
 
 #endif

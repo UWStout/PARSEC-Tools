@@ -41,7 +41,10 @@ SOURCES += \
 #    src/UILogic/PSProjectInfoDialog.cpp
     src/UILogic/RawImageExposureDialog.cpp \
     src/UILogic/QuickPreviewDialog.cpp \
-    src/UILogic/ScriptedPhotoScanDialog.cpp
+    src/UILogic/ScriptedPhotoScanDialog.cpp \
+    src/UILogic/GLModelWidget.cpp \
+    src/UILogic/QtModelViewerWidget.cpp \
+    src/UILogic/QtTrackball.cpp
 
 HEADERS += \
     include/PSandPhotoScanner.h \
@@ -61,14 +64,17 @@ HEADERS += \
     include/InteractivePhotoScanDialog.h \
     include/QtConsole.h \
     include/QuickPreviewDialog.h \
-    include/ScriptedPhotoScanDialog.h
+    include/ScriptedPhotoScanDialog.h \
+    include/GLModelWidget.h \
+    include/QtModelViewerWidget.h \
+    include/QtTrackball.h
 
 FORMS += \
     forms/AboutDialog.ui \
     forms/CancelableProgressDialog.ui \
     forms/CollectionSelectionDialog.ui \
     forms/GeneralSettingsDialog.ui \
-    forms/GLModelViewer.ui \
+    forms/GLModelWidget.ui \
     forms/ProgramPreferencesDialog.ui \
     forms/PSChunkInfo.ui \
     forms/PSHelperMain.ui \

@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QtModelViewerWidget" name="modelViewer" native="true">
+    <widget class="QtModelViewerWidget" name="modelViewer">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -172,9 +172,8 @@
  <customwidgets>
   <customwidget>
    <class>QtModelViewerWidget</class>
-   <extends>QWidget</extends>
-   <header>edu.uwstout.berriers.PSHelper.UILogic</header>
-   <container>1</container>
+   <extends>QOpenGLWidget</extends>
+   <header>QtModelViewerWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

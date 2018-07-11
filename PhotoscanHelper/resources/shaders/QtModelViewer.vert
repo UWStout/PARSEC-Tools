@@ -1,29 +1,31 @@
+#version 330
+
 // Vertex attributes
-attribute highp vec4 vertexAttrib;
-attribute highp vec3 normalAttrib;
-attribute mediump vec4 colorAttrib;
-attribute highp vec3 texCoordAttrib;
-attribute highp float faceTexIndexAttrib;
+in vec4 vertexAttrib;
+in vec3 normalAttrib;
+in vec4 colorAttrib;
+in vec3 texCoordAttrib;
+in float faceTexIndexAttrib;
 
 // Attributes output to the fragment shader
-varying highp vec3 texCoordAttribFrag;
-varying mediump vec4 colorAttribFrag;
-varying mediump vec3 baseVertexAttribFrag;
-varying mediump vec3 baseNormalAttribFrag;
+out vec3 texCoordAttribFrag;
+out vec4 colorAttribFrag;
+out vec3 baseVertexAttribFrag;
+out vec3 baseNormalAttribFrag;
 
 // Other outputs to the fragment shader
-varying highp vec4 camVertexFrag;
-varying highp vec3 camNormalFrag;
-varying highp vec4 lightPositionFrag;
+out vec4 camVertexFrag;
+out vec3 camNormalFrag;
+out vec4 lightPositionFrag;
 
 // Light position
-uniform highp vec4 lightPosition;
+uniform vec4 lightPosition;
 
 // Transformation matrices
-uniform highp mat4 perspectiveMatrix;
-uniform highp mat4 modelMatrix;
-uniform highp mat4 viewMatrix;
-uniform highp mat3 normalMatrix;
+uniform mat4 perspectiveMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat3 normalMatrix;
 
 void main(void)
 {

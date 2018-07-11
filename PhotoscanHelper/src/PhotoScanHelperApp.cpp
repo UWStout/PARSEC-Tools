@@ -7,6 +7,7 @@
 #include <QProgressDialog>
 #include <QLoggingCategory>
 #include <QThreadPool>
+#include <QSurfaceFormat>
 
 #include <string>
 #include <iostream>
@@ -18,6 +19,18 @@ using namespace std;
 #include "PSandPhotoScanner.h"
 
 int main(int argc, char *argv[]) {
+    // Setup a default rendering format for OpenGL operations
+    QSurfaceFormat format;
+    format.setVersion(3, 2);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(0);
+    format.setSamples(4);
+    QSurfaceFormat::setDefaultFormat(format);
+
+    // Enable any openGL logging from the system
+    QLoggingCategory::setFilterRules(QStringLiteral("qt.qpa.gl=true"));
+
     // Prepare the Qt GUI system
     QApplication app(argc, argv);
 
@@ -29,8 +42,6 @@ int main(int argc, char *argv[]) {
 //    // The Java process owns the native menu bar and won't relinquish it to Qt
 //    QApplication::setAttribute(ApplicationAttribute.AA_DontUseNativeMenuBar);
     QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-
-    QLoggingCategory::setFilterRules(QStringLiteral("qt.qpa.gl=true"));
 
     int n = floor(QThreadPool::globalInstance()->maxThreadCount() * 0.75f);
     QThreadPool::globalInstance()->setMaxThreadCount(n);

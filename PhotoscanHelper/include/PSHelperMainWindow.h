@@ -13,7 +13,7 @@ class PSProjectDataModel;
 class PSSessionData;
 class QSettings;
 class RawImageExposer;
-class GLModelViewer;
+class GLModelWidget;
 
 template <class T>
 class CancelableModalProgressDialog;
@@ -49,7 +49,7 @@ private:
     RawImageExposer* mRawExposer;
     CancelableModalProgressDialog<QFileInfo>* mRawExposureProgressDialog;
 
-    GLModelViewer* mModelViewer;
+    GLModelWidget *mModelViewer;
 
     // Default search paths for im4Java
     static const QString WINDOWS_PATH, MAC_UNIX_PATH;

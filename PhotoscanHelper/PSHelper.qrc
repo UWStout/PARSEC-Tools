@@ -1,7 +1,9 @@
 <RCC>
     <qresource prefix="/PSHelper">
-        <file alias="viewer.frag">resources/shaders/QtModelViewer.frag</file>
-        <file alias="viewer.vert">resources/shaders/QtModelViewer.vert</file>
         <file alias="icon.png">resources/icons/PhotoScanHelper.png</file>
+    </qresource>
+    <qresource prefix="/GLModelViewer">
+        <file alias="QtModelViewer.frag">resources/shaders/QtModelViewer.frag</file>
+        <file alias="QtModelViewer.vert">resources/shaders/QtModelViewer.vert</file>
     </qresource>
 </RCC>

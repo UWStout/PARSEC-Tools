@@ -46,21 +46,16 @@ namespace PLY {
 #pragma clang diagnostic pop
 #endif
 
-#include <QScreen>
 #include <QOpenGLContext>
+#include <QOpenGLTexture>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLFunctions>
-#include <QOffscreenSurface>
 
 const int PLYMeshData::ATTRIB_LOC_VERTEX = 0;
 const int PLYMeshData::ATTRIB_LOC_NORMAL = 1;
 const int PLYMeshData::ATTRIB_LOC_COLORS = 2;
 const int PLYMeshData::ATTRIB_LOC_TEXCOR = 3;
-
-// Static OpenGL offscreen context stuff
-QOffscreenSurface* PLYMeshData::msGLSurface = NULL;
-QOpenGLContext* PLYMeshData::msGLContext = new QOpenGLContext();
 
 struct PackedVertex {
     float x, y, z;
@@ -73,6 +68,7 @@ PLYMeshData::PLYMeshData() {
     mVertexBuffer = NULL;
     mPackedData = NULL;
     mVAO = NULL;
+    mGLTexture[0] = mGLTexture[1] = mGLTexture[2] = mGLTexture[3] = NULL;
     initMembers();
 }
 
@@ -80,6 +76,9 @@ PLYMeshData::~PLYMeshData() {
     destroyBuffers();
     free(mPackedData);
     delete mVertexBuffer;
+    for(int i=0; i<4; i++) {
+        delete mGLTexture[i];
+    }
     delete mVAO;
 }
 
@@ -88,6 +87,11 @@ void PLYMeshData::initMembers() {
     destroyBuffers();
     free(mPackedData);
     mPackedData = NULL;
+
+    for(int i=0; i<4; i++) {
+        delete mGLTexture[i];
+        mGLTexture[i] = NULL;
+    }
 
     mPLYVertCollection.clear();
     mPLYFaceCollection.clear();
@@ -112,8 +116,17 @@ void PLYMeshData::initMembers() {
     mVertexScale = 1.0f;
 }
 
-bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
-    // Process an archive if there is one
+void PLYMeshData::bindTextures() {
+    for(int i=0; i<4; i++) {
+        if (mGLTexture[i]) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            mGLTexture[i]->bind();
+        }
+    }
+}
+
+bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename, QFileInfo pTextureFile) {
+    // Extract the PLY file from the archive if there is one
     QuaZipFile* lInsideFile = NULL;
     if (pProjectFile.filePath() != "") {
         lInsideFile = new QuaZipFile(pProjectFile.filePath(), pFilename);
@@ -126,9 +139,17 @@ bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename) {
         }
     }
 
+    // Attempt to parse the PLY file
     if (!parsePLYFileStream(pFilename, lInsideFile)) {
         qWarning("Could not parse PLY file");
         return false;
+    }
+
+    // Remember texture/archive file for later loading when OpenGL is active
+    if (pTextureFile.filePath() == "") {
+        mTextureFile[0] = pProjectFile;
+    } else {
+        mTextureFile[0] = pTextureFile;
     }
 
     return true;
@@ -235,7 +256,7 @@ void PLYMeshData::processRawData() {
             // Assign proper texture coordinates
             lCur[i].tu = lF.texcoord(i*2 + 0);
             lCur[i].tv = lF.texcoord(i*2 + 1);
-            lCur[i].tn = 1.0f;
+            lCur[i].tn = 0.0f;
         }
 
         // Move forward three vertices (one triangle)
@@ -296,6 +317,46 @@ void PLYMeshData::buildBuffers(QOpenGLContext* pGLContext) {
     mVertexBuffer->release();
 }
 
+void PLYMeshData::buildTextures() {
+    if (mTextureFile[0].filePath() == "") {
+        return;
+    }
+
+    // Create the textures
+    if (mTextureFile[0].suffix() == "psz" || mTextureFile[0].suffix() == "zip") {
+        // Locate and extract textures from the archive if there is one
+        QuaZipFile* lInsideFile = NULL;
+        for(int i=0; i<4; i++) {
+            QString lTexName = QString("model%1.png").arg(i);
+            lInsideFile = new QuaZipFile(mTextureFile[0].filePath(), lTexName);
+            if(!lInsideFile->open(QIODevice::ReadOnly)) {
+                qInfo("No texture '%s' in archive '%s'", lTexName.toLocal8Bit().data(),
+                      mTextureFile[0].filePath().toLocal8Bit().data());
+                delete lInsideFile;
+            } else {
+                qInfo("Loading texture '%s', from archive '%s'",
+                      lTexName.toLocal8Bit().data(), mTextureFile[0].filePath().toLocal8Bit().data());
+                QByteArray lImageData = lInsideFile->readAll();
+                mGLTexture[i] = new QOpenGLTexture(QImage::fromData(lImageData, "png").mirrored());
+                lInsideFile->close();
+                delete lInsideFile;
+                qInfo(" ... done.");
+            }
+        }
+    } else {
+        // Just read the file directly
+        for(int i=0; i<4; i++) {
+            qInfo("Loading texture '%s'", mTextureFile[i].filePath().toLocal8Bit().data());
+            mGLTexture[i] = new QOpenGLTexture(QImage(mTextureFile[i].filePath()).mirrored());
+            qInfo(" ... done.");
+        }
+    }
+
+    if (mGLTexture[0] == NULL || !mGLTexture[0]->isCreated()) {
+        qWarning("Error reading/creating texture for mesh.");
+    }
+}
+
 void PLYMeshData::releaseBuffers() {
     if (mVAO != NULL && mVAO->isCreated()) {
         mVAO->release();
@@ -336,6 +397,18 @@ bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile)
     PLY::Storage store(header);
     PLY::Element& vertex = *header.find_element(PLY::Vertex::name);
     PLY::Element& face = *header.find_element(PLY::Face::name);
+
+    qInfo("PLY File Info:");
+    qInfo("====================================");
+    qInfo("Vertex - ");
+    for(auto curProp: vertex.props) {
+        qInfo("\t %s", curProp.name.c_str());
+    }
+    qInfo("Face - ");
+    for(auto curProp: face.props) {
+        qInfo("\t %s", curProp.name.c_str());
+    }
+    qInfo("====================================");
 
     // Make some assumptions about properties
     mHasColors = (vertex.props.size() > 3);

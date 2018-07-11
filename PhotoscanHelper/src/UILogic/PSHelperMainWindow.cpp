@@ -20,8 +20,7 @@
 #include "PSProjectInfoDialog.h"
 
 #include "RawImageExposer.h"
-#include <PLYMeshData.h>
-//#include "GLModelViewer.h"
+#include "GLModelWidget.h"
 #include "QueueableProcess.h"
 #include "CancelableModalProgressDialog.h"
 #include "QuickPreviewDialog.h"
@@ -299,20 +298,12 @@ void PSHelperMainWindow::on_RunQueueButton_clicked() {
 }
 
 void PSHelperMainWindow::viewModel() {
-    PLYMeshData* lMeshData = new PLYMeshData();
-    lMeshData->readPLYFile(mLastData->getPSProjectFile());
-    qInfo("Mesh: %lu verts, %lu faces", lMeshData->getVertexCount(), lMeshData->getFaceCount());
-    qInfo("Center: (%.2f, %.2f, %.2f)", lMeshData->getCenter()[0], lMeshData->getCenter()[1], lMeshData->getCenter()[2]);
-    qInfo("Scale: %.3f", lMeshData->getUnitScale());
-
-//    if(mModelViewer == NULL) {
-//        mModelViewer = new GLModelViewer(mLastData, NULL);
-//        mModelViewer.show();
-//    } else {
-//        mModelViewer.loadNewModel(mLastData);
-//        mModelViewer.show();
-//    }
-    delete lMeshData;
+    if(mModelViewer == NULL) {
+        // Parent is left NULL so this doesn't live INSIDE the main window
+        mModelViewer = new GLModelWidget((QWidget*)NULL);
+    }
+    mModelViewer->loadNewModel(mLastData->getModelData());
+    mModelViewer->show();
 }
 
 void PSHelperMainWindow::editGeneralSettings() {
