@@ -427,7 +427,8 @@ bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile)
 
     // Read the data in the file into the storage.
     bool ok = reader.read_data(&store);
-    reader.close_file();
+    // TODO: Investigate possible memory leak from line below.
+    //reader.close_file();
     if (!ok) {
         qWarning("Error reading data from PLY file");
         return false;
