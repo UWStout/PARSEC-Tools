@@ -28,6 +28,7 @@ class QOpenGLTexture;
 class QOpenGLBuffer;
 class QOpenGLContext;
 class QOpenGLVertexArrayObject;
+class QOpenGLFunctions;
 
 class PSDATASHARED_EXPORT PLYMeshData {
 public:
@@ -44,7 +45,7 @@ public:
     // Access texture file name and texture object
     QFileInfo getTextureFile(int pIdx = 0) const { return mTextureFile[pIdx]; }
     void setTextureFile(QFileInfo pTextureFile, int pIdx = 0) { mTextureFile[pIdx] = pTextureFile; }
-    void bindTextures();
+    void bindTextures(QOpenGLFunctions* GL);
 
     // Get model mesh counts
     size_t getVertexCount() const { return mVertexCount; }

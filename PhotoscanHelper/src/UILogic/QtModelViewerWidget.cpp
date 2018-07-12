@@ -1,15 +1,15 @@
-#include "QtModelViewerWidget.h"
-
+#include <PLYMeshData.h>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
+#include <QOpenGLFunctions>
 
 #include <QMatrix4x4>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QTimer>
 
-#include <PLYMeshData.h>
+#include "QtModelViewerWidget.h"
 
 #include "QtTrackball.h"
 
@@ -298,7 +298,7 @@ void QtModelViewerWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w-1, h-1);
 
     mPersp.setToIdentity();
-    mPersp.perspective(42.0, w/(float)h, 0.01, 100.0);
+    mPersp.perspective(42.0f, w/(float)h, 0.01f, 100.0f);
 }
 
 void QtModelViewerWidget::paintGL() {
@@ -357,6 +357,7 @@ void QtModelViewerWidget::drawExampleCube() {
 
 void QtModelViewerWidget::drawMesh() {
     QOpenGLVertexArrayObject::Binder vaoBinder(mMeshData->getVAO());
+    QOpenGLFunctions* GL = QOpenGLContext::currentContext()->functions();
 
     // Apply the model and trackball transformations
     const float* center = mMeshData->getCenter();
@@ -380,8 +381,8 @@ void QtModelViewerWidget::drawMesh() {
 
     // Bind the color textures
 //    for(int i=0; i<4; i++) {
-//        glActiveTexture(GL_TEXTURE0+i);
-//        glBindTexture(GL_TEXTURE_2D, mColorTextureID[i]);
+//        GL->glActiveTexture(GL_TEXTURE0+i);
+//        GL->glBindTexture(GL_TEXTURE_2D, mColorTextureID[i]);
 //    }
 
     // Enable the attribute arrays
@@ -391,8 +392,8 @@ void QtModelViewerWidget::drawMesh() {
     if(mMeshData->withTexCoords()) { mTexturedShader->enableAttributeArray(PLYMeshData::ATTRIB_LOC_TEXCOR); }
 
     // Draw the face index elements
-    mMeshData->bindTextures();
-    glDrawArrays(GL_TRIANGLES, 0, mMeshData->getFaceCount()*3);
+    mMeshData->bindTextures(GL);
+    GL->glDrawArrays(GL_TRIANGLES, 0, (GLsizei)mMeshData->getFaceCount()*3);
 
     // Disable the attribute arrays
     mTexturedShader->disableAttributeArray(PLYMeshData::ATTRIB_LOC_VERTEX);

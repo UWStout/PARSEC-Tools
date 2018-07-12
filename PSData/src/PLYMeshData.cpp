@@ -4,6 +4,7 @@
 
 #include <quazip/quazipfile.h>
 #include <QVector3D>
+#include <QOpenGLFunctions>
 
 // Defining the property names used by our PLY files
 namespace PLY {
@@ -116,10 +117,10 @@ void PLYMeshData::initMembers() {
     mVertexScale = 1.0f;
 }
 
-void PLYMeshData::bindTextures() {
+void PLYMeshData::bindTextures(QOpenGLFunctions* GL) {
     for(int i=0; i<4; i++) {
         if (mGLTexture[i]) {
-            glActiveTexture(GL_TEXTURE0 + i);
+            GL->glActiveTexture(GL_TEXTURE0 + i);
             mGLTexture[i]->bind();
         }
     }
@@ -195,9 +196,9 @@ void PLYMeshData::processRawData() {
     unsigned int i = 0;
     for(PLY::FaceTex& lF : mPLYFaceCollection) {
         // Extract the face indices
-        unsigned int A = lF.vertex(0);
-        unsigned int B = lF.vertex(1);
-        unsigned int C = lF.vertex(2);
+        unsigned int A = (unsigned int)lF.vertex(0);
+        unsigned int B = (unsigned int)lF.vertex(1);
+        unsigned int C = (unsigned int)lF.vertex(2);
 
         // Update vertex reverse lookup table
         lFaceLookup[A].push_back(i);
@@ -239,7 +240,7 @@ void PLYMeshData::processRawData() {
     for(PLY::FaceTex& lF : mPLYFaceCollection) {
         for(int i=0; i<3; i++) {
             // Get current vertex index
-            unsigned int idx = lF.vertex(i);
+            unsigned int idx = (unsigned int)lF.vertex(i);
 
             // Copy the raw vertex information
             lCur[i].x = mPLYVertCollection[idx].value_x.val;
@@ -292,7 +293,7 @@ void PLYMeshData::buildBuffers(QOpenGLContext* pGLContext) {
     mVertexBuffer->bind();
 
     // Copy data to video memory
-    mVertexBuffer->allocate(mPackedData, mFaceCount*3*sizeof(PackedVertex));
+    mVertexBuffer->allocate(mPackedData, (int)(mFaceCount*3*sizeof(PackedVertex)));
 
     // Setup VAO data layout
     mVertexBuffer->bind();
