@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QProcess>
 #include <QFileInfo>
+#include <QRegularExpression>
 
 class PSSessionData;
 
@@ -27,6 +28,7 @@ private:
     QFileInfo mMaskDir;
     int mTextureSize;
     int mTolerance;
+    QRegularExpression mRegEx, mRegExOverall;
 
     void startPhotoScan();
     void updateStatusLine(QByteArray pData);
