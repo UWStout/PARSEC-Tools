@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
                 lWatcher, &QFutureWatcher<PSSessionData*>::cancel);
 
         // Do the scanning in a separate thread with a future signal
-        lScanner = new PSandPhotoScanner(collectionPath, 1);
+        lScanner = new PSandPhotoScanner(collectionPath, 0);
         lWatcher->setFuture(lScanner->startScanParallel());
 
         // Run dialog in a locally blocking event loop

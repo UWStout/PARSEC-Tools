@@ -104,7 +104,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                         return curItem->getDateTakenStart().toString("MM/dd/yyyy hh:mm:ss ap");
                     }
 
-                case PSSessionData::F_ACTIVE_VERSION: return QString::asprintf("%03d", curItem->getActiveProjectIndex()+1);
+                case PSSessionData::F_ACTIVE_VERSION: return QString::asprintf("%03d", 1);
                 case PSSessionData::F_ACTIVE_CHUNK: return QString::asprintf("%d of %d", curItem->getActiveChunkIndex()+1, curItem->getChunkCount());
                 case PSSessionData::F_IMAGE_COUNT_REAL: return QString::asprintf("%ld/%ld", curItem->getProcessedImageCount(), curItem->getRawImageCount());
 

@@ -54,7 +54,7 @@ public:
 
     static void setSortBy(Field pNewSortBy);
 
-    void examineProjects(QSettings* settings);
+    void examineProject(QSettings* settings);
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o) const;
 
@@ -70,7 +70,6 @@ public:
 
     void setName(QString pName);
 
-    QFileInfo getPSProjectFile(int which) const;
     QFileInfo getPSProjectFile() const;
 	
     QDir getPSProjectFolder() const;
@@ -99,8 +98,6 @@ public:
 
     QString toString() const;
 
-    int getProjectCount() const;
-    int getActiveProjectIndex() const;
     PSProjectFileData* getActiveProject() const;
 
     int getChunkCount() const;
@@ -145,9 +142,8 @@ private:
     Status mStatus;
 
     // The list of project files in the directory
-    QFileInfoList mPSProjectFileList;
-    QList<PSProjectFileData*> mPSProjectList;
-    int mActiveProject;
+    QFileInfo mPSProjectFile;
+    PSProjectFileData* mPSProject;
 };
 
 #endif

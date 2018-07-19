@@ -36,12 +36,6 @@ private:
     QFileInfoList mProjectDirList;
 
     bool buildDirectoryList(QFileInfo pRoot);
-
-//    static const QString[] IGNORE_EXCEPTIONS = { "_Finished", "_TouchUp", "_TouchedUpPleaseReview" };
-
-//    static const ExtensionFileFilter mDirectoryFilter =
-//			new ExtensionFileFilter(true);
-
     static QSettings* initInfoStore(QString pSettingsFile);
 };
 

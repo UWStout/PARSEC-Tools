@@ -6,6 +6,7 @@ using namespace std;
 #include "PSSessionData.h"
 
 #include <QSettings>
+#include <QDebug>
 
 #include "PSProjectFileData.h"
 #include "PSChunkData.h"
@@ -80,28 +81,23 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder, QSettings* settings)
     mResultsApproved = false;
     mSpecialNotes = mName = "";
 
-    mActiveProject = -1;
-
     // Build for the first time
-    examineProjects(settings);
+    examineProject(settings);
 }
 
 PSSessionData::~PSSessionData() {}
 
-void PSSessionData::examineProjects(QSettings* settings) { // throws IOException, IllegalArgumentException {
+void PSSessionData::examineProject(QSettings* settings) { // throws IOException, IllegalArgumentException {
 
     // Examine the directory for images and project files
     examineDirectory(mPSProjectFolder);
     extractInfoFromFolderName(mPSProjectFolder.dirName());
 
-    if(mPSProjectFileList.length() == 0) return;
+    if(mPSProjectFile.fileName() == "") return;
 
-    // Initialize the project list
-    for(int i=0; i<mPSProjectFileList.length(); i++) {
-        mPSProjectList.append(new PSProjectFileData(mPSProjectFileList[i], settings));
-    }
+    // Initialize the project
+    mPSProject = new PSProjectFileData(mPSProjectFile, settings);
 
-    mActiveProject = mPSProjectFileList.length()-1;
     autoSetStatus();
 }
 
@@ -197,7 +193,8 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     }
 
     // Clear old data
-    mRawFileList = mPSProjectFileList = QFileInfoList();
+    mRawFileList = QFileInfoList();
+    mPSProjectFile = QFileInfo();
     mDateTakenStart = mDateTakenFinish = QDateTime();
     mImageCount_raw = mImageCount_processed = 0;
 
@@ -207,7 +204,10 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     DirLister lRawFileLister(pDirToExamine, gRawFileExtensions);
 
     // Get info from the listers
-    mPSProjectFileList = lProjectFileLister.getMatches();
+    if(lProjectFileLister.getMatches().length() > 1) {
+        qWarning() << "Warning: Multiple .psz files found. Using the first one.";
+    }
+    mPSProjectFile = lProjectFileLister.getMatches()[0];
     mImageCount_processed = lImageFileLister.count();
     mRawFileList = lRawFileLister.getMatches();
     mImageCount_raw = lRawFileLister.count();
@@ -269,20 +269,8 @@ int PSSessionData::getNextID() { return mNextID; }
 void PSSessionData::setSpecialNotes(QString pSpecialNotes) { mSpecialNotes = pSpecialNotes; }
 void PSSessionData::setName(QString pName) { mName = pName; }
 
-QFileInfo PSSessionData::getPSProjectFile(int which) const {
-    if(which >= 0 && which < mPSProjectFileList.length()) {
-        return mPSProjectFileList[which];
-    }
-
-    return QFileInfo();
-}
-
 QFileInfo PSSessionData::getPSProjectFile() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectFileList.length()) {
-        return mPSProjectFileList[mActiveProject];
-    }
-
-    return QFileInfo();
+    return mPSProjectFile;
 }
 
 QDir PSSessionData::getPSProjectFolder() const {
@@ -290,20 +278,11 @@ QDir PSSessionData::getPSProjectFolder() const {
 }
 
 PSModelData* PSSessionData::getModelData() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelData();
-    }
-
-    return NULL;
+    return mPSProject->getModelData();
 }
 
 QFileInfo PSSessionData::getModelArchiveFile() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelArchiveFile();
-    }
-
-    // Fall back to the current project file if any of the above fails
-    return getPSProjectFile();
+    return mPSProject->getModelArchiveFile();
 }
 
 long PSSessionData::getRawImageCount() const { return mImageCount_raw; }
@@ -458,144 +437,69 @@ QString PSSessionData::toString() const {
         }
     }
 
-    // Add project info
-    lDetails += "\nPhotoScan Project: ";
-    if(mActiveProject == -1) {
-        lDetails += "none\n";
-    } else {
-        // lDetails += mPSProjectList[mActiveProject]->toString();
-    }
-
     return lDetails;
 }
 
-int PSSessionData::getProjectCount() const { return mPSProjectList.length(); }
-int PSSessionData::getActiveProjectIndex() const { return mActiveProject; }
-
 PSProjectFileData* PSSessionData::getActiveProject() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject];
-    }
-
-    return NULL;
+    return mPSProject;
 }
 
 int PSSessionData::getChunkCount() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getChunkCount();
-    }
-
-    return 0;
+    return mPSProject->getChunkCount();
 }
 
 int PSSessionData::getActiveChunkIndex() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getActiveChunkIndex();
-    }
-
-    return -1;
+    return mPSProject->getActiveChunkIndex();
 }
 
 PSChunkData* PSSessionData::getChunk(int index) const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getChunk(index);
-    }
-
-    return NULL;
+    return mPSProject->getChunk(index);
 }
 
 PSChunkData* PSSessionData::getActiveChunk() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getActiveChunk();
-    }
-
-    return NULL;
+    return mPSProject->getActiveChunk();
 }
 
 QString PSSessionData::describeImageAlignPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeImageAlignPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeImageAlignPhase();
 }
 
 char PSSessionData::getAlignPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getAlignPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getAlignPhaseStatus();
 }
 
 QString PSSessionData::describeDenseCloudPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeDenseCloudPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeDenseCloudPhase();
 }
 
 int PSSessionData::getDenseCloudDepthImages() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getDenseCloudDepthImages();
-    }
-
-    return 0;
+    return mPSProject->getDenseCloudDepthImages();
 }
 
 char PSSessionData::getDenseCloudPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getDenseCloudPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getDenseCloudPhaseStatus();
 }
 
 QString PSSessionData::describeModelGenPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeModelGenPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeModelGenPhase();
 }
 
 char PSSessionData::getModelGenPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelGenPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getModelGenPhaseStatus();
 }
 
 long PSSessionData::getModelFaceCount() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelFaceCount();
-    }
-
-    return 0;
+    return mPSProject->getModelFaceCount();
 }
 
 long PSSessionData::getModelVertexCount() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelVertexCount();
-    }
-
-    return 0;
+    return mPSProject->getModelVertexCount();
 }
 
 QString PSSessionData::describeTextureGenPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeTextureGenPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeTextureGenPhase();
 }
 
 char PSSessionData::getTextureGenPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getTextureGenPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getTextureGenPhaseStatus();
 }

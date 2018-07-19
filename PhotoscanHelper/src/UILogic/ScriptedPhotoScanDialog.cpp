@@ -98,16 +98,10 @@ void ScriptedPhotoScanDialog::inputFromPS() {
         stdErr = stdErr.trimmed();
         int lLastLineIdx = stdErr.lastIndexOf("\n");
         stdErr = stdErr.right(stdErr.length() - lLastLineIdx - 1);
-        mGUI->psStatusLineEdit->setText(QString(stdErr));
-    } else if(!stdOut.isEmpty()) {
-        // Trim to one line of output
-        stdOut = stdOut.trimmed();
-        int lLastLineIdx = stdOut.lastIndexOf("\n");
-        stdOut = stdOut.right(stdOut.length() - lLastLineIdx - 1);
 
         // Check for RegEx matches
-        QRegularExpressionMatch match = mRegEx.match(stdOut);
-        QRegularExpressionMatch match2 = mRegExOverall.match(stdOut);
+        QRegularExpressionMatch match = mRegEx.match(stdErr);
+        QRegularExpressionMatch match2 = mRegExOverall.match(stdErr);
         if(match.hasMatch()) {
             mGUI->stageProgressBar->setValue(match.captured(2).toFloat());
             mGUI->stageProgressLabel->setText(QString("Stage progress: %1").arg(match.captured(1)));
@@ -118,11 +112,18 @@ void ScriptedPhotoScanDialog::inputFromPS() {
                                                         .arg(match2.captured(1))
                                                         .arg(match2.captured(2)));
         } else {
-            if (stdOut.contains("progress") || stdOut.contains("Stage")) {
-                qInfo("Line not matched '%s'", stdOut.data());
+            if (stdErr.contains("progress") || stdErr.contains("Stage")) {
+                qInfo("Line not matched '%s'", stdErr.data());
             }
-            mGUI->psStatusLineEdit->setText(QString(stdOut));
+            mGUI->psStatusLineEdit->setText(QString(stdErr));
         }
+    } else if(!stdOut.isEmpty()) {
+        // Trim to one line of output
+        stdOut = stdOut.trimmed();
+        int lLastLineIdx = stdOut.lastIndexOf("\n");
+        stdOut = stdOut.right(stdOut.length() - lLastLineIdx - 1);
+
+        mGUI->psStatusLineEdit->setText(QString(stdOut));
     }
 }
 
