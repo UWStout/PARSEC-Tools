@@ -1,7 +1,10 @@
 #include <stdexcept>
 
 #include "ExposureSettings.h"
+
+#ifdef USE_LIB_RAW
 #include "libraw/libraw.h"
+#endif
 
 const ExposureSettings ExposureSettings::DEFAULT_EXPOSURE = ExposureSettings(
             ExposureSettings::WB_MODE_DEFAULT, ExposureSettings::BRIGHT_MODE_AUTO_HISTOGRAM);
@@ -59,67 +62,35 @@ ExposureSettings* ExposureSettings::makeIndependentlyConsistent() const {
     return new ExposureSettings(WB_MODE_CUSTOM, mWBCustom, BRIGHT_MODE_SCALED, mBrightScale);
 }
 
-//	ArrayList<String> argumentList() {
-//		ArrayList<String> commandFlags = new ArrayList<String>();
+QStringList ExposureSettings::toDCRawArguments() const {
+    QStringList args;
 
-//		switch(mBrightMode) {
-//			default:
-//			case BRIGHT_MODE_AUTO_HISTOGRAM: break;
+    switch(mBrightMode) {
+        default:
+        case BRIGHT_MODE_AUTO_HISTOGRAM: break;
 
-//			case BRIGHT_MODE_DISABLED: commandFlags.add("-W"); break;
-//			case BRIGHT_MODE_SCALED:
-//				commandFlags.add("-W");
-//				commandFlags.add("-b");
-//				commandFlags.add(String.format("%.6f", mBrightScale));
-//			break;
-//		}
+        case BRIGHT_MODE_DISABLED: args << "-W"; break;
+        case BRIGHT_MODE_SCALED: args << "-W" << "-b" << QString::number(mBrightScale); break;
+    }
 
-//		switch(mWBMode) {
-//			default:
-//			case WB_MODE_DEFAULT: break;
+    switch(mWBMode) {
+        default:
+        case WB_MODE_DEFAULT: break;
 
-//			case WB_MODE_CAMERA: commandFlags.add("-w"); break;
-//			case WB_MODE_AVERAGE: commandFlags.add("-a"); break;
-//			case WB_MODE_CUSTOM:
-//				commandFlags.add("-r");
-//				commandFlags.add(String.format("%.6f", mWBCustom[0]));
-//				commandFlags.add(String.format("%.6f", mWBCustom[1]));
-//				commandFlags.add(String.format("%.6f", mWBCustom[2]));
-//				commandFlags.add(String.format("%.6f", mWBCustom[3]));
-//			break;
-//		}
+        case WB_MODE_CAMERA: args << "-w"; break;
+        case WB_MODE_AVERAGE: args << "-a"; break;
+        case WB_MODE_CUSTOM:
+            args << "-r" << QString::number(mWBCustom[0])
+                 << QString::number(mWBCustom[1])
+                 << QString::number(mWBCustom[2])
+                 << QString::number(mWBCustom[3]);
+        break;
+    }
 
-//		return commandFlags;
-//	}
+    return args;
+}
 
-//	DCRAWOperation toIM4JOptions() {
-//		DCRAWOperation options = new DCRAWOperation();
-
-//		switch(mBrightMode) {
-//			default:
-//			case BRIGHT_MODE_AUTO_HISTOGRAM: break;
-
-//			case BRIGHT_MODE_DISABLED: options.fixedWhiteLevel(); break;
-//			case BRIGHT_MODE_SCALED:
-//				options.fixedWhiteLevel();
-//				options.brightness(mBrightScale);
-//			break;
-//		}
-
-//		switch(mWBMode) {
-//			default:
-//			case WB_MODE_DEFAULT: break;
-
-//			case WB_MODE_CAMERA: options.useCameraWB(); break;
-//			case WB_MODE_AVERAGE: options.useAverageWB(); break;
-//			case WB_MODE_CUSTOM:
-//				options.setWB(mWBCustom[0], mWBCustom[1], mWBCustom[2], mWBCustom[3]);
-//			break;
-//		}
-
-//		return options;
-//	}
-
+#ifdef USE_LIB_RAW
 void ExposureSettings::toLibRawOptions(LibRaw* pCommandOptions) const {
     switch(mBrightMode) {
         default:
@@ -153,3 +124,4 @@ void ExposureSettings::toLibRawOptions(LibRaw* pCommandOptions) const {
 
     }
 }
+#endif

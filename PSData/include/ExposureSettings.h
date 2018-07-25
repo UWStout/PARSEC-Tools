@@ -2,8 +2,11 @@
 #define EXPOSURE_SETTINGS_H
 
 #include "psdata_global.h"
+#include <QStringList>
 
+#ifdef USE_LIB_RAW
 class LibRaw;
+#endif
 
 // Note that instances of class are deliberately made immutable
 class PSDATASHARED_EXPORT ExposureSettings {
@@ -42,10 +45,10 @@ public:
 
     ExposureSettings* makeIndependentlyConsistent() const;
 	
-//	ArrayList<String> argumentList();
-//	DCRAWOperation toIM4JOptions();
-
+    QStringList toDCRawArguments() const;
+#ifdef USE_LIB_RAW
     void toLibRawOptions(LibRaw* pCommandOptions) const;
+#endif
 
 private:
     const WhiteBalanceMode mWBMode;

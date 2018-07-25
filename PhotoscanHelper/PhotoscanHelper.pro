@@ -15,10 +15,15 @@ TEMPLATE = app
 include(../config.pri)
 
 # Link in 3rd party libs
-macx:LIBS += -lraw -lquazip -ljpeg
-win32:CONFIG(debug, debug|release): LIBS += -llibrawd -llibjpegd -lquazipd -lopengl32 -lglu32
-else:win32:CONFIG(debug, debug|release): LIBS += -llibraw -llibjpeg -lquazip -lopengl32 -lglu32
-win32:DEFINES += LIBRAW_NODLL
+macx:LIBS += -lquazip
+win32:CONFIG(debug, debug|release): LIBS += -lquazipd -lopengl32 -lglu32
+else:win32:CONFIG(debug, debug|release): LIBS += -lquazip -lopengl32 -lglu32
+
+# Uncomment to enable libraw
+#macx:LIBS += -lraw -ljpeg
+#win32:CONFIG(debug, debug|release): LIBS += -llibrawd -llibjpegd
+#else:win32:CONFIG(debug, debug|release): LIBS += -llibraw -llibjpeg
+#win32:DEFINES += USE_LIB_RAW LIBRAW_NODLL
 
 # Windows and Mac OS Icons (respectively)
 RC_ICONS = resources/icons/PhotoScanHelper.ico
