@@ -28,16 +28,14 @@ QFileInfo RawImageExposer::msDestination;
 ExposureSettings* RawImageExposer::msSettings = NULL;
 
 RawImageExposer::RawImageExposer(const PSSessionData& pProject, const ExposureSettings &pSettings, const QFileInfo &pDestination) :
-    mProjectName(pProject.getName())
-{
+    mProjectName(pProject.getName()) {
     updateSettings(pSettings.makeIndependentlyConsistent());
     msDestination = pDestination;
     mRawFiles = pProject.getRawFileList();
 }
 
 RawImageExposer::RawImageExposer(const PSSessionData& pProject, const ExposureSettings &pSettings) :
-    mProjectName(pProject.getName())
-{
+    mProjectName(pProject.getName()) {
     updateSettings(pSettings.makeIndependentlyConsistent());
     msDestination = QFileInfo();
     mRawFiles = pProject.getRawFileList();

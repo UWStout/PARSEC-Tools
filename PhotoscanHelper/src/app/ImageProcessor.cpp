@@ -1,12 +1,27 @@
+#ifdef  USE_LIB_RAW
 #include <libraw/libraw.h>
+#endif
+
 #include <QDebug>
 #include <QFile>
+#include <QTemporaryFile>
 
 #include "ImageProcessor.h"
 
 double ImageProcessor::mMultipliers[] = {1.0, 1.0, 1.0, 1.0};
 
-QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSettings& pSettings, bool pAsPreview) {
+inline QFileInfo developRawImageDCRaw(QFileInfo pImageFile, const ExposureSettings& pSettings, bool pAsPreview) {
+}
+
+inline void extractMultipliersDCRaw() {
+//    ImageProcessor::mMultipliers[0] = (double)pCommandOptions->imgdata.color.cam_mul[0];
+//    ImageProcessor::mMultipliers[1] = (double)pCommandOptions->imgdata.color.cam_mul[1];
+//    ImageProcessor::mMultipliers[2] = (double)pCommandOptions->imgdata.color.cam_mul[2];
+//    ImageProcessor::mMultipliers[3] = (double)pCommandOptions->imgdata.color.cam_mul[3];
+}
+
+#ifdef  USE_LIB_RAW
+inline QFileInfo developRawImageLIBRaw(QFileInfo pImageFile, const ExposureSettings& pSettings, bool pAsPreview) {
     // Check the file
     if(!pImageFile.exists() || pImageFile.isDir()) {
         qWarning() << "Error: file given for LibRaw does not exist or is not a file";
@@ -45,13 +60,21 @@ QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSe
 
     // Get output results
     extractMultipliers(commandOptions);
-
     return QFileInfo(lFile);
 }
 
-void ImageProcessor::extractMultipliers(LibRaw* pCommandOptions) {
-    mMultipliers[0] = (double)pCommandOptions->imgdata.color.cam_mul[0];
-    mMultipliers[1] = (double)pCommandOptions->imgdata.color.cam_mul[1];
-    mMultipliers[2] = (double)pCommandOptions->imgdata.color.cam_mul[2];
-    mMultipliers[3] = (double)pCommandOptions->imgdata.color.cam_mul[3];
+inline void extractMultipliersLIBRaw(LibRaw* pCommandOptions) {
+    ImageProcessor::mMultipliers[0] = (double)pCommandOptions->imgdata.color.cam_mul[0];
+    ImageProcessor::mMultipliers[1] = (double)pCommandOptions->imgdata.color.cam_mul[1];
+    ImageProcessor::mMultipliers[2] = (double)pCommandOptions->imgdata.color.cam_mul[2];
+    ImageProcessor::mMultipliers[3] = (double)pCommandOptions->imgdata.color.cam_mul[3];
+}
+#endif
+
+QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSettings& pSettings, bool pAsPreview) {
+#ifdef  USE_LIB_RAW
+    developRawImageLIBRaw(pImageFile, pSettings, pAsPreview);
+#else
+    developRawImageDCRaw(pImageFile, pSettings, pAsPreview);
+#endif
 }
