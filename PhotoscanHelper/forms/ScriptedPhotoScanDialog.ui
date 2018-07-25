@@ -21,30 +21,30 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="stageProgressLabel">
      <property name="text">
-      <string>Overall Progress: Stage X of X</string>
+      <string>Stage progress: initializing ...</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QProgressBar" name="progressBar">
+    <widget class="QProgressBar" name="stageProgressBar">
      <property name="value">
-      <number>24</number>
+      <number>0</number>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="overallProgressLabel">
      <property name="text">
-      <string>Stage Progress:</string>
+      <string>Overall progress: initializing ...</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QProgressBar" name="progressBar_2">
+    <widget class="QProgressBar" name="overallProgressBar">
      <property name="value">
-      <number>24</number>
+      <number>0</number>
      </property>
     </widget>
    </item>

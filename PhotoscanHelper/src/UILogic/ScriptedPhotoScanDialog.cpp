@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QThread>
+#include <QRegularExpressionMatch>
 
 #include <PSSessionData.h>
 
@@ -11,12 +12,12 @@ ScriptedPhotoScanDialog::ScriptedPhotoScanDialog(QWidget *parent) : QDialog(pare
     mGUI = new Ui::ScriptedPhotoScanDialog();
     mGUI->setupUi(this);
     mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-    mGUI->progressBar->setRange(0, 0);
-    mGUI->progressBar_2->setRange(0, 0);
 
     mTextureSize = 0;
     mTolerance = 0;
     mSession = NULL;
+    mRegEx = QRegularExpression("^(.*) progress: ([0-9]+\\.[0-9][0-9])%");
+    mRegExOverall = QRegularExpression("Stage ([0-9]) of ([0-9])");
 }
 
 ScriptedPhotoScanDialog::ScriptedPhotoScanDialog(PSSessionData* pSession, QFileInfo pMaskDir,
@@ -24,13 +25,13 @@ ScriptedPhotoScanDialog::ScriptedPhotoScanDialog(PSSessionData* pSession, QFileI
     mGUI = new Ui::ScriptedPhotoScanDialog();
     mGUI->setupUi(this);
     mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-    mGUI->progressBar->setRange(0, 0);
-    mGUI->progressBar_2->setRange(0, 0);
 
     mMaskDir = pMaskDir;
     mTextureSize = pTextureSize;
     mTolerance = pTolerance;
     mSession = pSession;
+    mRegEx = QRegularExpression("^(.*) progress: ([0-9]+\\.[0-9][0-9])%");
+    mRegExOverall = QRegularExpression("Stage ([0-9]) of ([0-9])");
     startPhotoScan();
 }
 
@@ -66,7 +67,7 @@ void ScriptedPhotoScanDialog::startPhotoScan() {
 #endif
 
     // Command arguments
-    lArgs << "-r" << "QuickPreview.py" << mSession->getPSProjectFolder().absolutePath();
+    lArgs << "-r" << "QuickPreview.py" << mSession->getSessionFolder().absolutePath();
     lArgs << mMaskDir.filePath();
 
     (mMaskDir.filePath() == "" ? lArgs << "False" : lArgs << "True");
@@ -93,11 +94,36 @@ void ScriptedPhotoScanDialog::inputFromPS() {
     QByteArray stdErr = mPSProc.readAllStandardError();
 
     if (!stdErr.isEmpty()) {
-        qWarning() << stdErr;
-        updateStatusLine(stdErr);
+        // Trim to one line of output
+        stdErr = stdErr.trimmed();
+        int lLastLineIdx = stdErr.lastIndexOf("\n");
+        stdErr = stdErr.right(stdErr.length() - lLastLineIdx - 1);
+
+        // Check for RegEx matches
+        QRegularExpressionMatch match = mRegEx.match(stdErr);
+        QRegularExpressionMatch match2 = mRegExOverall.match(stdErr);
+        if(match.hasMatch()) {
+            mGUI->stageProgressBar->setValue(match.captured(2).toFloat());
+            mGUI->stageProgressLabel->setText(QString("Stage progress: %1").arg(match.captured(1)));
+        } else if(match2.hasMatch()) {
+            mGUI->overallProgressBar->setRange(1, match2.captured(2).toInt());
+            mGUI->overallProgressBar->setValue(match2.captured(1).toInt());
+            mGUI->overallProgressLabel->setText(QString("Overall progress: %1 of %2")
+                                                        .arg(match2.captured(1))
+                                                        .arg(match2.captured(2)));
+        } else {
+            if (stdErr.contains("progress") || stdErr.contains("Stage")) {
+                qInfo("Line not matched '%s'", stdErr.data());
+            }
+            mGUI->psStatusLineEdit->setText(QString(stdErr));
+        }
     } else if(!stdOut.isEmpty()) {
-        qInfo() << stdOut;
-        updateStatusLine(stdOut);
+        // Trim to one line of output
+        stdOut = stdOut.trimmed();
+        int lLastLineIdx = stdOut.lastIndexOf("\n");
+        stdOut = stdOut.right(stdOut.length() - lLastLineIdx - 1);
+
+        mGUI->psStatusLineEdit->setText(QString(stdOut));
     }
 }
 
@@ -117,10 +143,10 @@ void ScriptedPhotoScanDialog::onFinished(int pExitCode, QProcess::ExitStatus pEx
 
     mGUI->psStatusLineEdit->setText("[PhotoScan Ended]");
     mGUI->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-    mGUI->progressBar->setRange(0, 1);
-    mGUI->progressBar_2->setRange(0, 1);
-    mGUI->progressBar->setValue(1);
-    mGUI->progressBar_2->setValue(1);
+    mGUI->stageProgressBar->setRange(0, 1);
+    mGUI->overallProgressBar->setRange(0, 1);
+    mGUI->stageProgressBar->setValue(1);
+    mGUI->overallProgressBar->setValue(1);
 }
 
 void ScriptedPhotoScanDialog::onErrorOccurred(QProcess::ProcessError pError) {

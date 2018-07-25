@@ -54,11 +54,13 @@ public:
 
     static void setSortBy(Field pNewSortBy);
 
-    void examineProjects(QSettings* settings);
+    void examineProject(QSettings* settings);
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o) const;
 
     bool examineDirectory(QDir pDirToExamine);
+
+    void examineImages();
 	
     void autoSetStatus();
     void setCustomStatus(int statusIndex);
@@ -66,14 +68,13 @@ public:
 	
     static int getNextID();
     void setID(QString mID);
-    void setSpecialNotes(QString pSpecialNotes);
+    void addNotes(QString pNotes);
 
     void setName(QString pName);
 
-    QFileInfo getPSProjectFile(int which) const;
     QFileInfo getPSProjectFile() const;
 	
-    QDir getPSProjectFolder() const;
+    QDir getSessionFolder() const;
     PSModelData* getModelData() const;
     QFileInfo getModelArchiveFile() const;
 
@@ -84,10 +85,10 @@ public:
     const double* getWhiteBalanceMultipliers() const;
     double getBrightnessMultiplier() const;
 
-    QDateTime getDateTakenStart() const;
+    QDateTime getDateTimeCaptured() const;
     QDateTime getDateTakenFinish() const;
     bool areResultsApproved() const;
-    QString getSpecialNotes() const;
+    QStringList getNotes() const;
     QString getName() const;
     QString getNameStrict() const;
     Status getStatus() const;
@@ -99,8 +100,6 @@ public:
 
     QString toString() const;
 
-    int getProjectCount() const;
-    int getActiveProjectIndex() const;
     PSProjectFileData* getActiveProject() const;
 
     int getChunkCount() const;
@@ -121,33 +120,30 @@ public:
     char getTextureGenPhaseStatus() const;
 
 private:
+    void processImages(QDir &pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName);
+
     static Field mSortBy;
     static int mNextID;
 
-    // Path to the project file
-    QDir mPSProjectFolder;
+    // Various folders relevant to the session
+    QDir mSessionFolder, mRawFolder, mProcessedFolder, mMasksFolder;
 
     // Information about images and sensors
     long mImageCount_raw, mImageCount_processed;
-    QFileInfoList mRawFileList;
+    QFileInfoList mRawFileList, mProcessedFileList, mMaskFileList;
 
     // General PS Project information
-    QString mID;
-
-    // Image exposure with dcraw
-    ExposureSettings mExposure;
-    QDateTime mDateTakenStart, mDateTakenFinish;
-
-    // Custom data for this project
-    bool mResultsApproved;
-    QString mSpecialNotes;
-    QString mName;
+    QString mID, mName, mDescription;
+    QStringList mNotes;
     Status mStatus;
 
+    // Capture and exposure information
+    ExposureSettings mExposure;
+    QDateTime mDateTimeCaptured;
+
     // The list of project files in the directory
-    QFileInfoList mPSProjectFileList;
-    QList<PSProjectFileData*> mPSProjectList;
-    int mActiveProject;
+    QFileInfo mPSProjectFile;
+    PSProjectFileData* mPSProject;
 };
 
 #endif

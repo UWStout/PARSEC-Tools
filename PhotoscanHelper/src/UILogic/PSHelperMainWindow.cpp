@@ -333,7 +333,7 @@ void PSHelperMainWindow::runExposeImagesAction() {
 
         if(!mRawExposureProgressDialog->wasCanceled()) {
             try {
-                mLastData->examineProjects(mDataInfoStore);
+                mLastData->examineProject(mDataInfoStore);
             } catch (std::exception e) {
                 qWarning() << "Error: exception while rebuilding PS Project Data.";
                 qWarning() << e.what();

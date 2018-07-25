@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
 using namespace std;
@@ -5,6 +6,8 @@ using namespace std;
 #include "PSSessionData.h"
 
 #include <QSettings>
+#include <QDebug>
+#include <QDirIterator>
 
 #include "PSProjectFileData.h"
 #include "PSChunkData.h"
@@ -34,6 +37,14 @@ const QStringList gPSImageFileExtensions = {
     "*.png",
     "*.bmp",
     "*.exr"
+};
+const QStringList gPSMaskFileExtensions = {
+    "*_mask.jpg", "*_mask.jpeg",
+    "*_mask.tif", "*_mask.tiff",
+    "*_mask.pgm", "*_mask.ppm",
+    "*_mask.png",
+    "*_mask.bmp",
+    "*_mask.exr"
 };
 const QStringList gRawFileExtensions = {
     "*.3fr",
@@ -70,37 +81,33 @@ const QStringList gRawFileExtensions = {
 PSSessionData::PSSessionData(QDir pPSProjectFolder, QSettings* settings)
     : mExposure(ExposureSettings::DEFAULT_EXPOSURE) { // throws IOException {
     // Fill everything with default values
-    mPSProjectFolder = pPSProjectFolder;
+    mSessionFolder = pPSProjectFolder;
     mStatus = PSS_UNKNOWN;
 
     mImageCount_raw = 0;
     mImageCount_processed = 0;
 
-    mResultsApproved = false;
-    mSpecialNotes = mName = "";
-
-    mActiveProject = -1;
+    mName = "";
+    mNotes = QStringList();
 
     // Build for the first time
-    examineProjects(settings);
+    examineProject(settings);
 }
 
 PSSessionData::~PSSessionData() {}
 
-void PSSessionData::examineProjects(QSettings* settings) { // throws IOException, IllegalArgumentException {
+void PSSessionData::examineProject(QSettings* settings) { // throws IOException, IllegalArgumentException {
 
     // Examine the directory for images and project files
-    examineDirectory(mPSProjectFolder);
-    extractInfoFromFolderName(mPSProjectFolder.dirName());
+    examineDirectory(mSessionFolder);
+    examineImages();
+    extractInfoFromFolderName(mSessionFolder.dirName());
 
-    if(mPSProjectFileList.length() == 0) return;
+    if(mPSProjectFile.fileName() == "") return;
 
-    // Initialize the project list
-    for(int i=0; i<mPSProjectFileList.length(); i++) {
-        mPSProjectList.append(new PSProjectFileData(mPSProjectFileList[i], settings));
-    }
+    // Initialize the project
+    mPSProject = new PSProjectFileData(mPSProjectFile, settings);
 
-    mActiveProject = mPSProjectFileList.length()-1;
     autoSetStatus();
 }
 
@@ -155,15 +162,15 @@ int PSSessionData::compareTo(const PSSessionData* o) const {
     switch(mSortBy) {
         default:
         case F_PROJECT_FOLDER:
-            return mPSProjectFolder.dirName().compare(o->mPSProjectFolder.dirName());
+            return mSessionFolder.dirName().compare(o->mSessionFolder.dirName());
 
         case F_PROJECT_ID: return mID.compare(o->mID);
         case F_PROJECT_NAME: return getName().compare(o->getName());
         case F_PHOTO_DATE:
         {
-            if(mDateTakenStart.isNull()) return -1;
-            if(o->mDateTakenStart.isNull()) return 1;
-            return o->mDateTakenStart.daysTo(mDateTakenStart);
+            if(mDateTimeCaptured.isNull()) return -1;
+            if(o->mDateTimeCaptured.isNull()) return 1;
+            return o->mDateTimeCaptured.daysTo(mDateTimeCaptured);
         }
         case F_IMAGE_COUNT_REAL: return mImageCount_processed - o->mImageCount_processed;
 
@@ -196,8 +203,8 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     }
 
     // Clear old data
-    mRawFileList = mPSProjectFileList = QFileInfoList();
-    mDateTakenStart = mDateTakenFinish = QDateTime();
+    mPSProjectFile = QFileInfo();
+    mDateTimeCaptured = QDateTime();
     mImageCount_raw = mImageCount_processed = 0;
 
     // Build listers for the three types of files
@@ -206,9 +213,11 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     DirLister lRawFileLister(pDirToExamine, gRawFileExtensions);
 
     // Get info from the listers
-    mPSProjectFileList = lProjectFileLister.getMatches();
+    if(lProjectFileLister.getMatches().length() > 1) {
+        qWarning() << "Warning: Multiple .psz files found. Using the first one.";
+    }
+    mPSProjectFile = lProjectFileLister.getMatches()[0];
     mImageCount_processed = lImageFileLister.count();
-    mRawFileList = lRawFileLister.getMatches();
     mImageCount_raw = lRawFileLister.count();
 
     // Extract dates if there are raw files
@@ -220,14 +229,48 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
 //            mDateTakenFinish = ImageProcessorIM4J.getDateFromMetadata(mRawFileList[mRawFileList.length-1]);
         } catch (...) {
             qWarning("Error: failed to extract dates from raw images\n");
-            mDateTakenStart = mDateTakenFinish = QDateTime();
+            mDateTimeCaptured = QDateTime();
         }
     } else {
-        mDateTakenStart = mDateTakenFinish = QDateTime();
+        mDateTimeCaptured = QDateTime();
     }
 
     // Return success
     return true;
+}
+
+void PSSessionData::processImages(QDir& pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName) {
+    // Create QDir
+    pDir = QDir(mSessionFolder.absolutePath() + QDir::separator() + pFolderName);
+
+    // Check to see if it exists
+    if(!pDir.exists()) {
+        // If not, create that directory
+        qDebug() << pDir.mkdir(mSessionFolder.absolutePath() + QDir::separator() + pFolderName);
+    }
+
+    // Iterate through the QDir
+    QDirIterator lIt(mSessionFolder.absolutePath(), pFilter, QDir::Files);
+    while (lIt.hasNext() && !lIt.next().isNull()) {
+        if(lIt.fileName().isEmpty()) {
+            continue;
+        }
+        // Move files into proper folders
+        QString newName = mSessionFolder.absolutePath() + QDir::separator() + pFolderName + QDir::separator() + lIt.fileName();
+        qDebug() << QFile::rename(lIt.filePath(), newName);
+        qDebug() << lIt.filePath() << " <--> " << newName;
+    }
+
+    // Store files in QFileInfoList
+    // NOTE: May need to include symlinks at a later time
+    pImageList = pDir.entryInfoList(pFilter, QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    qDebug() << pFolderName << " length: " << pImageList.length();
+}
+
+void PSSessionData::examineImages() {
+    processImages(mMasksFolder, mMaskFileList, gPSMaskFileExtensions, "Masks");
+    processImages(mRawFolder, mRawFileList, gRawFileExtensions, "Raw");
+    processImages(mProcessedFolder, mProcessedFileList, gPSImageFileExtensions, "Processed");
 }
 
 void PSSessionData::autoSetStatus() {
@@ -265,44 +308,23 @@ void PSSessionData::setID(QString pID) {
 
 QString PSSessionData::getID() const { return mID; }
 int PSSessionData::getNextID() { return mNextID; }
-void PSSessionData::setSpecialNotes(QString pSpecialNotes) { mSpecialNotes = pSpecialNotes; }
+void PSSessionData::addNotes(QString pNotes) { mNotes.append(pNotes); }
 void PSSessionData::setName(QString pName) { mName = pName; }
 
-QFileInfo PSSessionData::getPSProjectFile(int which) const {
-    if(which >= 0 && which < mPSProjectFileList.length()) {
-        return mPSProjectFileList[which];
-    }
-
-    return QFileInfo();
-}
-
 QFileInfo PSSessionData::getPSProjectFile() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectFileList.length()) {
-        return mPSProjectFileList[mActiveProject];
-    }
-
-    return QFileInfo();
+    return mPSProjectFile;
 }
 
-QDir PSSessionData::getPSProjectFolder() const {
-    return mPSProjectFolder;
+QDir PSSessionData::getSessionFolder() const {
+    return mSessionFolder;
 }
 
 PSModelData* PSSessionData::getModelData() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelData();
-    }
-
-    return NULL;
+    return mPSProject->getModelData();
 }
 
 QFileInfo PSSessionData::getModelArchiveFile() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelArchiveFile();
-    }
-
-    // Fall back to the current project file if any of the above fails
-    return getPSProjectFile();
+    return mPSProject->getModelArchiveFile();
 }
 
 long PSSessionData::getRawImageCount() const { return mImageCount_raw; }
@@ -314,14 +336,12 @@ bool PSSessionData::isImageExposureKnown() const { return true; }
 
 const double* PSSessionData::getWhiteBalanceMultipliers() const { return mExposure.getWBCustom(); }
 double PSSessionData::getBrightnessMultiplier() const { return mExposure.getBrightScale(); }
-QDateTime PSSessionData::getDateTakenStart() const { return mDateTakenStart; }
-QDateTime PSSessionData::getDateTakenFinish() const { return mDateTakenFinish; }
-bool PSSessionData::areResultsApproved() const { return mResultsApproved; }
-QString PSSessionData::getSpecialNotes() const { return mSpecialNotes; }
+QDateTime PSSessionData::getDateTimeCaptured() const { return mDateTimeCaptured; }
+QStringList PSSessionData::getNotes() const { return mNotes; }
 
 QString PSSessionData::getName() const {
     if(mName.isNull() || mName.isEmpty()) {
-        return mPSProjectFolder.dirName();
+        return mSessionFolder.dirName();
     }
     return mName;
 }
@@ -334,12 +354,19 @@ void PSSessionData::writeGeneralSettings(QSettings* settings) const {
     if(settings == NULL) return;
 
     // We count on the folder name being unique inside this collection
-    settings->beginGroup(mPSProjectFolder.dirName().replace(' ',  '_') + "_Settings");
+    settings->beginGroup(mSessionFolder.dirName().replace(' ',  '_') + "_Settings");
 
     // Write these only if they are not empty
     if(!mID.isEmpty()) { settings->setValue("General/ID", mID); }
     if(!mName.isEmpty()) { settings->setValue("General/Name", mName); }
-    if(!mSpecialNotes.isEmpty()) { settings->setValue("General/SpecialNotes", mSpecialNotes); }
+    if(!mNotes.isEmpty()) {
+        settings->beginWriteArray("General/notes");
+        for (int i = 0; i < mNotes.size(); i++) {
+            settings->setArrayIndex(i);
+            settings->setValue("note", mNotes[i]);
+        }
+        settings->endArray();
+    }
 
     // Only write custom status states
     if(mStatus > PSS_TEXTURE_GEN_DONE) { settings->setValue("General/Status", (int)mStatus); }
@@ -350,18 +377,25 @@ void PSSessionData::writeGeneralSettings(QSettings* settings) const {
 void PSSessionData::readGeneralSettings(QSettings* settings) {
     if(settings == NULL) return;
 
-    settings->beginGroup(mPSProjectFolder.dirName().replace(' ',  '_') + "_Settings");
+    settings->beginGroup(mSessionFolder.dirName().replace(' ',  '_') + "_Settings");
 
     // Retrieve the general settings
     QString settingsID = settings->value("General/ID", mID).toString();
     QString settingsName = settings->value("General/Name", "").toString();
     if(settingsName.isEmpty()) { settingsName = settings->value("General/Description", "").toString(); }
-    QString settingsSpecialNotes = settings->value("General/SpecialNotes", "").toString();
+
+    QStringList settingsNotes;
+    int notesSize = settings->beginReadArray("General/notes");
+    for (int i = 0; i < notesSize; ++i) {
+        settings->setArrayIndex(i);
+        settingsNotes << settings->value("note").toString();
+    }
+    settings->endArray();
 
     // Only read these settings if they are not empty
     if(!settingsID.isEmpty()) { mID = settingsID; }
     if(!settingsName.isEmpty()) { mName = settingsName; }
-    if(!settingsSpecialNotes.isEmpty()) { mSpecialNotes = settingsSpecialNotes; }
+    if(!settingsNotes.isEmpty()) { mNotes = settingsNotes; }
 
     // Only read and accept custom status states
     int statVal = settings->value("General/Status", "0").toInt();
@@ -373,7 +407,7 @@ void PSSessionData::readGeneralSettings(QSettings* settings) {
 void PSSessionData::writeExposureSettings(ExposureSettings pExpSettings, QSettings* settings) const {
     // Write those to the settings file for the application
     if(settings == NULL) return;
-    settings->beginGroup(mPSProjectFolder.dirName().replace(' ',  "_") + "_Settings");
+    settings->beginGroup(mSessionFolder.dirName().replace(' ',  "_") + "_Settings");
 
     settings->setValue("WhiteBalanceMode", (int)pExpSettings.getWBMode());
     settings->setValue("WhiteBalanceMode/R", pExpSettings.getWBCustom()[0]);
@@ -393,7 +427,7 @@ ExposureSettings PSSessionData::readExposureSettings(QSettings* settings) {
 
     ExposureSettings lDefSettings = ExposureSettings::DEFAULT_EXPOSURE;
 
-    settings->beginGroup(mPSProjectFolder.dirName().replace(' ',  "_") + "_Settings");
+    settings->beginGroup(mSessionFolder.dirName().replace(' ',  "_") + "_Settings");
 
     int lWBOrdinal = settings->value("WhiteBalanceMode", (int)lDefSettings.getWBMode()).toInt();
     double lWBCustom[4] = {
@@ -420,8 +454,7 @@ ExposureSettings PSSessionData::readExposureSettings(QSettings* settings) {
  */
 QString PSSessionData::toString() const {
     // General information
-    QString lDetails = "Session: " + mPSProjectFolder.dirName();
-    if(mResultsApproved) lDetails += " (APPROVED)";
+    QString lDetails = "Session: " + mSessionFolder.dirName();
     lDetails += "\n";
 
     lDetails += "\tName: ";
@@ -430,7 +463,7 @@ QString PSSessionData::toString() const {
     lDetails += "\n";
 
     lDetails += "\tNotes: ";
-    if(mSpecialNotes != NULL && mSpecialNotes != "") { lDetails += mSpecialNotes; }
+    if(!mNotes.isEmpty()) { lDetails += mNotes.join("; "); }
     else { lDetails += "[none]"; }
     lDetails += "\n";
 
@@ -442,8 +475,7 @@ QString PSSessionData::toString() const {
 
     if(isImageExposureKnown()) {
         const double* lMult = mExposure.getWBCustom();
-        lDetails += "\tTaken from " + mDateTakenStart.toString();
-        lDetails += " to " + mDateTakenFinish.toString() + "\n";
+        lDetails += "\tTaken on " + mDateTimeCaptured.toString();
         lDetails += "\tConverted as - ";
         for(int i=0; i<4; i++) {
             lDetails.append(QString::number(lMult[i]));
@@ -457,144 +489,69 @@ QString PSSessionData::toString() const {
         }
     }
 
-    // Add project info
-    lDetails += "\nPhotoScan Project: ";
-    if(mActiveProject == -1) {
-        lDetails += "none\n";
-    } else {
-        // lDetails += mPSProjectList[mActiveProject]->toString();
-    }
-
     return lDetails;
 }
 
-int PSSessionData::getProjectCount() const { return mPSProjectList.length(); }
-int PSSessionData::getActiveProjectIndex() const { return mActiveProject; }
-
 PSProjectFileData* PSSessionData::getActiveProject() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject];
-    }
-
-    return NULL;
+    return mPSProject;
 }
 
 int PSSessionData::getChunkCount() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getChunkCount();
-    }
-
-    return 0;
+    return mPSProject->getChunkCount();
 }
 
 int PSSessionData::getActiveChunkIndex() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getActiveChunkIndex();
-    }
-
-    return -1;
+    return mPSProject->getActiveChunkIndex();
 }
 
 PSChunkData* PSSessionData::getChunk(int index) const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getChunk(index);
-    }
-
-    return NULL;
+    return mPSProject->getChunk(index);
 }
 
 PSChunkData* PSSessionData::getActiveChunk() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getActiveChunk();
-    }
-
-    return NULL;
+    return mPSProject->getActiveChunk();
 }
 
 QString PSSessionData::describeImageAlignPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeImageAlignPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeImageAlignPhase();
 }
 
 char PSSessionData::getAlignPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getAlignPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getAlignPhaseStatus();
 }
 
 QString PSSessionData::describeDenseCloudPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeDenseCloudPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeDenseCloudPhase();
 }
 
 int PSSessionData::getDenseCloudDepthImages() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getDenseCloudDepthImages();
-    }
-
-    return 0;
+    return mPSProject->getDenseCloudDepthImages();
 }
 
 char PSSessionData::getDenseCloudPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getDenseCloudPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getDenseCloudPhaseStatus();
 }
 
 QString PSSessionData::describeModelGenPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeModelGenPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeModelGenPhase();
 }
 
 char PSSessionData::getModelGenPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelGenPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getModelGenPhaseStatus();
 }
 
 long PSSessionData::getModelFaceCount() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelFaceCount();
-    }
-
-    return 0;
+    return mPSProject->getModelFaceCount();
 }
 
 long PSSessionData::getModelVertexCount() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getModelVertexCount();
-    }
-
-    return 0;
+    return mPSProject->getModelVertexCount();
 }
 
 QString PSSessionData::describeTextureGenPhase() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->describeTextureGenPhase();
-    }
-
-    return "N/A";
+    return mPSProject->describeTextureGenPhase();
 }
 
 char PSSessionData::getTextureGenPhaseStatus() const {
-    if(mActiveProject >= 0 && mActiveProject < mPSProjectList.length()) {
-        return mPSProjectList[mActiveProject]->getTextureGenPhaseStatus();
-    }
-
-    return 0;
+    return mPSProject->getTextureGenPhaseStatus();
 }

@@ -98,13 +98,13 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                 case PSSessionData::F_PROJECT_ID: return curItem->getID();
                 case PSSessionData::F_PROJECT_NAME: return curItem->getName();
                 case PSSessionData::F_PHOTO_DATE:
-                    if(!curItem->getDateTakenStart().isValid()) {
+                    if(!curItem->getDateTimeCaptured().isValid()) {
                         return "Unknown";
                     } else {
-                        return curItem->getDateTakenStart().toString("MM/dd/yyyy hh:mm:ss ap");
+                        return curItem->getDateTimeCaptured().toString("MM/dd/yyyy hh:mm:ss ap");
                     }
 
-                case PSSessionData::F_ACTIVE_VERSION: return QString::asprintf("%03d", curItem->getActiveProjectIndex()+1);
+                case PSSessionData::F_ACTIVE_VERSION: return QString::asprintf("%03d", 1);
                 case PSSessionData::F_ACTIVE_CHUNK: return QString::asprintf("%d of %d", curItem->getActiveChunkIndex()+1, curItem->getChunkCount());
                 case PSSessionData::F_IMAGE_COUNT_REAL: return QString::asprintf("%ld/%ld", curItem->getProcessedImageCount(), curItem->getRawImageCount());
 
@@ -116,8 +116,8 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                 case PSSessionData::F_TEXTURE_GEN_LEVEL: return curItem->describeTextureGenPhase();
 
                 // Optional columns only used for CSV file
-                case PSSessionData::F_PROJECT_FOLDER: return curItem->getPSProjectFolder().dirName();
-                case PSSessionData::F_PROJECT_NOTE: return curItem->getSpecialNotes();
+                case PSSessionData::F_PROJECT_FOLDER: return curItem->getSessionFolder().dirName();
+                case PSSessionData::F_PROJECT_NOTE: return curItem->getNotes();
 
                 // Other columns should never happen
                 default: return QVariant();
@@ -127,7 +127,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
         // Tooltips come from the column or the name of the project
         case Qt::ToolTipRole: {
             if(column == PSSessionData::F_PROJECT_NAME)
-                { return curItem->getPSProjectFolder().dirName(); }
+                { return curItem->getSessionFolder().dirName(); }
             else { return curItem->getDescription((PSSessionData::Field)column); }
         }
 
