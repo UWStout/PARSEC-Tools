@@ -56,7 +56,7 @@ void RawImageExposureDialog::setProjectData(PSSessionData* pData, QSettings* pIn
     mProjectData = pData;
     mProjectInfoStore = pInfoStore;
     try {
-        mGUI->DestinationDirLineEdit->setText(mProjectData->getPSProjectFolder().canonicalPath());
+        mGUI->DestinationDirLineEdit->setText(mProjectData->getSessionFolder().canonicalPath());
     } catch(...) {}
     projectDataChanged();
 }
@@ -90,7 +90,7 @@ void RawImageExposureDialog::on_BrightModeComboBox_currentIndexChanged(int pNewI
 
 void RawImageExposureDialog::on_DestinationBrowseButton_clicked() {
     QString lDestination = QFileDialog::getExistingDirectory(this, "Select Destination",
-                                                             mProjectData->getPSProjectFolder().path());
+                                                             mProjectData->getSessionFolder().path());
     if(!lDestination.isNull() && !lDestination.isEmpty()) {
         mGUI->DestinationDirLineEdit->setText(lDestination);
     }

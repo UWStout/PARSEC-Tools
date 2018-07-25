@@ -71,7 +71,7 @@ const QVector<PSSessionData*> PSandPhotoScanner::getPSProjectData() const { retu
 int PSandPhotoScanner::countUniqueDirs() const {
     QSet<QString> lDirSet;
     for(const PSSessionData* lData : mData) {
-        QString lPath = lData->getPSProjectFolder().path();
+        QString lPath = lData->getSessionFolder().path();
         if (!lDirSet.contains(lPath)) {
             lDirSet.insert(lPath);
         }

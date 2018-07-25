@@ -21,7 +21,7 @@ PSProjectInfoDialog::~PSProjectInfoDialog() {
 void PSProjectInfoDialog::setProjectData(const PSSessionData* pProjData) {
     QString mainHeader;
     if (pProjData->getPSProjectFile().filePath() == "" ) {
-        mainHeader = pProjData->getPSProjectFolder().dirName();
+        mainHeader = pProjData->getSessionFolder().dirName();
     } else {
         mainHeader = pProjData->getPSProjectFile().fileName();
     }
@@ -30,7 +30,7 @@ void PSProjectInfoDialog::setProjectData(const PSSessionData* pProjData) {
 
     mGUI->IDLabel->setText(pProjData->getID());
     mGUI->PSFileLabel->setText(pProjData->getPSProjectFile().filePath() == "" ? "N/A" : pProjData->getPSProjectFile().fileName());
-    mGUI->PSFolderLabel->setText(pProjData->getPSProjectFolder().path());
+    mGUI->PSFolderLabel->setText(pProjData->getSessionFolder().path());
 
     mGUI->DescriptionLabel->setText(pProjData->getNameStrict());
     mGUI->ImageInfoLabel->setText(QString::asprintf("%ld raw, %ld normal, %d depth map",
@@ -44,7 +44,7 @@ void PSProjectInfoDialog::setProjectData(const PSSessionData* pProjData) {
     } else {
         mGUI->ExposureInfoLabel->setText("N/A");
     }
-    mGUI->SpecialNotesLabel->setText(pProjData->getSpecialNotes());
+    mGUI->SpecialNotesLabel->setText(pProjData->getNotes().join("; "));
 
     for(int chunk = 0; chunk < pProjData->getChunkCount(); chunk++)
     {

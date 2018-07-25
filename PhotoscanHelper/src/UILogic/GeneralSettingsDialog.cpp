@@ -14,7 +14,7 @@ GeneralSettingsDialog::~GeneralSettingsDialog() {
 }
 
 void GeneralSettingsDialog::restoreSettings() {
-    QString mainHeader = (mProjectData->getPSProjectFile()== QFileInfo() ? mProjectData->getPSProjectFolder().dirName() :
+    QString mainHeader = (mProjectData->getPSProjectFile()== QFileInfo() ? mProjectData->getSessionFolder().dirName() :
                                                                           mProjectData->getPSProjectFile().fileName());
     mGUI->mainHeadingLabel->setText(mainHeader);
 
@@ -31,7 +31,7 @@ void GeneralSettingsDialog::restoreSettings() {
     }
 
     mGUI->DescriptionLineEdit->setText(mProjectData->getNameStrict());
-    mGUI->SpecialNotesTextEdit->setPlainText(mProjectData->getSpecialNotes());
+    mGUI->SpecialNotesTextEdit->setPlainText(mProjectData->getNotes().join("; "));
 }
 
 void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
@@ -46,7 +46,7 @@ void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
 
             mProjectData->setID(mGUI->IDLineEdit->text());
             mProjectData->setName(mGUI->DescriptionLineEdit->text());
-            mProjectData->setSpecialNotes(mGUI->SpecialNotesTextEdit->toPlainText());
+            mProjectData->addNotes(mGUI->SpecialNotesTextEdit->toPlainText());
         break;
 
         case QDialogButtonBox::Cancel:

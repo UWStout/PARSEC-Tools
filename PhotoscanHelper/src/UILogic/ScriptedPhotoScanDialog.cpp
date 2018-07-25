@@ -67,7 +67,7 @@ void ScriptedPhotoScanDialog::startPhotoScan() {
 #endif
 
     // Command arguments
-    lArgs << "-r" << "QuickPreview.py" << mSession->getPSProjectFolder().absolutePath();
+    lArgs << "-r" << "QuickPreview.py" << mSession->getSessionFolder().absolutePath();
     lArgs << mMaskDir.filePath();
 
     (mMaskDir.filePath() == "" ? lArgs << "False" : lArgs << "True");
