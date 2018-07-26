@@ -114,7 +114,7 @@ void PSSessionData::examineProject() {
 
 void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
     // The original format: "[ID_as_integer] rest of folder name"
-    QStringList parts = pFolderName.split("\\s");
+    QStringList parts = pFolderName.split(" ");
     if(parts.length() > 1) {
         // Get the ID
         setID(parts[0]);
@@ -123,39 +123,7 @@ void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
         parts.removeFirst();
         mName = parts.join(' ');
     } else {
-        // MIA format: "[Date as YYMMDD]_[accession number/ID w/ characters]_[name/description]"
-//        parts = pFolderName.split("_");
-//        mID = ""; int endOfID = 1;
-//        if(parts != NULL && parts.length > 1) {
-//            try {
-//                while(endOfID<parts.length) {
-//                    if(endOfID > 1 && !Character.isDigit(parts[endOfID].charAt(0))) {
-//                        break;
-//                    } else {
-//                        if(endOfID == 1) { mID = parts[endOfID]; }
-//                        else { mID += "_" + parts[endOfID]; }
-//                    }
-//                    endOfID++;
-//                }
-//            } catch(Exception e) { mID = "-1"; }
-
-//            // Try to parse out the date
-//            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyMMdd");
-//            try {
-//                mDateTakenStart = dateFormatter.parse(parts[0]);
-//                mDateTakenFinish = mDateTakenStart;
-//            } catch (...) {
-//                mDateTakenStart = mDateTakenFinish = QDateTime();
-//            }
-
-//            // Build description
-//            StringJoiner joiner = new StringJoiner(" ");
-//            for(int i=endOfID; i<parts.length; i++) {
-//                joiner.add(parts[i]);
-//            }
-
-//            mName = joiner.toString();
-//        }
+        qWarning() << "Folder name not in correct format";
     }
 }
 
@@ -377,7 +345,7 @@ void PSSessionData::writeGeneralSettings() {
         mSettings.endArray();
     }
 
-    // TODO: Write date and time of capture to settings
+    if(!mDateTimeCaptured.isNull()) { mSettings.setValue("DateTime", mDateTimeCaptured.toString()); }
 
     // Only write custom status states
     // TODO: Consider storing ALL statuses, not just custom ones
@@ -403,6 +371,7 @@ void PSSessionData::readGeneralSettings() {
     mSettings.endArray();
 
     // TODO: Read date and time of capture
+    mDateTimeCaptured = QDateTime::fromString(mSettings.value("DateTime").toString());
 
     // Only read these settings if they are not empty
     if(!settingsNotes.isEmpty()) { mNotes = settingsNotes; }
