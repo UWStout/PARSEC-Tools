@@ -10,7 +10,11 @@
 
 double ImageProcessor::mMultipliers[] = { 1.0, 0.5, 1.0, 0.5 };
 
+#ifdef Q_OS_WIN32
+QString gDCRawCommand = "c:/program files/graphicsmagick/dcraw.exe";
+#else
 QString gDCRawCommand = "/opt/local/bin/dcraw";
+#endif
 
 inline void extractMultipliersDCRaw(const QString& line) {
     QStringList tokens = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);

@@ -113,7 +113,7 @@ void RawImageExposureDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
             }
 
             if(lResult == QMessageBox::Yes) {
-                mProjectData->writeExposureSettings(*getExposureSettings(), mProjectInfoStore);
+                mProjectData->writeExposureSettings(*getExposureSettings());
                 this->accept();
             }
         } break;
@@ -208,7 +208,7 @@ void RawImageExposureDialog::previewReady() {
 }
 
 void RawImageExposureDialog::projectDataChanged() {
-    mDefaultSettings = new ExposureSettings(mProjectData->readExposureSettings(mProjectInfoStore));
+    mDefaultSettings = new ExposureSettings(mProjectData->readExposureSettings());
     applySettings(mDefaultSettings);
 
     mGUI->PreviewImageComboBox->clear();

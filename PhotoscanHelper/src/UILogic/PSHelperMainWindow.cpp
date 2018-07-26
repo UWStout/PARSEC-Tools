@@ -309,7 +309,7 @@ void PSHelperMainWindow::viewModel() {
 void PSHelperMainWindow::editGeneralSettings() {
     GeneralSettingsDialog* lDialog = new GeneralSettingsDialog(mLastData, this);
     if(lDialog->exec() == QDialog::Accepted) {
-        mLastData->writeGeneralSettings(mDataInfoStore);
+        mLastData->writeGeneralSettings();
     }
 }
 
@@ -333,7 +333,7 @@ void PSHelperMainWindow::runExposeImagesAction() {
 
         if(!mRawExposureProgressDialog->wasCanceled()) {
             try {
-                mLastData->examineProject(mDataInfoStore);
+                mLastData->examineProject();
             } catch (std::exception e) {
                 qWarning() << "Error: exception while rebuilding PS Project Data.";
                 qWarning() << e.what();

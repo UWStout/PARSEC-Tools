@@ -843,7 +843,7 @@ void PSHTest_Test::fullXMLParsing_data()
 void PSHTest_Test::fullXMLParsing()
 {
     QFETCH(QFileInfo, file);
-    PSProjectFileData* data = new PSProjectFileData(file, NULL);
+    PSProjectFileData* data = new PSProjectFileData(file);
     Q_ASSERT(data != NULL);
     delete data;
 }

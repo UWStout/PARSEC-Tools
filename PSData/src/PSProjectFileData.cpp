@@ -10,7 +10,7 @@ using namespace std;
 #include "PSChunkData.h"
 //#include "PSModelData.h"
 
-PSProjectFileData::PSProjectFileData(QFileInfo pPSProjectFile, QSettings* settings) {
+PSProjectFileData::PSProjectFileData(QFileInfo pPSProjectFile) {
     // Clear out any old chunks by re-initializing the array
     mActiveChunk = UINT_MAX;
 

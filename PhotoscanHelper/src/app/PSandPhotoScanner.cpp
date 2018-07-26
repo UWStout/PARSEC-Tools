@@ -125,7 +125,7 @@ int PSandPhotoScanner::countDirsWithoutModels() const {
 }
 
 PSSessionData* examineProjectFolder(QFileInfo pProjectFolder) {
-    PSSessionData* lData = new PSSessionData(QDir(pProjectFolder.filePath()), NULL);
+    PSSessionData* lData = new PSSessionData(QDir(pProjectFolder.filePath()));
     if(lData == NULL || (lData->getPSProjectFile().filePath() == "" &&
        lData->getRawImageCount() == 0 && lData->getProcessedImageCount() == 0)) {
         qWarning("Error: unable to scan '%s'", pProjectFolder.filePath().toLocal8Bit().data());
@@ -157,8 +157,8 @@ void PSandPhotoScanner::finishDataParallel() {
 
     std::sort(mData.begin(), mData.end(), greaterThanPSSD);
     for(PSSessionData* data : mData) {
-        data->readGeneralSettings(mPSProjectInfoStore);
-        data->readExposureSettings(mPSProjectInfoStore);
+        data->readGeneralSettings();
+        data->readExposureSettings();
     }
     mDataScanned = true;
 }

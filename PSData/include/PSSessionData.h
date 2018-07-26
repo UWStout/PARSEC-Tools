@@ -10,8 +10,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfoList>
-
-class QSettings;
+#include <QSettings>
 
 class PSProjectFileData;
 class PSChunkData;
@@ -49,12 +48,12 @@ public:
     static const char BASE_LENGTH;
     static const char EXTENDED_LENGTH;
 
-    PSSessionData(QDir pPSProjectFolder, QSettings* settings);
+    PSSessionData(QDir pPSProjectFolder);
     virtual ~PSSessionData();
 
     static void setSortBy(Field pNewSortBy);
 
-    void examineProject(QSettings* settings);
+    void examineProject();
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o) const;
 
@@ -78,26 +77,28 @@ public:
     PSModelData* getModelData() const;
     QFileInfo getModelArchiveFile() const;
 
-    long getRawImageCount() const;
-    long getProcessedImageCount() const;
+    size_t getRawImageCount() const;
+    size_t getProcessedImageCount() const;
+    size_t getMaskImageCount() const;
+
     QFileInfoList getRawFileList() const;
+    QFileInfoList getProcessedFileList() const;
+    QFileInfoList getMaskFileList() const;
+
+    void writeGeneralSettings();
+    void readGeneralSettings();
+    void writeExposureSettings(ExposureSettings pExpSettings);
+    ExposureSettings readExposureSettings();
+
     bool isImageExposureKnown() const;
     const double* getWhiteBalanceMultipliers() const;
     double getBrightnessMultiplier() const;
 
     QDateTime getDateTimeCaptured() const;
-    QDateTime getDateTakenFinish() const;
-    bool areResultsApproved() const;
     QStringList getNotes() const;
     QString getName() const;
     QString getNameStrict() const;
     Status getStatus() const;
-
-    void writeGeneralSettings(QSettings* settings) const;
-    void readGeneralSettings(QSettings* settings);
-    void writeExposureSettings(ExposureSettings pExpSettings, QSettings* settings) const;
-    ExposureSettings readExposureSettings(QSettings* settings);
-
     QString toString() const;
 
     PSProjectFileData* getActiveProject() const;
@@ -120,16 +121,20 @@ public:
     char getTextureGenPhaseStatus() const;
 
 private:
-    void processImages(QDir &pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName);
+    void setImages(QDir &pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName);
+
+    void initSettingsFile();
 
     static Field mSortBy;
     static int mNextID;
+
+    // INI file to store all metadata
+    QSettings mSettings;
 
     // Various folders relevant to the session
     QDir mSessionFolder, mRawFolder, mProcessedFolder, mMasksFolder;
 
     // Information about images and sensors
-    long mImageCount_raw, mImageCount_processed;
     QFileInfoList mRawFileList, mProcessedFileList, mMaskFileList;
 
     // General PS Project information

@@ -78,25 +78,26 @@ const QStringList gRawFileExtensions = {
  * @throws IOException see readPSProjectFile()
  * @see readPSProjectFile
  */
-PSSessionData::PSSessionData(QDir pPSProjectFolder, QSettings* settings)
-    : mExposure(ExposureSettings::DEFAULT_EXPOSURE) { // throws IOException {
+PSSessionData::PSSessionData(QDir pPSProjectFolder)
+    : mExposure(ExposureSettings::DEFAULT_EXPOSURE),
+      mSettings(pPSProjectFolder.absolutePath() + QDir::separator() + "psh_meta.ini", QSettings::IniFormat) {
     // Fill everything with default values
     mSessionFolder = pPSProjectFolder;
     mStatus = PSS_UNKNOWN;
 
-    mImageCount_raw = 0;
-    mImageCount_processed = 0;
-
     mName = "";
     mNotes = QStringList();
 
+    // Initialize settings
+    initSettingsFile();
+
     // Build for the first time
-    examineProject(settings);
+    examineProject();
 }
 
 PSSessionData::~PSSessionData() {}
 
-void PSSessionData::examineProject(QSettings* settings) { // throws IOException, IllegalArgumentException {
+void PSSessionData::examineProject() {
 
     // Examine the directory for images and project files
     examineDirectory(mSessionFolder);
@@ -106,7 +107,7 @@ void PSSessionData::examineProject(QSettings* settings) { // throws IOException,
     if(mPSProjectFile.fileName() == "") return;
 
     // Initialize the project
-    mPSProject = new PSProjectFileData(mPSProjectFile, settings);
+    mPSProject = new PSProjectFileData(mPSProjectFile);
 
     autoSetStatus();
 }
@@ -172,7 +173,7 @@ int PSSessionData::compareTo(const PSSessionData* o) const {
             if(o->mDateTimeCaptured.isNull()) return 1;
             return o->mDateTimeCaptured.daysTo(mDateTimeCaptured);
         }
-        case F_IMAGE_COUNT_REAL: return mImageCount_processed - o->mImageCount_processed;
+        case F_IMAGE_COUNT_REAL: return mProcessedFileList.length() - o->mProcessedFileList.length();
 
         case F_PROJECT_STATUS: return (int)(mStatus) - (int)(o->mStatus);
         case F_IMAGE_ALIGN_LEVEL: return describeImageAlignPhase().compare(o->describeImageAlignPhase());
@@ -205,7 +206,6 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     // Clear old data
     mPSProjectFile = QFileInfo();
     mDateTimeCaptured = QDateTime();
-    mImageCount_raw = mImageCount_processed = 0;
 
     // Build listers for the three types of files
     DirLister lProjectFileLister(pDirToExamine, gPSProjectFileExtensions);
@@ -217,11 +217,9 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
         qWarning() << "Warning: Multiple .psz files found. Using the first one.";
     }
     mPSProjectFile = lProjectFileLister.getMatches()[0];
-    mImageCount_processed = lImageFileLister.count();
-    mImageCount_raw = lRawFileLister.count();
 
     // Extract dates if there are raw files
-    if(mImageCount_raw > 0) {
+    if(mRawFileList.length() > 0) {
         // Just assume first and last files are the earliest and latest files
         std::sort(mRawFileList.begin(), mRawFileList.end(), compareFileInfo);
         try {
@@ -239,7 +237,7 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     return true;
 }
 
-void PSSessionData::processImages(QDir& pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName) {
+void PSSessionData::setImages(QDir& pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName) {
     // Create QDir
     pDir = QDir(mSessionFolder.absolutePath() + QDir::separator() + pFolderName);
 
@@ -268,9 +266,9 @@ void PSSessionData::processImages(QDir& pDir, QFileInfoList& pImageList, const Q
 }
 
 void PSSessionData::examineImages() {
-    processImages(mMasksFolder, mMaskFileList, gPSMaskFileExtensions, "Masks");
-    processImages(mRawFolder, mRawFileList, gRawFileExtensions, "Raw");
-    processImages(mProcessedFolder, mProcessedFileList, gPSImageFileExtensions, "Processed");
+    setImages(mMasksFolder, mMaskFileList, gPSMaskFileExtensions, "Masks");
+    setImages(mRawFolder, mRawFileList, gRawFileExtensions, "Raw");
+    setImages(mProcessedFolder, mProcessedFileList, gPSImageFileExtensions, "Processed");
 }
 
 void PSSessionData::autoSetStatus() {
@@ -327,9 +325,12 @@ QFileInfo PSSessionData::getModelArchiveFile() const {
     return mPSProject->getModelArchiveFile();
 }
 
-long PSSessionData::getRawImageCount() const { return mImageCount_raw; }
-long PSSessionData::getProcessedImageCount() const { return mImageCount_processed; }
+size_t PSSessionData::getRawImageCount() const { return mRawFileList.length(); }
+size_t PSSessionData::getProcessedImageCount() const { return mProcessedFileList.length(); }
+size_t PSSessionData::getMaskImageCount() const { return mMaskFileList.length(); }
 QFileInfoList PSSessionData::getRawFileList() const { return mRawFileList; }
+QFileInfoList PSSessionData::getProcessedFileList() const { return mProcessedFileList; }
+QFileInfoList PSSessionData::getMaskFileList() const { return mMaskFileList; }
 
 // TODO: Implement this vvv
 bool PSSessionData::isImageExposureKnown() const { return true; }
@@ -350,98 +351,106 @@ QString PSSessionData::getNameStrict() const { return mName; }
 
 PSSessionData::Status PSSessionData::getStatus() const { return mStatus; }
 
-void PSSessionData::writeGeneralSettings(QSettings* settings) const {
-    if(settings == NULL) return;
-
-    // We count on the folder name being unique inside this collection
-    settings->beginGroup(mSessionFolder.dirName().replace(' ',  '_') + "_Settings");
-
-    // Write these only if they are not empty
-    if(!mID.isEmpty()) { settings->setValue("General/ID", mID); }
-    if(!mName.isEmpty()) { settings->setValue("General/Name", mName); }
-    if(!mNotes.isEmpty()) {
-        settings->beginWriteArray("General/notes");
-        for (int i = 0; i < mNotes.size(); i++) {
-            settings->setArrayIndex(i);
-            settings->setValue("note", mNotes[i]);
-        }
-        settings->endArray();
+void PSSessionData::initSettingsFile() {
+    if (mSettings.status() != QSettings::NoError) {
+        qDebug("Error with session ini file.");
+        return;
     }
 
-    // Only write custom status states
-    if(mStatus > PSS_TEXTURE_GEN_DONE) { settings->setValue("General/Status", (int)mStatus); }
-
-    settings->endGroup();
+    readGeneralSettings();
+    readExposureSettings();
 }
 
-void PSSessionData::readGeneralSettings(QSettings* settings) {
-    if(settings == NULL) return;
+void PSSessionData::writeGeneralSettings() {
+    mSettings.beginGroup("General");
 
-    settings->beginGroup(mSessionFolder.dirName().replace(' ',  '_') + "_Settings");
+    // Write these only if they are not empty
+    if(!mID.isEmpty()) { mSettings.setValue("ID", mID); }
+    if(!mName.isEmpty()) { mSettings.setValue("Name", mName); }
+    if(!mDescription.isEmpty()) { mSettings.setValue("Description", mDescription); }
+    if(!mNotes.isEmpty()) {
+        mSettings.beginWriteArray("Notes");
+        for (int i = 0; i < mNotes.size(); i++) {
+            mSettings.setArrayIndex(i);
+            mSettings.setValue("note", mNotes[i]);
+        }
+        mSettings.endArray();
+    }
+
+    // TODO: Write date and time of capture to settings
+
+    // Only write custom status states
+    // TODO: Consider storing ALL statuses, not just custom ones
+    if(mStatus > PSS_TEXTURE_GEN_DONE) { mSettings.setValue("Status", (int)mStatus); }
+
+    mSettings.endGroup();
+}
+
+void PSSessionData::readGeneralSettings() {
+    mSettings.beginGroup("General");
 
     // Retrieve the general settings
-    QString settingsID = settings->value("General/ID", mID).toString();
-    QString settingsName = settings->value("General/Name", "").toString();
-    if(settingsName.isEmpty()) { settingsName = settings->value("General/Description", "").toString(); }
+    mID = mSettings.value("ID", mID).toString();
+    mName = mSettings.value("Name", mName).toString();
+    mDescription = mSettings.value("Description", mDescription).toString();
 
     QStringList settingsNotes;
-    int notesSize = settings->beginReadArray("General/notes");
+    int notesSize = mSettings.beginReadArray("Notes");
     for (int i = 0; i < notesSize; ++i) {
-        settings->setArrayIndex(i);
-        settingsNotes << settings->value("note").toString();
+        mSettings.setArrayIndex(i);
+        settingsNotes << mSettings.value("note").toString();
     }
-    settings->endArray();
+    mSettings.endArray();
+
+    // TODO: Read date and time of capture
 
     // Only read these settings if they are not empty
-    if(!settingsID.isEmpty()) { mID = settingsID; }
-    if(!settingsName.isEmpty()) { mName = settingsName; }
     if(!settingsNotes.isEmpty()) { mNotes = settingsNotes; }
 
     // Only read and accept custom status states
-    int statVal = settings->value("General/Status", "0").toInt();
+    int statVal = mSettings.value("Status", "0").toInt();
     if(statVal > PSS_TEXTURE_GEN_DONE) { mStatus = (Status)statVal; }
 
-    settings->endGroup();
+    mSettings.endGroup();
 }
 
-void PSSessionData::writeExposureSettings(ExposureSettings pExpSettings, QSettings* settings) const {
+void PSSessionData::writeExposureSettings(ExposureSettings pExpSettings) {
     // Write those to the settings file for the application
-    if(settings == NULL) return;
-    settings->beginGroup(mSessionFolder.dirName().replace(' ',  "_") + "_Settings");
+    mSettings.beginGroup("Exposure");
 
-    settings->setValue("WhiteBalanceMode", (int)pExpSettings.getWBMode());
-    settings->setValue("WhiteBalanceMode/R", pExpSettings.getWBCustom()[0]);
-    settings->setValue("WhiteBalanceMode/G1", pExpSettings.getWBCustom()[1]);
-    settings->setValue("WhiteBalanceMode/B", pExpSettings.getWBCustom()[2]);
-    settings->setValue("WhiteBalanceMode/G2", pExpSettings.getWBCustom()[3]);
+    mSettings.setValue("WhiteBalanceMode", (int)pExpSettings.getWBMode());
+    mSettings.setValue("WhiteBalanceMode/R", pExpSettings.getWBCustom()[0]);
+    mSettings.setValue("WhiteBalanceMode/G1", pExpSettings.getWBCustom()[1]);
+    mSettings.setValue("WhiteBalanceMode/B", pExpSettings.getWBCustom()[2]);
+    mSettings.setValue("WhiteBalanceMode/G2", pExpSettings.getWBCustom()[3]);
 
-    settings->setValue("BrightnessMode", (int)pExpSettings.getBrightMode());
-    settings->setValue("BrightnessMode/Scaler", pExpSettings.getBrightScale());
+    mSettings.setValue("BrightnessMode", (int)pExpSettings.getBrightMode());
+    mSettings.setValue("BrightnessMode/Scaler", pExpSettings.getBrightScale());
 
     // Close the group
-    settings->endGroup();
+    mSettings.endGroup();
 }
 
-ExposureSettings PSSessionData::readExposureSettings(QSettings* settings) {
-    if(settings == NULL) return ExposureSettings::DEFAULT_EXPOSURE;
+ExposureSettings PSSessionData::readExposureSettings() {
+    if(mSettings.status() != QSettings::NoError) return ExposureSettings::DEFAULT_EXPOSURE;
 
     ExposureSettings lDefSettings = ExposureSettings::DEFAULT_EXPOSURE;
 
-    settings->beginGroup(mSessionFolder.dirName().replace(' ',  "_") + "_Settings");
+    mSettings.beginGroup("Exposure");
 
-    int lWBOrdinal = settings->value("WhiteBalanceMode", (int)lDefSettings.getWBMode()).toInt();
+    int lWBOrdinal = mSettings.value("WhiteBalanceMode", (int)lDefSettings.getWBMode()).toInt();
     double lWBCustom[4] = {
-        settings->value("WhiteBalanceMode/R", lDefSettings.getWBCustom()[0]).toDouble(),
-        settings->value("WhiteBalanceMode/G1", lDefSettings.getWBCustom()[1]).toDouble(),
-        settings->value("WhiteBalanceMode/B", lDefSettings.getWBCustom()[2]).toDouble(),
-        settings->value("WhiteBalanceMode/G2", lDefSettings.getWBCustom()[3]).toDouble()
+        mSettings.value("WhiteBalanceMode/R", lDefSettings.getWBCustom()[0]).toDouble(),
+        mSettings.value("WhiteBalanceMode/G1", lDefSettings.getWBCustom()[1]).toDouble(),
+        mSettings.value("WhiteBalanceMode/B", lDefSettings.getWBCustom()[2]).toDouble(),
+        mSettings.value("WhiteBalanceMode/G2", lDefSettings.getWBCustom()[3]).toDouble()
     };
 
-    int lBrightMOrdinal = settings->value("BrightnessMode", (int)lDefSettings.getBrightMode()).toInt();
-    double lBrightScaler = settings->value("BrightnessMode/Scaler", lDefSettings.getBrightScale()).toDouble();
+    int lBrightMOrdinal = mSettings.value("BrightnessMode", (int)lDefSettings.getBrightMode()).toInt();
+    double lBrightScaler = mSettings.value("BrightnessMode/Scaler", lDefSettings.getBrightScale()).toDouble();
 
     // Close the group and dispose of this object (cause you know, garbage collection)
-    settings->endGroup();
+    mSettings.endGroup();
 
     return ExposureSettings((ExposureSettings::WhiteBalanceMode)lWBOrdinal, lWBCustom,
                             (ExposureSettings::BrightnessMode)lBrightMOrdinal, lBrightScaler);
@@ -468,9 +477,9 @@ QString PSSessionData::toString() const {
     lDetails += "\n";
 
     // Image data details
-    lDetails += "\n\tImages - " + QString::number(mImageCount_processed) + " in folder\n";
-    if(mImageCount_raw > 0) {
-        lDetails += "\t         " + QString::number(mImageCount_raw) + " raw images\n";
+    lDetails += "\n\tImages - " + QString::number(mProcessedFileList.length()) + " in folder\n";
+    if(mRawFileList.length() > 0) {
+        lDetails += "\t         " + QString::number(mRawFileList.length()) + " raw images\n";
     }
 
     if(isImageExposureKnown()) {
