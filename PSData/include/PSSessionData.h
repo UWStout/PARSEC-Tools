@@ -128,8 +128,8 @@ private:
     static Field mSortBy;
     static int mNextID;
 
-    // INI file to store all metadata
-    QSettings mSettings;
+    // INI filename to store all metadata
+    QString mSettings;
 
     // Various folders relevant to the session
     QDir mSessionFolder, mRawFolder, mProcessedFolder, mMasksFolder;

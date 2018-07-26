@@ -309,6 +309,7 @@ void PSHelperMainWindow::viewModel() {
 void PSHelperMainWindow::editGeneralSettings() {
     GeneralSettingsDialog* lDialog = new GeneralSettingsDialog(mLastData, this);
     if(lDialog->exec() == QDialog::Accepted) {
+        qDebug("Writing general settings for session %s", mLastData->getName().toLocal8Bit().data());
         mLastData->writeGeneralSettings();
     }
 }

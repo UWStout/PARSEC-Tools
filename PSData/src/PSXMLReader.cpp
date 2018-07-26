@@ -1,5 +1,6 @@
 #include "PSXMLReader.h"
 
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QXmlStreamReader>
@@ -37,12 +38,12 @@ QFileInfo PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFileInfo
 
         // Fill in project name if needed
         if(newFilePath.contains("{projectname}")) {
-            QString baseFilename = QFileInfo(newFilePath).baseName();
+            QString baseFilename = QFileInfo(currentFile).baseName();
             newFilePath = newFilePath.replace("{projectname}", baseFilename);
         }
 
         // Make into an absolute QFile Path object
-        newFilePath = QFileInfo(currentFile.fileName()).canonicalPath() + newFilePath;
+        newFilePath = QFileInfo(currentFile.filePath()).absolutePath() + QDir::separator() + newFilePath;
         return QFileInfo(newFilePath);
     }
 
