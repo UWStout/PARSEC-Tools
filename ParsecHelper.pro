@@ -4,4 +4,8 @@ SUBDIRS += \
     PSHTest \
     PhotoscanHelper \
     PSData \
-    QPLY \
+    QPLY
+
+PSData.depends = QPly
+PhotoscanHelper.depends = PSData
+PHTest.depends = PSData

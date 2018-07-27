@@ -15,7 +15,7 @@ QXmlStreamReader* PSXMLReader::explodeTag(QXmlStreamReader* reader, QStack<QFile
     if(!reader->attributes().value("", "path").isEmpty()) {
         // Construct the absolute path to the new QFile and let it become the current QFile
         QFileInfo newXMLFile = checkForAndUpdatePath(reader, currentFileStack.top());
-        currentFileStack.push(newXMLFile);
+        currentFileStack.push(newXMLFile);        
 
         // Turn into an input stream
         QXmlStreamReader* newReader = getXMLStreamFromFile(newXMLFile);
@@ -34,6 +34,8 @@ QFileInfo PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFileInfo
 
         // Retrieve relative path
         QString newFilePath = reader->attributes().value("", "path").toString();
+
+        qDebug("Opening %s with parent %s", newFilePath.toLocal8Bit().data(), currentFile.filePath().toLocal8Bit().data());
 
         // Fill in project name if needed
         if(newFilePath.contains("{projectname}")) {

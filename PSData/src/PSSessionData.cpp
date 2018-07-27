@@ -79,8 +79,8 @@ const QStringList gRawFileExtensions = {
  * @see readPSProjectFile
  */
 PSSessionData::PSSessionData(QDir pPSProjectFolder)
-    : mExposure(ExposureSettings::DEFAULT_EXPOSURE),
-      mSettings(pPSProjectFolder.absolutePath() + QDir::separator() + "psh_meta.ini", QSettings::IniFormat) {
+    : mSettings(pPSProjectFolder.absolutePath() + QDir::separator() + "psh_meta.ini", QSettings::IniFormat),
+      mExposure(ExposureSettings::DEFAULT_EXPOSURE) {
     // Fill everything with default values
     mSessionFolder = pPSProjectFolder;
     mStatus = PSS_UNKNOWN;
