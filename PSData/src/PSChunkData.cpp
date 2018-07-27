@@ -61,7 +61,7 @@ void PSChunkData::init(QXmlStreamReader* reader) {
     mOptimize_durationSeconds = 0;
     mModelGeneration_durationSeconds = 0;
 
-    if (reader != NULL) {
+    if (reader != NULL && !mSourceFile.fileName().endsWith("psx")) {
         parseXMLChunk(reader);
     }
 }

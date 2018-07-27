@@ -113,6 +113,7 @@ void RawImageExposureDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
             }
 
             if(lResult == QMessageBox::Yes) {
+                qDebug("Writing exposure settings for session %s", mProjectData->getName().toLocal8Bit().data());
                 mProjectData->writeExposureSettings(*getExposureSettings());
                 this->accept();
             }
