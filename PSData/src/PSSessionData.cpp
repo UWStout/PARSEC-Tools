@@ -25,7 +25,7 @@ void PSSessionData::setSortBy(PSSessionData::Field pNewSortBy) {
     mSortBy = pNewSortBy;
 }
 
-int PSSessionData::mNextID = 0;
+uint64_t PSSessionData::mNextID = 0;
 
 // File name filters
 // Note: raw file extensions from https://en.wikipedia.org/wiki/Raw_image_format
@@ -117,7 +117,7 @@ void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
     QStringList parts = pFolderName.split(" ");
     if(parts.length() > 1) {
         // Get the ID
-        setID(parts[0]);
+        setID(parts[0].toULongLong());
 
         // Build description
         parts.removeFirst();
@@ -265,15 +265,15 @@ void PSSessionData::setCustomStatus(int statusIndex) {
     }
 }
 
-void PSSessionData::setID(QString pID) {
+void PSSessionData::setID(uint64_t pID) {
     mID = pID;
-    if(mID.toInt() > mNextID) {
-        mNextID = mID.toInt() + 1;
+    if(mID > mNextID) {
+        mNextID = mID + 1;
     }
 }
 
-QString PSSessionData::getID() const { return mID; }
-int PSSessionData::getNextID() { return mNextID; }
+uint64_t PSSessionData::getID() const { return mID; }
+uint64_t PSSessionData::getNextID() { return mNextID; }
 void PSSessionData::addNotes(QString pNotes) { mNotes.append(pNotes); }
 void PSSessionData::setName(QString pName) { mName = pName; }
 
@@ -337,7 +337,7 @@ void PSSessionData::writeGeneralSettings() {
     }
 
     // Write these only if they are not empty
-    if(!mID.isEmpty()) { lSettings.setValue("ID", mID); }
+    if(mID != NULL) { lSettings.setValue("ID", mID); }
     if(!mName.isEmpty()) { lSettings.setValue("Name", mName); }
     if(!mDescription.isEmpty()) { lSettings.setValue("Description", mDescription); }
     if(!mNotes.isEmpty()) {
@@ -363,7 +363,7 @@ void PSSessionData::readGeneralSettings() {
     lSettings.beginGroup("General");
 
     // Retrieve the general settings
-    mID = lSettings.value("ID", mID).toString();
+    mID = lSettings.value("ID", mID).toULongLong();
     mName = lSettings.value("Name", mName).toString();
     mDescription = lSettings.value("Description", mDescription).toString();
 

@@ -44,7 +44,7 @@ void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
         case QDialogButtonBox::Ok:
             mProjectData->setCustomStatus(statusIndex);
 
-            mProjectData->setID(mGUI->IDLineEdit->text());
+            mProjectData->setID(mGUI->IDLineEdit->text().toULongLong());
             mProjectData->setName(mGUI->DescriptionLineEdit->text());
             mProjectData->addNotes(mGUI->SpecialNotesTextEdit->toPlainText());
         break;

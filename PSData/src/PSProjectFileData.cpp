@@ -12,8 +12,6 @@ using namespace std;
 
 PSProjectFileData::PSProjectFileData(QFileInfo pPSProjectFile) {
     // Clear out any old chunks by re-initializing the array
-    mActiveChunk = UINT_MAX;
-
     mPSProjectFile = pPSProjectFile;
     parseProjectFile();
     mActiveChunk = 0;

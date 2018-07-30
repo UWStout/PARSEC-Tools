@@ -63,10 +63,10 @@ public:
 	
     void autoSetStatus();
     void setCustomStatus(int statusIndex);
-    QString getID() const;
+    uint64_t getID() const;
 	
-    static int getNextID();
-    void setID(QString mID);
+    static uint64_t getNextID();
+    void setID(uint64_t mID);
     void addNotes(QString pNotes);
 
     void setName(QString pName);
@@ -126,7 +126,7 @@ private:
     void initSettingsFile();
 
     static Field mSortBy;
-    static int mNextID;
+    static uint64_t mNextID;
 
     // INI filename to store all metadata
     QString mSettings;
@@ -138,7 +138,8 @@ private:
     QFileInfoList mRawFileList, mProcessedFileList, mMaskFileList;
 
     // General PS Project information
-    QString mID, mName, mDescription;
+    uint64_t mID;
+    QString mName, mDescription;
     QStringList mNotes;
     Status mStatus;
 
