@@ -157,7 +157,7 @@ private:
     static const QString sMasksFolderName;
 
     static Field mSortBy;
-    static int mNextID;
+    static uint64_t mNextID;
 };
 
 #endif

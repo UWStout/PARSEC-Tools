@@ -27,7 +27,7 @@ void PSSessionData::setSortBy(PSSessionData::Field pNewSortBy) {
 }
 
 // The next ID available that is guaranteed to be unique
-int PSSessionData::mNextID = 0;
+uint64_t PSSessionData::mNextID = 0;
 
 // File name filters
 // Note: raw file extensions from https://en.wikipedia.org/wiki/Raw_image_format
@@ -114,6 +114,7 @@ void PSSessionData::examineProject() {
 
         // Parse the PhotoScan XML file
         if(mPSProjectFile.filePath() != "") {
+            qDebug() << "Working fine";
             mPSProject = new PSProjectFileData(mPSProjectFile);
         }
 
