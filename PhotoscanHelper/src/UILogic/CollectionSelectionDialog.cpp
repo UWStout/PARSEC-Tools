@@ -29,7 +29,7 @@ QString CollectionSelectionDialog::getSelectedCollectionPath() {
 void CollectionSelectionDialog::on_browseButton_clicked() {
     QString newDir = QFileDialog::getExistingDirectory(parentWidget(),
                         "Select a collection directory", "");
-    if(newDir != NULL && !newDir.isEmpty()) {
+    if(newDir != nullptr && !newDir.isEmpty()) {
         mGUI->collectionsComboBox->setEditText(newDir);
     }
 }

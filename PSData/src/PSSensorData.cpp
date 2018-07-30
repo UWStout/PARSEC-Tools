@@ -14,7 +14,7 @@ PSSensorData::PSSensorData(long pID, QString pLabel) : ID(pID) {
     mK1 = mK2 = mK3 = mK4 = mP1 = mP2 = mP3 = mP4 = 1.0;
 
     mCovarianceParams = "";
-    mCovarianceCoeffs = NULL;
+    mCovarianceCoeffs = nullptr;
 }
 
 PSSensorData::~PSSensorData() {}
@@ -28,8 +28,8 @@ PSSensorData* PSSensorData::makeFromXML(QXmlStreamReader* reader) {
     }
 
     // Sanity check
-    if(reader == NULL || reader->name() != "sensor") {
-        return NULL;
+    if(reader == nullptr || reader->name() != "sensor") {
+        return nullptr;
     }
 
     // Build the basic sensor
@@ -119,7 +119,7 @@ PSSensorData* PSSensorData::makeFromXML(QXmlStreamReader* reader) {
     }
 
     // Should never reach this except when XML is malformed
-    return NULL;
+    return nullptr;
 }
 
 QString PSSensorData::getLabel() const { return mLabel; }

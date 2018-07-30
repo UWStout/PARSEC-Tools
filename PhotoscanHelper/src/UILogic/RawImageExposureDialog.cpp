@@ -30,7 +30,7 @@ RawImageExposureDialog::~RawImageExposureDialog() {
 }
 
 void RawImageExposureDialog::setUpGUI() {
-    mProjectData = NULL;
+    mProjectData = nullptr;
     mBlockUpdateFromGUI = false;
     mEnqueueMode = false;
 
@@ -144,7 +144,7 @@ void RawImageExposureDialog::updateFromGUI() {
 
 // TODO: Update to use libraw exposure
 void RawImageExposureDialog::asyncGeneratePreview() {
-    if(mProjectData == NULL) return;
+    if(mProjectData == nullptr) return;
 
     qInfo() << "Generating preview.";
     mGUI->PreviewButton->setEnabled(false);

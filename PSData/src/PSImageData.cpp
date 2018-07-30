@@ -8,7 +8,7 @@
 PSImageData::PSImageData(long pCamID, QString pFilePath) {
     mCamID = pCamID;
     mFilePath = pFilePath;
-    mCameraData = NULL;
+    mCameraData = nullptr;
 }
 
 PSImageData::~PSImageData() {}
@@ -36,8 +36,8 @@ PSImageData* PSImageData::makeFromXML(QXmlStreamReader* reader) {
     }
 
     // Sanity check
-    if(reader == NULL || reader->name() != "camera" || !reader->isStartElement()) {
-        return NULL;
+    if(reader == nullptr || reader->name() != "camera" || !reader->isStartElement()) {
+        return nullptr;
     }
 
     // Note, in some older file formats, the ID is not there
@@ -75,5 +75,5 @@ PSImageData* PSImageData::makeFromXML(QXmlStreamReader* reader) {
     }
 
     // Should never reach this except when XML is malformed
-    return NULL;
+    return nullptr;
 }

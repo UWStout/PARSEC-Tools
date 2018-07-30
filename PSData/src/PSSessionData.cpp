@@ -20,11 +20,13 @@ DEFINE_ENUM(Field, FIELDS_ENUM, PSSessionData)
 const char PSSessionData::BASE_LENGTH = 6;
 const char PSSessionData::EXTENDED_LENGTH = 11;
 
+// Values to control how containers of PSSessionData objects are sorted
 PSSessionData::Field PSSessionData::mSortBy = PSSessionData::F_PROJECT_ID;
 void PSSessionData::setSortBy(PSSessionData::Field pNewSortBy) {
     mSortBy = pNewSortBy;
 }
 
+// The next ID available that is guaranteed to be unique
 int PSSessionData::mNextID = 0;
 
 // File name filters
@@ -68,48 +70,77 @@ const QStringList gRawFileExtensions = {
     "*.x3f"
 };
 
-/**
- * Construct a new PSProjectData that points to the PSZ project file
- * indicated by the path string.  The folder that contains the PSZ
- * file (as well as all sub-folders) will be examined for images.
- *
- * @param pPSProjectFilename A path string the indicates an existing PSZ file.
- * will be used with java.io.QFile to process the PhotoScan project.
- * @throws IOException see readPSProjectFile()
- * @see readPSProjectFile
- */
+// Images sub-folder names
+const QString PSSessionData::sRawFolderName = "Raw";
+const QString PSSessionData::sProcessedFolderName = "Processed";
+const QString PSSessionData::sMasksFolderName = "Masks";
+
 PSSessionData::PSSessionData(QDir pPSProjectFolder)
-    : mExposure(ExposureSettings::DEFAULT_EXPOSURE),
-      mSettings(pPSProjectFolder.absolutePath() + QDir::separator() + "psh_meta.ini") {
+    : mSettings(pPSProjectFolder.absolutePath() + QDir::separator() + "psh_meta.ini"),
+      mExposure(ExposureSettings::DEFAULT_EXPOSURE) {
     // Fill everything with default values
     mSessionFolder = pPSProjectFolder;
     mStatus = PSS_UNKNOWN;
+    mRawFileCount = mProcessedFileCount = mMaskFileCount = 0;
+
+    isExternal = true;
+    isConsistent = isSynchronized = false;
 
     mName = "";
     mNotes = QStringList();
 
-    // Build for the first time
+    // Update project state and synchronize
     examineProject();
 }
 
 PSSessionData::~PSSessionData() {}
 
 void PSSessionData::examineProject() {
+    // Build folder names
+    mRawFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sRawFolderName);
+    mProcessedFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sProcessedFolderName);
+    mMasksFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sMasksFolderName);
 
-    // Examine the directory for images and project files
+    // Reset image counts
+    mRawFileCount = mProcessedFileCount = mMaskFileCount = -1;
+
+    // Preliminary examination of directory
     examineDirectory(mSessionFolder);
-    examineImages();
-    extractInfoFromFolderName(mSessionFolder.dirName());
 
-    if(mPSProjectFile.fileName() == "") return;
+    // Is this an external session folder that needs to be fully examined (no INI file yet)
+    if (!QFileInfo(mSettings).exists()) {
+        // Try to guess some info from the folder name
+        extractInfoFromFolderName(mSessionFolder.dirName());
 
-    // Initialize the project
-    mPSProject = new PSProjectFileData(mPSProjectFile);
+        // Parse the PhotoScan XML file
+        if(mPSProjectFile.filePath() != "") {
+            mPSProject = new PSProjectFileData(mPSProjectFile);
+        }
 
-    autoSetStatus();
+        // Ensure the image files lists are initialized and image counts are accurate
+        getRawFileList(); getProcessedFileList(); getMaskFileList();
 
-    // Check for previous settings in an ini file
-    initSettingsFile();
+        // Update status and create initial INI file
+        autoSetStatus();
+        writeGeneralSettings();
+
+        // Update state
+        isExternal = false;
+        isSynchronized = isConsistent = true;
+    } else {
+        // Read from INI file
+        readGeneralSettings();
+        readExposureSettings();
+
+        // NOTE: image files lists will not be created until the first time
+        //       their getters are called (to shorten loading time).
+
+        // Update state
+        isExternal = false;
+
+        // TODO: Fix these so they actually check project filename and last modified timestamp
+        isSynchronized = isConsistent = true;
+    }
 }
 
 void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
@@ -155,16 +186,6 @@ bool compareFileInfo(const QFileInfo& A, const QFileInfo& B) {
     return (A.fileName().compare(B.fileName()) < 0);
 }
 
-/**
- * Examine the files in the given directory and count any normal images and raw
- * images that are found there OR in any of the sub-directories.  This is intended
- * to be used in a folder that contains a PSZ file as a 'side-car' file for all
- * the source images used in that same PSZ file.  Afterwards, mImageCount_* will
- * be set to the numbers of images found.  If the function fails (return false)
- * the mImageCount properties are set to 0.
- * @return True if the directory was successfully examined, false on failure.
- * @see countfilesIn
- */
 bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     // Sanity check
     if(!pDirToExamine.exists()) {
@@ -175,68 +196,46 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     mPSProjectFile = QFileInfo();
     mDateTimeCaptured = QDateTime();
 
-    // Build listers for the three types of files
-    DirLister lProjectFileLister(pDirToExamine, gPSProjectFileExtensions);
-    DirLister lImageFileLister(pDirToExamine, gPSImageFileExtensions);
-    DirLister lRawFileLister(pDirToExamine, gRawFileExtensions);
+    // Ensure the image folders exist and files are copied into them
+    initImageDir(mMasksFolder, gPSMaskFileExtensions, "Masks");
+    initImageDir(mRawFolder, gRawFileExtensions, "Raw");
+    initImageDir(mProcessedFolder, gPSImageFileExtensions, "Processed");
 
-    // Get info from the listers
-    if(lProjectFileLister.getMatches().length() > 1) {
-        qWarning() << "Warning: Multiple .psz files found. Using the first one.";
-    }
-    mPSProjectFile = lProjectFileLister.getMatches()[0];
-
-    // Extract dates if there are raw files
-    if(mRawFileList.length() > 0) {
-        // Just assume first and last files are the earliest and latest files
-        std::sort(mRawFileList.begin(), mRawFileList.end(), compareFileInfo);
-        try {
-//            mDateTakenStart = ImageProcessorIM4J.getDateFromMetadata(mRawFileList[0]);
-//            mDateTakenFinish = ImageProcessorIM4J.getDateFromMetadata(mRawFileList[mRawFileList.length-1]);
-        } catch (...) {
-            qWarning("Error: failed to extract dates from raw images\n");
-            mDateTimeCaptured = QDateTime();
+    // Find the project file
+    QFileInfoList lProjectFiles = pDirToExamine.entryInfoList(
+                gPSProjectFileExtensions, QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    if(!lProjectFiles.isEmpty()) {
+        mPSProjectFile = lProjectFiles[0];
+        if(lProjectFiles.length() > 1) {
+            qDebug("Session Warning: More then one project file. Will use the first one found only! (%s)",
+                   mPSProjectFile.fileName().toLocal8Bit().data());
         }
-    } else {
-        mDateTimeCaptured = QDateTime();
     }
 
     // Return success
     return true;
 }
 
-void PSSessionData::setImages(QDir& pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName) {
-    // Create QDir
-    pDir = QDir(mSessionFolder.absolutePath() + QDir::separator() + pFolderName);
-
-    // Check to see if it exists
+inline void PSSessionData::initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName) {
+    // Check to see if directory exists
     if(!pDir.exists()) {
-        // If not, create that directory
-        qDebug() << pDir.mkdir(mSessionFolder.absolutePath() + QDir::separator() + pFolderName);
+        // If not, try to create that directory
+        QString lNewDir = mSessionFolder.absolutePath() + QDir::separator() + pFolderName;
+        if (!mSessionFolder.mkdir(pFolderName) || !pDir.exists()) {
+            qDebug("Failed to create directory %s", lNewDir.toLocal8Bit().data());
+        }
     }
 
-    // Iterate through the QDir
+    // Iterate through the all files that match the given filter in the session root dir
     QDirIterator lIt(mSessionFolder.absolutePath(), pFilter, QDir::Files);
     while (lIt.hasNext() && !lIt.next().isNull()) {
         if(lIt.fileName().isEmpty()) {
             continue;
         }
-        // Move files into proper folders
-        QString newName = mSessionFolder.absolutePath() + QDir::separator() + pFolderName + QDir::separator() + lIt.fileName();
-        qDebug() << QFile::rename(lIt.filePath(), newName);
-        qDebug() << lIt.filePath() << " <--> " << newName;
+
+        // Move matched files into the given folder
+        QString newName = pDir.absolutePath() + QDir::separator() + lIt.fileName();
     }
-
-    // Store files in QFileInfoList
-    // NOTE: May need to include symlinks at a later time
-    pImageList = pDir.entryInfoList(pFilter, QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-    qDebug() << pFolderName << " length: " << pImageList.length();
-}
-
-void PSSessionData::examineImages() {
-    setImages(mMasksFolder, mMaskFileList, gPSMaskFileExtensions, "Masks");
-    setImages(mRawFolder, mRawFileList, gRawFileExtensions, "Raw");
-    setImages(mProcessedFolder, mProcessedFileList, gPSImageFileExtensions, "Processed");
 }
 
 void PSSessionData::autoSetStatus() {
@@ -293,40 +292,43 @@ QFileInfo PSSessionData::getModelArchiveFile() const {
     return mPSProject->getModelArchiveFile();
 }
 
-size_t PSSessionData::getRawImageCount() const { return mRawFileList.length(); }
-size_t PSSessionData::getProcessedImageCount() const { return mProcessedFileList.length(); }
-size_t PSSessionData::getMaskImageCount() const { return mMaskFileList.length(); }
-QFileInfoList PSSessionData::getRawFileList() const { return mRawFileList; }
-QFileInfoList PSSessionData::getProcessedFileList() const { return mProcessedFileList; }
-QFileInfoList PSSessionData::getMaskFileList() const { return mMaskFileList; }
+int PSSessionData::getRawImageCount() const { return mRawFileCount; }
+int PSSessionData::getProcessedImageCount() const { return mProcessedFileCount; }
+int PSSessionData::getMaskImageCount() const { return mMaskFileCount; }
 
-// TODO: Implement this vvv
-bool PSSessionData::isImageExposureKnown() const { return true; }
-
-const double* PSSessionData::getWhiteBalanceMultipliers() const { return mExposure.getWBCustom(); }
-double PSSessionData::getBrightnessMultiplier() const { return mExposure.getBrightScale(); }
-QDateTime PSSessionData::getDateTimeCaptured() const { return mDateTimeCaptured; }
-QStringList PSSessionData::getNotes() const { return mNotes; }
-
-QString PSSessionData::getName() const {
-    if(mName.isNull() || mName.isEmpty()) {
-        return mSessionFolder.dirName();
+const QFileInfoList& PSSessionData::getRawFileList() const {
+    if(mRawFileList.length() != mRawFileCount) {
+        mRawFileList = mRawFolder.entryInfoList(gRawFileExtensions,
+                           QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+        mRawFileCount = mRawFileList.length();
     }
-    return mName;
+    return mRawFileList;
 }
 
-QString PSSessionData::getNameStrict() const { return mName; }
+const QFileInfoList& PSSessionData::getProcessedFileList() const {
+    if(mProcessedFileList.length() != mProcessedFileCount) {
+        mProcessedFileList = mProcessedFolder.entryInfoList(gPSImageFileExtensions,
+                                 QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+        mProcessedFileCount = mProcessedFileList.length();
+    }
+    return mProcessedFileList;
+}
 
+const QFileInfoList& PSSessionData::getMaskFileList() const {
+    if(mMaskFileList.length() != mMaskFileCount) {
+        mMaskFileList = mMasksFolder.entryInfoList(gPSMaskFileExtensions,
+                                 QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+        mMaskFileCount = mMaskFileList.length();
+    }
+    return mMaskFileList;
+}
+
+QDateTime PSSessionData::getDateTimeCaptured() const { return mDateTimeCaptured; }
+QStringList PSSessionData::getNotes() const { return mNotes; }
+QString PSSessionData::getName() const { return mName; }
 PSSessionData::Status PSSessionData::getStatus() const { return mStatus; }
 
 void PSSessionData::initSettingsFile() {
-
-    if (!QFileInfo(mSettings).exists()) {
-        writeGeneralSettings();
-    } else {
-        readGeneralSettings();
-        readExposureSettings();
-    }
 }
 
 void PSSessionData::writeGeneralSettings() {
@@ -352,9 +354,14 @@ void PSSessionData::writeGeneralSettings() {
     if(!mDateTimeCaptured.isNull()) { lSettings.setValue("DateTime", mDateTimeCaptured.toString()); }
 
     // Only write custom status states
-    // TODO: Consider storing ALL statuses, not just custom ones
-    if(mStatus > PSS_TEXTURE_GEN_DONE) { lSettings.setValue("Status", (int)mStatus); }
+    lSettings.setValue("Status", static_cast<int>(mStatus));
+    lSettings.endGroup();
 
+    // Store image counts so we can read them without scaning the image directories
+    lSettings.beginGroup("Images");
+    lSettings.setValue("RawImageCount", mRawFileCount);
+    lSettings.setValue("ProcessedImageCount", mProcessedFileCount);
+    lSettings.setValue("MaskImageCount", mMaskFileCount);
     lSettings.endGroup();
 }
 
@@ -380,9 +387,8 @@ void PSSessionData::readGeneralSettings() {
     // Only read these settings if they are not empty
     if(!settingsNotes.isEmpty()) { mNotes = settingsNotes; }
 
-    // Only read and accept custom status states
-    int statVal = lSettings.value("Status", "0").toInt();
-    if(statVal > PSS_TEXTURE_GEN_DONE) { mStatus = (Status)statVal; }
+    // Read most recent status
+    mStatus = static_cast<Status>(lSettings.value("Status", "0").toInt());
 
     lSettings.endGroup();
 }
@@ -393,26 +399,27 @@ void PSSessionData::writeExposureSettings(ExposureSettings pExpSettings) {
     // Write those to the settings file for the application
     lSettings.beginGroup("Exposure");
 
-    lSettings.setValue("WhiteBalanceMode", (int)pExpSettings.getWBMode());
+    lSettings.setValue("WhiteBalanceMode", static_cast<int>(pExpSettings.getWBMode()));
     lSettings.setValue("WhiteBalanceMode/R", pExpSettings.getWBCustom()[0]);
     lSettings.setValue("WhiteBalanceMode/G1", pExpSettings.getWBCustom()[1]);
     lSettings.setValue("WhiteBalanceMode/B", pExpSettings.getWBCustom()[2]);
     lSettings.setValue("WhiteBalanceMode/G2", pExpSettings.getWBCustom()[3]);
 
-    lSettings.setValue("BrightnessMode", (int)pExpSettings.getBrightMode());
+    lSettings.setValue("BrightnessMode", static_cast<int>(pExpSettings.getBrightMode()));
     lSettings.setValue("BrightnessMode/Scaler", pExpSettings.getBrightScale());
 
     // Close the group
     lSettings.endGroup();
 }
 
-ExposureSettings PSSessionData::readExposureSettings() {
+ExposureSettings PSSessionData::readExposureSettings() const {
     ExposureSettings lDefSettings = ExposureSettings::DEFAULT_EXPOSURE;
 
     QSettings lSettings(mSettings, QSettings::IniFormat);
     lSettings.beginGroup("Exposure");
 
-    int lWBOrdinal = lSettings.value("WhiteBalanceMode", (int)lDefSettings.getWBMode()).toInt();
+    int lWBOrdinal = lSettings.value("WhiteBalanceMode",
+                                     static_cast<int>(lDefSettings.getWBMode())).toInt();
     double lWBCustom[4] = {
         lSettings.value("WhiteBalanceMode/R", lDefSettings.getWBCustom()[0]).toDouble(),
         lSettings.value("WhiteBalanceMode/G1", lDefSettings.getWBCustom()[1]).toDouble(),
@@ -420,79 +427,19 @@ ExposureSettings PSSessionData::readExposureSettings() {
         lSettings.value("WhiteBalanceMode/G2", lDefSettings.getWBCustom()[3]).toDouble()
     };
 
-    int lBrightMOrdinal = lSettings.value("BrightnessMode", (int)lDefSettings.getBrightMode()).toInt();
+    int lBrightMOrdinal = lSettings.value("BrightnessMode", static_cast<int>(lDefSettings.getBrightMode())).toInt();
     double lBrightScaler = lSettings.value("BrightnessMode/Scaler", lDefSettings.getBrightScale()).toDouble();
 
     // Close the group and dispose of this object (cause you know, garbage collection)
     lSettings.endGroup();
 
-    return ExposureSettings((ExposureSettings::WhiteBalanceMode)lWBOrdinal, lWBCustom,
-                            (ExposureSettings::BrightnessMode)lBrightMOrdinal, lBrightScaler);
+    return ExposureSettings(
+                static_cast<ExposureSettings::WhiteBalanceMode>(lWBOrdinal), lWBCustom,
+                static_cast<ExposureSettings::BrightnessMode>(lBrightMOrdinal), lBrightScaler);
 }
 
-/**
- * Overloading of the standard string conversion function.  Describes all parts
- * of this object in a string for printing to the screen.  NOT for serialization.
- * @see java.lang.Object#toString()
- */
-QString PSSessionData::toString() const {
-    // General information
-    QString lDetails = "Session: " + mSessionFolder.dirName();
-    lDetails += "\n";
-
-    lDetails += "\tName: ";
-    if(mName != NULL && mName != "") { lDetails += mName; }
-    else { lDetails += "[none]"; }
-    lDetails += "\n";
-
-    lDetails += "\tNotes: ";
-    if(!mNotes.isEmpty()) { lDetails += mNotes.join("; "); }
-    else { lDetails += "[none]"; }
-    lDetails += "\n";
-
-    // Image data details
-    lDetails += "\n\tImages - " + QString::number(mProcessedFileList.length()) + " in folder\n";
-    if(mRawFileList.length() > 0) {
-        lDetails += "\t         " + QString::number(mRawFileList.length()) + " raw images\n";
-    }
-
-    if(isImageExposureKnown()) {
-        const double* lMult = mExposure.getWBCustom();
-        lDetails += "\tTaken on " + mDateTimeCaptured.toString();
-        lDetails += "\tConverted as - ";
-        for(int i=0; i<4; i++) {
-            lDetails.append(QString::number(lMult[i]));
-            if (i<3) { lDetails += ", "; }
-            else { lDetails += "\n"; }
-        }
-
-        double lScaler = mExposure.getBrightScale();
-        if(fabs(lScaler - 1.0) > 1e-8) {
-            lDetails += "\t               " + QString::number(lScaler) + " adjustment\n";
-        }
-    }
-
-    return lDetails;
-}
-
-PSProjectFileData* PSSessionData::getActiveProject() const {
+PSProjectFileData* PSSessionData::getProject() const {
     return mPSProject;
-}
-
-int PSSessionData::getChunkCount() const {
-    return mPSProject->getChunkCount();
-}
-
-int PSSessionData::getActiveChunkIndex() const {
-    return mPSProject->getActiveChunkIndex();
-}
-
-PSChunkData* PSSessionData::getChunk(int index) const {
-    return mPSProject->getChunk(index);
-}
-
-PSChunkData* PSSessionData::getActiveChunk() const {
-    return mPSProject->getActiveChunk();
 }
 
 QString PSSessionData::describeImageAlignPhase() const {

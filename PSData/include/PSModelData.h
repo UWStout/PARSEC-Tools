@@ -17,7 +17,7 @@ public:
     ~PSModelData();
 	
     static PSModelData* makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFile,
-                                    PSChunkData* pParent = NULL);
+                                    PSChunkData* pParent = nullptr);
 
     void setFaceCount(long pFaceCount);
     void setVertexCount(long pVertexCount);

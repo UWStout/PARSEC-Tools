@@ -1,6 +1,7 @@
 #include "PSProjectDataModel.h"
 
 #include "PSSessionData.h"
+#include "PSProjectFileData.h"
 
 #include <QColor>
 #include <QBrush>
@@ -41,7 +42,6 @@ QModelIndex PSProjectDataModel::parent(const QModelIndex& child) const {
 }
 
 // TODO: check out http://programmingexamples.net/wiki/Qt/Delegates/ComboBoxDelegate
-
 Qt::ItemFlags PSProjectDataModel::flags(const QModelIndex& index) const {
     if(index.column() == 2 || index.column() == 3) {
         return (Qt::ItemIsEnabled | Qt::ItemIsEditable);
@@ -49,9 +49,9 @@ Qt::ItemFlags PSProjectDataModel::flags(const QModelIndex& index) const {
     return Qt::ItemIsEnabled;
 }
 
+// Our data model is immutable (it is a static view only)
 bool PSProjectDataModel::setData(const QModelIndex& index, const QVariant& value, int role) {
     (void)index, (void)value, (void)role;
-    // Remember to emit data changed signal as appropriate
     return false;
 }
 
@@ -72,7 +72,7 @@ int PSProjectDataModel::rowCount(const QModelIndex& arg0) const {
 // Only rows can be retrieved (aka, projects)
 PSSessionData* PSProjectDataModel::getDataAtIndex(int index) {
     if(index >= 0 && index < mData.length()) { return mData[index]; }
-    else { return NULL; }
+    else { return nullptr; }
 }
 
 // Inform the view about the data in the table
@@ -86,6 +86,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
 
     // Get the correct data for this row
     PSSessionData* curItem = mData[row];
+    PSProjectFileData* lProject = curItem->getProject();
 
     // Respond to the requested role differently for each column
     switch(role)
@@ -105,7 +106,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                     }
 
                 case PSSessionData::F_ACTIVE_VERSION: return QString::asprintf("%03d", 1);
-                case PSSessionData::F_ACTIVE_CHUNK: return QString::asprintf("%d of %d", curItem->getActiveChunkIndex()+1, curItem->getChunkCount());
+                case PSSessionData::F_ACTIVE_CHUNK: return QString::asprintf("%d of %d", lProject->getActiveChunkIndex()+1, lProject->getChunkCount());
                 case PSSessionData::F_IMAGE_COUNT_REAL: return QString::asprintf("%ld/%ld", curItem->getProcessedImageCount(), curItem->getRawImageCount());
 
                 // Detailed processing info (extended info)
@@ -126,22 +127,18 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
 
         // Tooltips come from the column or the name of the project
         case Qt::ToolTipRole: {
-            if(column == PSSessionData::F_PROJECT_NAME)
-                { return curItem->getSessionFolder().dirName(); }
-            else { return curItem->getDescription((PSSessionData::Field)column); }
+            if(column == PSSessionData::F_PROJECT_NAME) { return curItem->getSessionFolder().dirName(); }
+            else { return curItem->getDescription(static_cast<PSSessionData::Field>(column)); }
         }
 
         // Background colors indicate the quality of the project
         case Qt::BackgroundRole:
             if(mShowColorForStatus) {
 
-                switch(column)
-                {
+                switch(column) {
                     // Status column
-                    case PSSessionData::F_PROJECT_STATUS:
-                    {
-                        switch(curItem->getStatus())
-                        {
+                    case PSSessionData::F_PROJECT_STATUS: {
+                        switch(curItem->getStatus()) {
                             // These indicate an error of some sort
                             case PSSessionData::PSS_UNKNOWN: case PSSessionData::PSS_UNPROCESSSED:
                                 return QBrush(errorColor);
@@ -171,8 +168,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
 
                     // Processing phases
                     case PSSessionData::F_IMAGE_ALIGN_LEVEL:
-                        switch(curItem->getAlignPhaseStatus())
-                        {
+                        switch(curItem->getAlignPhaseStatus()) {
                             case 0: return QBrush(doneColor);
                             case 1: return QBrush(okColor);
                             case 2: return QBrush(warningColor);
@@ -181,8 +177,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                         }
 
                     case PSSessionData::F_DENSE_CLOUD_LEVEL:
-                        switch(curItem->getDenseCloudPhaseStatus())
-                        {
+                        switch(curItem->getDenseCloudPhaseStatus()) {
                             case 0: return QBrush(doneColor);
                             case 1: return QBrush(okColor);
                             case 2: return QBrush(warningColor);
@@ -191,8 +186,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                         }
 
                     case PSSessionData::F_MODEL_GEN_LEVEL:
-                        switch(curItem->getModelGenPhaseStatus())
-                        {
+                        switch(curItem->getModelGenPhaseStatus()) {
                             case 0: return QBrush(doneColor);
                             case 1: return QBrush(okColor);
                             case 2: return QBrush(warningColor);
@@ -201,8 +195,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                         }
 
                     case PSSessionData::F_TEXTURE_GEN_LEVEL:
-                        switch(curItem->getTextureGenPhaseStatus())
-                        {
+                        switch(curItem->getTextureGenPhaseStatus()) {
                             case 0: return QBrush(doneColor);
                             case 1: return QBrush(okColor);
                             case 2: return QBrush(warningColor);
@@ -227,7 +220,7 @@ bool greaterThanPSSD(PSSessionData* A, PSSessionData* B) {
 }
 
 void PSProjectDataModel::sort(int column, Qt::SortOrder order) {
-    PSSessionData::setSortBy((PSSessionData::Field)column);
+    PSSessionData::setSortBy(static_cast<PSSessionData::Field>(column));
     if (order == Qt::AscendingOrder) {
         std::sort(mData.begin(), mData.end(), greaterThanPSSD);
     } else {
@@ -245,9 +238,9 @@ QVariant PSProjectDataModel::headerData(int section, Qt::Orientation orientation
 
         switch(role) {
             case Qt::DisplayRole:
-                return PSSessionData::getShortName((PSSessionData::Field)section);
+                return PSSessionData::getShortName(static_cast<PSSessionData::Field>(section));
             case Qt::ToolTipRole:
-                return PSSessionData::getDescription((PSSessionData::Field)section);
+                return PSSessionData::getDescription(static_cast<PSSessionData::Field>(section));
         }
     }
 
@@ -332,4 +325,3 @@ bool PSProjectDataModel::outputToCSVFile(QString destFilename) {
     outFile.close();
     return true;
 }
-

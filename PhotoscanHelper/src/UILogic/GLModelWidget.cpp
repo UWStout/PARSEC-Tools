@@ -23,7 +23,7 @@ GLModelWidget::GLModelWidget(QWidget* parent) : QWidget(parent) {
 GLModelWidget::GLModelWidget(const PSSessionData* pSession, QWidget* parent) : QWidget(parent) {
     initMembers();
     mName = pSession->getPSProjectFile().baseName();
-    if(pSession->getModelData() != NULL) {
+    if(pSession->getModelData() != nullptr) {
         loadNewModel(pSession->getModelData());
     }
 }
@@ -56,18 +56,18 @@ void GLModelWidget::initMembers() {
 }
 
 void GLModelWidget::loadNewModel(const PSSessionData* pSession) {
-    if(pSession != NULL) {
+    if(pSession != nullptr) {
         mName = pSession->getPSProjectFile().baseName();
         loadNewModel(pSession->getModelData());
     } else {
-        loadNewModel((PSModelData*)NULL);
+        loadNewModel((PSModelData*)nullptr);
     }
 }
 
 void GLModelWidget::loadNewModel(const PSModelData* pModel) {
-    if(pModel == NULL) {
-        mPlyMesh = NULL;
-        mGUI->modelViewer->setModelData(NULL, NULL);
+    if(pModel == nullptr) {
+        mPlyMesh = nullptr;
+        mGUI->modelViewer->setModelData(nullptr, nullptr);
         mGUI->statusLabel->setText("Please load a model.");
     } else {
         if (pModel->getArchiveFile().filePath() == "") {
@@ -109,7 +109,7 @@ void GLModelWidget::on_renderModeComboBox_currentIndexChanged(int index) {
 }
 
 QImage GLModelWidget::readTexture(QString pTextureFilename, QFileInfo pArchiveFile) {
-    QIODevice* lFileDev = NULL;
+    QIODevice* lFileDev = nullptr;
     if(pArchiveFile.filePath() != "") {
         lFileDev = new QuaZipFile(pArchiveFile.filePath(), pTextureFilename);
         if(!lFileDev->open(QIODevice::ReadOnly)) {
@@ -138,7 +138,7 @@ QImage GLModelWidget::readTexture(QString pTextureFilename, QFileInfo pArchiveFi
 }
 
 void GLModelWidget::dataLoadingFinished() {
-    if(!mDataLoading->future().result() || mPlyMesh == NULL) {
+    if(!mDataLoading->future().result() || mPlyMesh == nullptr) {
         mGUI->statusLabel->setText("There was an error loading the model.");
     } else {
 
@@ -155,8 +155,8 @@ void GLModelWidget::dataLoadingFinished() {
         }
 
         mGUI->statusLabel->setText(modelInfo);
-//        if(mPngTextures[0] == NULL) {
-            mGUI->modelViewer->setModelData(NULL, mPlyMesh);
+//        if(mPngTextures[0] == nullptr) {
+            mGUI->modelViewer->setModelData(nullptr, mPlyMesh);
 //        } else {
 //            mGUI->modelViewer->setModelData(mPngTextures, mPlyMesh);
 //        }

@@ -32,7 +32,7 @@ void PSChunkData::init(QXmlStreamReader* reader) {
     mEnabled = false;
     mInsideFrame = false;
 
-    mModelData = NULL;
+    mModelData = nullptr;
     mMarkerCount = mScalebarCount = 0;
     mSensorCount_inChunk = 0;
 
@@ -61,7 +61,7 @@ void PSChunkData::init(QXmlStreamReader* reader) {
     mOptimize_durationSeconds = 0;
     mModelGeneration_durationSeconds = 0;
 
-    if (reader != NULL && !mSourceFile.fileName().endsWith("psx")) {
+    if (reader != nullptr && !mSourceFile.fileName().endsWith("psx")) {
         parseXMLChunk(reader);
     }
 }
@@ -75,7 +75,7 @@ void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
     }
 
     // Sanity checks
-    if(reader == NULL || reader->name() != "chunk") {
+    if(reader == nullptr || reader->name() != "chunk") {
         return;
     }
 
@@ -112,8 +112,8 @@ void PSChunkData::parseXMLChunk(QXmlStreamReader* reader) {
                 else if (elem == "scalebars") { readElementArray(reader, "scalebars", "scalebar"); }
                 else if (elem == "frames") { readElementArray(reader, "frames", "frame"); }
                 else if (elem == "property") {
-                    QString lPropertyName = reader->attributes().value(NULL, "name").toString();
-                    QString lPropertyValue = reader->attributes().value(NULL, "value").toString();
+                    QString lPropertyName = reader->attributes().value(nullptr, "name").toString();
+                    QString lPropertyValue = reader->attributes().value(nullptr, "value").toString();
                     parseProperty(lPropertyName, lPropertyValue);
                 }
             }
@@ -171,7 +171,7 @@ void PSChunkData::processArrayElement(QXmlStreamReader* reader, QString elem) {
 
 void PSChunkData::parseXMLFrame(QXmlStreamReader* reader) {
     // Sanity checks
-    if(reader == NULL || reader->name() != "frame") { return; }
+    if(reader == nullptr || reader->name() != "frame") { return; }
 
     // Follow any path attrib if needed
     QXmlStreamReader* preFrameReader = reader;
@@ -218,8 +218,8 @@ void PSChunkData::parseXMLFrame(QXmlStreamReader* reader) {
                         reader = preFrameReader;
                     }
                 } else if (elem == "property") {
-                    QString lPropertyName = reader->attributes().value(NULL, "name").toString();
-                    QString lPropertyValue = reader->attributes().value(NULL, "value").toString();
+                    QString lPropertyName = reader->attributes().value(nullptr, "name").toString();
+                    QString lPropertyValue = reader->attributes().value(nullptr, "value").toString();
                     parseProperty(lPropertyName, lPropertyValue);
                 }
             }
@@ -356,7 +356,7 @@ void PSChunkData::addImage(PSImageData *pNewImage) {
 QString PSChunkData::toString() const {
     // General details
     QString lDetails = "\tChunk ID: " + QString::number(mID) + ", Label: ";
-    if(mLabel != NULL && mLabel != "") {
+    if(mLabel != nullptr && mLabel != "") {
         lDetails += mLabel + "\n";
     } else {
         lDetails += "[none]\n";
@@ -430,7 +430,7 @@ QString PSChunkData::toString() const {
     }
 
     // Model generation details
-    if(mModelData == NULL) {
+    if(mModelData == nullptr) {
         lDetails += "\n\tModel Generation - no data\n";
     } else {
 //        Duration lModelGenTime = Duration.ofMillis((long)(mModelGeneration_durationSeconds*1000));
@@ -609,10 +609,10 @@ QString PSChunkData::describeModelGenPhase() const {
     }
 }
 
-bool PSChunkData::hasMesh() const { return mModelData != NULL; }
+bool PSChunkData::hasMesh() const { return mModelData != nullptr; }
 
 QFileInfo PSChunkData::getModelArchiveFile() const {
-    if(mModelData != NULL) {
+    if(mModelData != nullptr) {
         return mModelData->getArchiveFile();
     }
     return QFileInfo();

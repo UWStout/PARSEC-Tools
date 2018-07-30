@@ -1,4 +1,5 @@
 #include "PSChunkData.h"
+#include "PSProjectFileData.h"
 #include "PSSessionData.h"
 
 #include "PSProjectInfoDialog.h"
@@ -32,24 +33,22 @@ void PSProjectInfoDialog::setProjectData(const PSSessionData* pProjData) {
     mGUI->PSFileLabel->setText(pProjData->getPSProjectFile().filePath() == "" ? "N/A" : pProjData->getPSProjectFile().fileName());
     mGUI->PSFolderLabel->setText(pProjData->getSessionFolder().path());
 
-    mGUI->DescriptionLabel->setText(pProjData->getNameStrict());
+    mGUI->DescriptionLabel->setText(pProjData->getName());
     mGUI->ImageInfoLabel->setText(QString::asprintf("%ld raw, %ld normal, %d depth map",
                                   pProjData->getRawImageCount(), pProjData->getProcessedImageCount(),
                                   pProjData->getDenseCloudDepthImages()));
 
-    if(pProjData->isImageExposureKnown()) {
-        const double* lWB = pProjData->getWhiteBalanceMultipliers();
-        mGUI->ExposureInfoLabel->setText(QString::asprintf("White Balance [%.4f, %.4f, %.4f, %.4f], Brightness %.4f",
-                                         lWB[0], lWB[1], lWB[2], lWB[3], pProjData->getBrightnessMultiplier()));
-    } else {
-        mGUI->ExposureInfoLabel->setText("N/A");
-    }
+    ExposureSettings lExpSettings = pProjData->readExposureSettings();
+    const double* lWB = lExpSettings.getWBCustom();
+    mGUI->ExposureInfoLabel->setText(QString::asprintf("White Balance [%.4f, %.4f, %.4f, %.4f], Brightness %.4f",
+                                     lWB[0], lWB[1], lWB[2], lWB[3], lExpSettings.getBrightScale()));
     mGUI->SpecialNotesLabel->setText(pProjData->getNotes().join("; "));
 
-    for(int chunk = 0; chunk < pProjData->getChunkCount(); chunk++)
+    PSProjectFileData* lProjData = pProjData->getProject();
+    for(int chunk = 0; chunk < (int)lProjData->getChunkCount(); chunk++)
     {
-        PSChunkData* lChunk = pProjData->getChunk(chunk);
-        if(lChunk == NULL) continue;
+        PSChunkData* lChunk = lProjData->getChunk(chunk);
+        if(lChunk == nullptr) continue;
 
         QWidget* lChunkInfo = new QWidget(this);
         Ui::PSChunkInfo* lChunkGUI = new Ui::PSChunkInfo();

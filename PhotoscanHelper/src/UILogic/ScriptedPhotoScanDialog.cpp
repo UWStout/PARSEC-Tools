@@ -15,7 +15,7 @@ ScriptedPhotoScanDialog::ScriptedPhotoScanDialog(QWidget *parent) : QDialog(pare
 
     mTextureSize = 0;
     mTolerance = 0;
-    mSession = NULL;
+    mSession = nullptr;
     mRegEx = QRegularExpression("^(.*) progress: ([0-9]+\\.[0-9][0-9])%");
     mRegExOverall = QRegularExpression("Stage ([0-9]) of ([0-9])");
 }

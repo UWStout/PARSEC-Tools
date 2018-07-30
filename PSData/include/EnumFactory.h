@@ -40,27 +40,27 @@ public: \
     switch(value) \
     { \
       ENUM_DEF(ENUM_CASE) \
-      default: return ""; /* handle input error */ \
     } \
+    return ""; /* handle input error */ \
   } \
   const char* ns::getShortName(ns::EnumType value) \
   { \
     switch(value) \
     { \
       ENUM_DEF(ENUM_CASE_SHRT) \
-      default: return ""; /* handle input error */ \
     } \
+    return ""; /* handle input error */ \
   } \
   const char* ns::getDescription(ns::EnumType value) \
   { \
     switch(value) \
     { \
       ENUM_DEF(ENUM_CASE_DESC) \
-      default: return ""; /* handle input error */ \
     } \
+    return ""; /* handle input error */ \
   } \
   ns::EnumType ns::get##EnumType##Value(const char *str) \
   { \
     ENUM_DEF(ENUM_STRCMP) \
-    return (EnumType)0; /* handle input error */ \
+    return static_cast<EnumType>(0); /* handle input error */ \
   }

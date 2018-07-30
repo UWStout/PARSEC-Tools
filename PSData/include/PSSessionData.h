@@ -48,7 +48,12 @@ public:
     static const char BASE_LENGTH;
     static const char EXTENDED_LENGTH;
 
-    PSSessionData(QDir pPSProjectFolder);
+    explicit PSSessionData(QDir pPSProjectFolder);
+
+    // Delete implicity copy and assignment operators
+    PSSessionData(const PSSessionData&) = delete;
+    PSSessionData& operator=(const PSSessionData&) = delete;
+
     virtual ~PSSessionData();
 
     static void setSortBy(Field pNewSortBy);
@@ -56,10 +61,6 @@ public:
     void examineProject();
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o) const;
-
-    bool examineDirectory(QDir pDirToExamine);
-
-    void examineImages();
 	
     void autoSetStatus();
     void setCustomStatus(int statusIndex);
@@ -68,7 +69,6 @@ public:
     static int getNextID();
     void setID(QString mID);
     void addNotes(QString pNotes);
-
     void setName(QString pName);
 
     QFileInfo getPSProjectFile() const;
@@ -77,56 +77,53 @@ public:
     PSModelData* getModelData() const;
     QFileInfo getModelArchiveFile() const;
 
-    size_t getRawImageCount() const;
-    size_t getProcessedImageCount() const;
-    size_t getMaskImageCount() const;
+    int getRawImageCount() const;
+    int getProcessedImageCount() const;
+    int getMaskImageCount() const;
 
-    QFileInfoList getRawFileList() const;
-    QFileInfoList getProcessedFileList() const;
-    QFileInfoList getMaskFileList() const;
+    const QFileInfoList& getRawFileList() const;
+    const QFileInfoList& getProcessedFileList() const;
+    const QFileInfoList& getMaskFileList() const;
 
     void writeGeneralSettings();
     void readGeneralSettings();
     void writeExposureSettings(ExposureSettings pExpSettings);
-    ExposureSettings readExposureSettings();
-
-    bool isImageExposureKnown() const;
-    const double* getWhiteBalanceMultipliers() const;
-    double getBrightnessMultiplier() const;
+    ExposureSettings readExposureSettings() const;
 
     QDateTime getDateTimeCaptured() const;
     QStringList getNotes() const;
     QString getName() const;
-    QString getNameStrict() const;
     Status getStatus() const;
-    QString toString() const;
 
-    PSProjectFileData* getActiveProject() const;
-
-    int getChunkCount() const;
-    int getActiveChunkIndex() const;
-    PSChunkData* getChunk(int index) const;
-    PSChunkData* getActiveChunk() const;
+    PSProjectFileData* getProject() const;
 
     QString describeImageAlignPhase() const;
     char getAlignPhaseStatus() const;
+
     QString describeDenseCloudPhase() const;
     int getDenseCloudDepthImages() const;
     char getDenseCloudPhaseStatus() const;
+
     QString describeModelGenPhase() const;
     char getModelGenPhaseStatus() const;
     long getModelFaceCount() const;
     long getModelVertexCount() const;
+
     QString describeTextureGenPhase() const;
     char getTextureGenPhaseStatus() const;
 
 private:
-    void setImages(QDir &pDir, QFileInfoList& pImageList, const QStringList pFilter, const QString pFolderName);
-
+    void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
     void initSettingsFile();
 
-    static Field mSortBy;
-    static int mNextID;
+    bool examineDirectory(QDir pDirToExamine);
+    void findFilesAndImages();
+    void initAsExternalSession();
+
+    void updateOutOfSyncSession();
+
+    // Session state
+    bool isExternal, isConsistent, isSynchronized;
 
     // INI filename to store all metadata
     QString mSettings;
@@ -134,8 +131,11 @@ private:
     // Various folders relevant to the session
     QDir mSessionFolder, mRawFolder, mProcessedFolder, mMasksFolder;
 
-    // Information about images and sensors
-    QFileInfoList mRawFileList, mProcessedFileList, mMaskFileList;
+    // Information about images
+    mutable int mRawFileCount, mProcessedFileCount, mMaskFileCount;
+    mutable QFileInfoList mRawFileList;
+    mutable QFileInfoList mProcessedFileList;
+    mutable QFileInfoList mMaskFileList;
 
     // General PS Project information
     QString mID, mName, mDescription;
@@ -149,6 +149,14 @@ private:
     // The list of project files in the directory
     QFileInfo mPSProjectFile;
     PSProjectFileData* mPSProject;
+
+    // Class level static values
+    static const QString sRawFolderName;
+    static const QString sProcessedFolderName;
+    static const QString sMasksFolderName;
+
+    static Field mSortBy;
+    static int mNextID;
 };
 
 #endif

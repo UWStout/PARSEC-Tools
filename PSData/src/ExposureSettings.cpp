@@ -34,7 +34,7 @@ ExposureSettings::ExposureSettings(WhiteBalanceMode pWBMode, const double* pWBCu
         );
     }
 
-    if(pWBMode == WB_MODE_CUSTOM && (pWBCustom == NULL)) {
+    if(pWBMode == WB_MODE_CUSTOM && (pWBCustom == nullptr)) {
         throw new std::invalid_argument(
             "Error: white balance custom parameters missing."
         );

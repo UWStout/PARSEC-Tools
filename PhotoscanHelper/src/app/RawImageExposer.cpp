@@ -25,7 +25,7 @@
 #include "ImageProcessor.h"
 
 QFileInfo RawImageExposer::msDestination;
-ExposureSettings* RawImageExposer::msSettings = NULL;
+ExposureSettings* RawImageExposer::msSettings = nullptr;
 
 RawImageExposer::RawImageExposer(const PSSessionData& pProject, const ExposureSettings &pSettings, const QFileInfo &pDestination) :
     mProjectName(pProject.getName()) {
