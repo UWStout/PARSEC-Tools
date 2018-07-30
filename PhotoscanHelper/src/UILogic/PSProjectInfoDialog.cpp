@@ -29,7 +29,7 @@ void PSProjectInfoDialog::setProjectData(const PSSessionData* pProjData) {
 
     mGUI->MainHeaderLabel->setText(mainHeader);
 
-    mGUI->IDLabel->setText(pProjData->getID());
+    mGUI->IDLabel->setText(QString::number(pProjData->getID()));
     mGUI->PSFileLabel->setText(pProjData->getPSProjectFile().filePath() == "" ? "N/A" : pProjData->getPSProjectFile().fileName());
     mGUI->PSFolderLabel->setText(pProjData->getSessionFolder().path());
 

@@ -164,7 +164,7 @@ int PSSessionData::compareTo(const PSSessionData* o) const {
         case F_PROJECT_FOLDER:
             return mSessionFolder.dirName().compare(o->mSessionFolder.dirName());
 
-        case F_PROJECT_ID: return mID.compare(o->mID);
+        case F_PROJECT_ID: return (mID - o->mID);
         case F_PROJECT_NAME: return getName().compare(o->getName());
         case F_PHOTO_DATE:
         {

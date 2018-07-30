@@ -23,13 +23,7 @@ void GeneralSettingsDialog::restoreSettings() {
         mGUI->statusComboBox->setCurrentIndex(status);
     }
 
-    if(mProjectData->getID() == "-1") {
-        QString str;
-        mGUI->IDLineEdit->setText(str.sprintf("%05d", PSSessionData::getNextID()));
-    } else {
-        mGUI->IDLineEdit->setText(mProjectData->getID());
-    }
-
+    mGUI->IDLineEdit->setText(QString::number(mProjectData->getID()));
     mGUI->DescriptionLineEdit->setText(mProjectData->getName());
     mGUI->SpecialNotesTextEdit->setPlainText(mProjectData->getNotes().join("; "));
 }
