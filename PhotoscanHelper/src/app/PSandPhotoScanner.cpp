@@ -126,11 +126,11 @@ int PSandPhotoScanner::countDirsWithoutModels() const {
 
 PSSessionData* examineProjectFolder(QFileInfo pProjectFolder) {
     PSSessionData* lData = new PSSessionData(QDir(pProjectFolder.filePath()));
-    if(lData == NULL || (lData->getPSProjectFile().filePath() == "" &&
+    if(lData == nullptr || (lData->getPSProjectFile().filePath() == "" &&
        lData->getRawImageCount() == 0 && lData->getProcessedImageCount() == 0)) {
         qWarning("Error: unable to scan '%s'", pProjectFolder.filePath().toLocal8Bit().data());
         delete lData;
-        return NULL;
+        return nullptr;
     } else {
         return lData;
     }
@@ -150,7 +150,7 @@ bool greaterThanPSSD(PSSessionData* A, PSSessionData* B) {
 
 void PSandPhotoScanner::finishDataParallel() {
     for(PSSessionData* lResult : mFutureResults) {
-        if (lResult != NULL) {
+        if (lResult != nullptr) {
             mData.append(lResult);
         }
     }

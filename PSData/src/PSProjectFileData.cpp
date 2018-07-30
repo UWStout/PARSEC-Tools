@@ -19,7 +19,7 @@ PSProjectFileData::PSProjectFileData(QFileInfo pPSProjectFile) {
 
 PSProjectFileData::~PSProjectFileData() {
     // Delete all chunk data
-    for(unsigned int i=0; i < (unsigned int)mChunks.size(); i++) {
+    for(int i=0; i < mChunks.size(); i++) {
         delete mChunks[i];
     }
 }
@@ -34,14 +34,14 @@ bool PSProjectFileData::parseProjectFile() {
     }
 
     // Initialize file stack
-    QXmlStreamReader* reader = NULL;
+    QXmlStreamReader* reader = nullptr;
     mPathStack.push(mPSProjectFile);
 
     try {
         // Get the starting XML stream
         reader = getXMLStreamFromFile(mPSProjectFile);
-        if (reader == NULL) {
-            qWarning("NULL QXmlStreamReader, cannot proceed.\n");
+        if (reader == nullptr) {
+            qWarning("nullptr QXmlStreamReader, cannot proceed.\n");
             return false;
         }
 
@@ -53,7 +53,7 @@ bool PSProjectFileData::parseProjectFile() {
                 // The document tag contains the PS XML version and possibly a path
                 if (reader->name() == "document") {
                     // Extract PhotoScan file version
-                    mPSVersion = reader->attributes().value(NULL, "version").toString();
+                    mPSVersion = reader->attributes().value(nullptr, "version").toString();
 
                     // Attempt to descend
                     QXmlStreamReader* oldReader = reader;
@@ -89,7 +89,7 @@ void PSProjectFileData::processArrayElement(QXmlStreamReader* reader, QString el
         PSChunkData* lNewChunk = new PSChunkData(mPSProjectFile, reader, mPathStack);
 
         // Save the results
-        if(lNewChunk != NULL) {
+        if(lNewChunk != nullptr) {
             mChunks.push_back(lNewChunk);
         }
     } else {
@@ -97,20 +97,20 @@ void PSProjectFileData::processArrayElement(QXmlStreamReader* reader, QString el
     }
 }
 
-unsigned int PSProjectFileData::getChunkCount() const {
-    return (unsigned int)mChunks.size();
+size_t PSProjectFileData::getChunkCount() const {
+    return static_cast<size_t>(mChunks.size());
 }
 
-unsigned int PSProjectFileData::getActiveChunkIndex() const {
+size_t PSProjectFileData::getActiveChunkIndex() const {
     return mActiveChunk;
 }
 
 PSChunkData* PSProjectFileData::getActiveChunk() const {
-    if(mActiveChunk < (unsigned int)mChunks.size()) {
+    if(mActiveChunk < mChunks.size()) {
         return mChunks[mActiveChunk];
     }
 
-    return NULL;
+    return nullptr;
 }
 
 PSChunkData* PSProjectFileData::getChunk(unsigned int index) const {
@@ -118,7 +118,7 @@ PSChunkData* PSProjectFileData::getChunk(unsigned int index) const {
         return mChunks[index];
     }
 
-    return NULL;
+    return nullptr;
 }
 
 QFileInfo PSProjectFileData::getModelArchiveFile() const {
@@ -134,7 +134,7 @@ PSModelData* PSProjectFileData::getModelData() const {
         return mChunks[mActiveChunk]->getModelData();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 QString PSProjectFileData::describeImageAlignPhase() const {

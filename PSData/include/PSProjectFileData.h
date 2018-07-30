@@ -21,7 +21,12 @@ class PSModelData;
 
 class PSDATASHARED_EXPORT PSProjectFileData : public PSXMLReader, public PSStatusDescribable {
 public:
-    PSProjectFileData(QFileInfo pPSProjectFile);
+    explicit PSProjectFileData(QFileInfo pPSProjectFile);
+
+    // Delete implied copy and assignment functions
+    PSProjectFileData(const PSProjectFileData&) = delete;
+    PSProjectFileData& operator=(const PSProjectFileData&) = delete;
+
     virtual ~PSProjectFileData();
 
     QFileInfo getPSProjectFile();
@@ -30,8 +35,8 @@ public:
     bool parseProjectFile();
     void processArrayElement(QXmlStreamReader* reader, QString elementName);
 
-    unsigned int getChunkCount() const;
-    unsigned int getActiveChunkIndex() const;
+    size_t getChunkCount() const;
+    size_t getActiveChunkIndex() const;
     PSChunkData* getActiveChunk() const;
     PSChunkData* getChunk(unsigned int index) const;
     QFileInfo getModelArchiveFile() const;
@@ -56,7 +61,7 @@ private:
 
     // Project Chunks
     QVector<PSChunkData*> mChunks;
-    unsigned int mActiveChunk;
+    size_t mActiveChunk;
 };
 
 #endif

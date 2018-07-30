@@ -20,10 +20,10 @@ QtModelViewerWidget::QtModelViewerWidget(QWidget* parent) : QOpenGLWidget(parent
     mCamZPos = 5.0f;
     adjustCameraPosition(0.0f);
 
-    mMeshData = NULL;
+    mMeshData = nullptr;
     mRenderMode = RENDER_SHADED;
-    mTexturedShader = NULL;
-    mCubeVBuffer = mCubeElemBuffer = NULL;
+    mTexturedShader = nullptr;
+    mCubeVBuffer = mCubeElemBuffer = nullptr;
     mCubeVAO = new QOpenGLVertexArrayObject(this);
 
     mColorTexLoc[0] = mColorTexLoc[1] = mColorTexLoc[2] = mColorTexLoc[3] = -1;
@@ -57,17 +57,17 @@ void QtModelViewerWidget::setModelData(QImage pColorTexture[], PLYMeshData *pMes
 //    }
 
     // Clear out the VBO data from the GPU
-    if(mMeshData != NULL) {
+    if(mMeshData != nullptr) {
         mMeshData->releaseBuffers();
     }
 
     // Set new textures
-    if (pColorTexture != NULL) {
+    if (pColorTexture != nullptr) {
 //        for(int i=0; i<4; i++) {
 //            mColorTexture[i] = pColorTexture[i];
 
 //        // Pass texture(s) into the context
-//        if(mColorTexture[i] != NULL) {
+//        if(mColorTexture[i] != nullptr) {
 //            glActiveTexture(GL_TEXTURE0 + i);
 //            mColorTextureID[i] = bindTexture(mColorTexture[i]);
 //        }
@@ -76,7 +76,7 @@ void QtModelViewerWidget::setModelData(QImage pColorTexture[], PLYMeshData *pMes
 
     // Set new mesh dat
     mMeshData = pMeshData;
-    if (mMeshData != NULL) {
+    if (mMeshData != nullptr) {
         makeCurrent();
         mMeshData->buildBuffers(QOpenGLContext::currentContext());
         mMeshData->buildTextures();

@@ -46,15 +46,15 @@ PSHelperMainWindow::PSHelperMainWindow(QWidget* parent) : QMainWindow(parent) {
     mGUI->setupUi(this);
     setWindowTitle("PhotoScan Helper");
 
-    mModelViewer = NULL;
+    mModelViewer = nullptr;
 
-    mRawExposer = NULL;
+    mRawExposer = nullptr;
     mRawExposureProgressDialog = new CancelableModalProgressDialog<QFileInfo>("Exposing Raw Images", this);
 //    mProcessQueue = new LinkedList<QueueableProcess<? extends Object>>();
 
     readSettings();
 
-    mModelViewer = NULL; // new GLModelViewer((PSSessionData)NULL, NULL); // Help
+    mModelViewer = nullptr; // new GLModelViewer((PSSessionData)nullptr, nullptr); // Help
     // mModelViewer->show(); // Help
 }
 
@@ -123,9 +123,9 @@ bool PSHelperMainWindow::validateSettings() {
 //            }
 
 //            // Show the preferences dialog for updating (
-//            ProgramPreferencesDialog prefsDiag = new ProgramPreferencesDialog(NULL, this);
+//            ProgramPreferencesDialog prefsDiag = new ProgramPreferencesDialog(nullptr, this);
 //            if(prefsDiag.exec() == QDialog.DialogCode.Accepted.value()) {
-//                prefsDiag.writeResults(NULL);
+//                prefsDiag.writeResults(nullptr);
 //                writeSettings();
 //            } else {
 //                // They cancelled so return false
@@ -146,11 +146,11 @@ void PSHelperMainWindow::writeSettings() {
 
 //    String searchPath = ImageProcessorIM4J.getSearchPath();
 //    String useGM = (ImageProcessorIM4J.getUseGraphicsMagick()?"true":"false");
-//    String exifOverride = (ImageProcessorIM4J.getExiftoolOverrideBin()==NULL?"":
+//    String exifOverride = (ImageProcessorIM4J.getExiftoolOverrideBin()==nullptr?"":
 //                            ImageProcessorIM4J.getExiftoolOverrideBin());
-//    String dcrawOverride = (ImageProcessorIM4J.getDcrawOverrideBin()==NULL?"":
+//    String dcrawOverride = (ImageProcessorIM4J.getDcrawOverrideBin()==nullptr?"":
 //                            ImageProcessorIM4J.getDcrawOverrideBin());
-//    String IMOverride = (ImageProcessorIM4J.getImageMagickOverrideBin()==NULL?"":
+//    String IMOverride = (ImageProcessorIM4J.getImageMagickOverrideBin()==nullptr?"":
 //                            ImageProcessorIM4J.getImageMagickOverrideBin());
 
     settings.beginGroup("Paths");
@@ -203,7 +203,7 @@ void PSHelperMainWindow::closeEvent(QCloseEvent* event) {
 
 void PSHelperMainWindow::on_PSDataTableView_doubleClicked(const QModelIndex &pIndex) {
     PSSessionData* lProjData = mDataModel->getDataAtIndex(pIndex.row());
-    if(lProjData == NULL) return;
+    if(lProjData == nullptr) return;
     PSProjectInfoDialog* lProjDialog = new PSProjectInfoDialog(lProjData, this);
     lProjDialog->exec();
     delete lProjDialog;
@@ -240,7 +240,7 @@ void PSHelperMainWindow::on_action_ShowColorsForStatus_triggered(bool pChecked) 
 }
 
 void PSHelperMainWindow::on_PreferencesAction_triggered(bool pChecked) {
-    (void)pChecked;
+    Q_UNUSED(pChecked);
 //    ProgramPreferencesDialog* prefsDiag = new ProgramPreferencesDialog(mDataInfoStore, this);
 //    if(prefsDiag->exec() == QDialog::Accepted) {
 //        prefsDiag->writeResults(mDataInfoStore);
@@ -255,7 +255,7 @@ void PSHelperMainWindow::on_AboutAction_triggered(bool pChecked) {
 
     aboutUI->setupUi(aboutDialog);
     QPixmap* iconPix = new QPixmap(":/PSHelper/icon.png");
-    if(iconPix != NULL && !iconPix->isNull()) {
+    if(iconPix != nullptr && !iconPix->isNull()) {
         int w = aboutUI->iconLabel->width();
         int h = aboutUI->iconLabel->height();
         aboutUI->iconLabel->setPixmap(
@@ -298,9 +298,9 @@ void PSHelperMainWindow::on_RunQueueButton_clicked() {
 }
 
 void PSHelperMainWindow::viewModel() {
-    if(mModelViewer == NULL) {
+    if(mModelViewer == nullptr) {
         // Parent is left NULL so this doesn't live INSIDE the main window
-        mModelViewer = new GLModelWidget((QWidget*)NULL);
+        mModelViewer = new GLModelWidget(static_cast<QWidget*>(nullptr));
     }
     mModelViewer->loadNewModel(mLastData->getModelData());
     mModelViewer->show();
@@ -315,7 +315,7 @@ void PSHelperMainWindow::editGeneralSettings() {
 }
 
 void PSHelperMainWindow::runExposeImagesAction() {
-    if(mLastData == NULL) return;
+    if(mLastData == nullptr) return;
 
     RawImageExposureDialog* lExposureDialog = new RawImageExposureDialog(this);
     lExposureDialog->setProjectData(mLastData, mDataInfoStore);
@@ -379,18 +379,18 @@ void PSHelperMainWindow::dequeue() {
 }
 
 void PSHelperMainWindow::queueExposeImagesAction() {
-    if(mLastData == NULL) return;
+    if(mLastData == nullptr) return;
     RawImageExposureDialog* lExposureDialog = new RawImageExposureDialog(this);
     lExposureDialog->setEnqueueMode(true);
     lExposureDialog->setProjectData(mLastData, mDataInfoStore);
     int result = lExposureDialog->exec();
 
-//    if(result == 1) {
+    if(result == QDialog::Accepted) {
 //        try {
 //            mRawExposer = new RawImageExposer(mLastData, lExposureDialog->getExposureSettings(),
 //                    lExposureDialog->getDestinationPath());
 //            mProcessQueue.add(mRawExposer);
 //            QListWidgetItem lNewItem = new QListWidgetItem(mRawExposer->describeProcess(), mGUI->QueueListWidget);
 //        } catch (std::exception& e) {}
-//    }
+    }
 }

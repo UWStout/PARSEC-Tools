@@ -84,7 +84,7 @@ private:
     void initMembers();
 
     // PLY Parsing helper functions
-    bool parsePLYFileStream(QString pFilename = "", QuaZipFile* pInsideFile = NULL);
+    bool parsePLYFileStream(QString pFilename = "", QuaZipFile* pInsideFile = nullptr);
     void processRawData();
 
     // Buffers for the vertex and face data

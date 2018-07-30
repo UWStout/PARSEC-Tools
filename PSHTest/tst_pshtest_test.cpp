@@ -486,7 +486,7 @@ void PSHTest_Test::plyZipTest()
     QFETCH(QString, modelFile);
 
     // Process an archive if there is one
-    QuaZipFile* lInsideFile = NULL;
+    QuaZipFile* lInsideFile = nullptr;
     if (archive.filePath() != "") {
         lInsideFile = new QuaZipFile(archive.filePath(), modelFile);
         if(!lInsideFile->open(QIODevice::ReadOnly)) {
@@ -499,7 +499,7 @@ void PSHTest_Test::plyZipTest()
     // Open file and read header info
     PLY::Header header;
     PLY::Reader reader(header);
-    if (lInsideFile != NULL) {
+    if (lInsideFile != nullptr) {
         if (!reader.use_io_device(lInsideFile)) {
             qWarning("Failed to use archive stream");
             lInsideFile->close();
@@ -567,7 +567,7 @@ void PSHTest_Test::sensorDataParsing()
     lXMLFile->close();
     delete lXMLFile;
 
-    Q_ASSERT(data != NULL);
+    Q_ASSERT(data != nullptr);
     QFETCH(PSSensorData*, result);
 
     QCOMPARE(data->ID, result->ID);
@@ -631,7 +631,7 @@ void PSHTest_Test::imageDataParsing()
     delete lXMLFile;
 
     // Compare everything
-    Q_ASSERT(data != NULL);
+    Q_ASSERT(data != nullptr);
     QFETCH(PSImageData*, result);
     QCOMPARE(data->getCamID(), result->getCamID());
     QCOMPARE(data->getPropertyCount(), result->getPropertyCount());
@@ -673,7 +673,7 @@ void PSHTest_Test::cameraDataParsing()
     delete lXMLFile;
 
     // Compare everything
-    Q_ASSERT(data != NULL);
+    Q_ASSERT(data != nullptr);
     QFETCH(PSCameraData*, result);
     QCOMPARE(data->ID, result->ID);
     QCOMPARE(data->getLabel(), result->getLabel());
@@ -714,7 +714,7 @@ void PSHTest_Test::modelDataParsing()
     delete lXMLFile;
 
     // Compare everything
-    Q_ASSERT(data != NULL);
+    Q_ASSERT(data != nullptr);
     QFETCH(PSModelData*, result);
     QCOMPARE(data->getArchiveFile().filePath(), result->getArchiveFile().filePath());
     QCOMPARE(data->getFaceCount(), result->getFaceCount());
@@ -758,7 +758,7 @@ void PSHTest_Test::chunkParsing()
     delete lXMLFile;
 
     // Compare everything
-    Q_ASSERT(data != NULL);
+    Q_ASSERT(data != nullptr);
     QFETCH(PSChunkData*, result);
 
     QCOMPARE(data->getLabel(), result->getLabel());
@@ -844,7 +844,7 @@ void PSHTest_Test::fullXMLParsing()
 {
     QFETCH(QFileInfo, file);
     PSProjectFileData* data = new PSProjectFileData(file);
-    Q_ASSERT(data != NULL);
+    Q_ASSERT(data != nullptr);
     delete data;
 }
 

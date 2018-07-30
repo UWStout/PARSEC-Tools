@@ -75,7 +75,7 @@ public:
 
     DECLARE_ENUM(ModelGenerationDetail, MODEL_GENERATION_DETAIL_ENUM)
 
-    PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader = NULL);
+    PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader = nullptr);
     PSChunkData(QFileInfo pSourceFile, QXmlStreamReader* reader, QStack<QFileInfo> pFileStack);
     virtual ~PSChunkData();
 

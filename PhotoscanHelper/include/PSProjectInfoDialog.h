@@ -8,7 +8,6 @@ class PSSessionData;
 namespace Ui {
     class PSProjectInfoDialog;
 }
-class PSSessionData;
 
 class PSProjectInfoDialog : public QDialog {
     Q_OBJECT

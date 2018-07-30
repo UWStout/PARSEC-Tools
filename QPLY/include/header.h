@@ -114,7 +114,7 @@ namespace PLY {
 
 		/// Find a Property.
 		/** \param name the name of the Property to find.
-		 *  \return the Property, or NULL if the Element
+		 *  \return the Property, or nullptr if the Element
 		 *  does not contain the Property.
 		 */
 		Property* find_property(const char* name);
@@ -168,7 +168,7 @@ namespace PLY {
 
 		/// Find an Element.
 		/** \param name the name of the Element to find.
-		 *  \return the Element, or NULL if the Header
+		 *  \return the Element, or nullptr if the Header
 		 *  does not contain the Element.
 		 */
 		Element* find_element(const char* name);

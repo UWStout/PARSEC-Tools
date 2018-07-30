@@ -60,7 +60,7 @@ QFileInfo PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFileInfo
 QXmlStreamReader* PSXMLReader::getXMLStreamFromFile(QFileInfo pFile) {
 
     // The XML FileStream source
-    QXmlStreamReader* lXMLFileStream = NULL;
+    QXmlStreamReader* lXMLFileStream = nullptr;
     QString ext = QFileInfo(pFile.fileName()).completeSuffix();
 
     // Zip files with the XML inside them as doc.xml
@@ -85,7 +85,7 @@ QXmlStreamReader* PSXMLReader::getXMLStreamFromFile(QFileInfo pFile) {
                  pFile.filePath().toLocal8Bit().data());
     }
 
-    // Might be NULL
+    // Might be nullptr
     return lXMLFileStream;
 }
 
@@ -106,8 +106,8 @@ void PSXMLReader::readElementArray(QXmlStreamReader* reader, QString arrayName, 
 
         // Parse property tags inside of arrays (happens with depth maps)
         else if (reader->isStartElement() && reader->name() == "property") {
-            QString lPropertyName = reader->attributes().value(NULL, "name").toString();
-            QString lPropertyValue = reader->attributes().value(NULL, "value").toString();
+            QString lPropertyName = reader->attributes().value(nullptr, "name").toString();
+            QString lPropertyValue = reader->attributes().value(nullptr, "value").toString();
             parseProperty(lPropertyName, lPropertyValue);
         }
 

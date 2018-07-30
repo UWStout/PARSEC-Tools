@@ -66,10 +66,10 @@ struct PackedVertex {
 };
 
 PLYMeshData::PLYMeshData() {
-    mVertexBuffer = NULL;
-    mPackedData = NULL;
-    mVAO = NULL;
-    mGLTexture[0] = mGLTexture[1] = mGLTexture[2] = mGLTexture[3] = NULL;
+    mVertexBuffer = nullptr;
+    mPackedData = nullptr;
+    mVAO = nullptr;
+    mGLTexture[0] = mGLTexture[1] = mGLTexture[2] = mGLTexture[3] = nullptr;
     initMembers();
 }
 
@@ -87,22 +87,22 @@ void PLYMeshData::initMembers() {
     // Free any dynamic memory
     destroyBuffers();
     free(mPackedData);
-    mPackedData = NULL;
+    mPackedData = nullptr;
 
     for(int i=0; i<4; i++) {
         delete mGLTexture[i];
-        mGLTexture[i] = NULL;
+        mGLTexture[i] = nullptr;
     }
 
     mPLYVertCollection.clear();
     mPLYFaceCollection.clear();
 
     // Allocate buffer structures
-    if (mVertexBuffer == NULL) {
+    if (mVertexBuffer == nullptr) {
         mVertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     }
 
-    if (mVAO == NULL) {
+    if (mVAO == nullptr) {
         mVAO = new QOpenGLVertexArrayObject();
     }
 
@@ -128,7 +128,7 @@ void PLYMeshData::bindTextures(QOpenGLFunctions* GL) {
 
 bool PLYMeshData::readPLYFile(QFileInfo pProjectFile, QString pFilename, QFileInfo pTextureFile) {
     // Extract the PLY file from the archive if there is one
-    QuaZipFile* lInsideFile = NULL;
+    QuaZipFile* lInsideFile = nullptr;
     if (pProjectFile.filePath() != "") {
         lInsideFile = new QuaZipFile(pProjectFile.filePath(), pFilename);
         if(!lInsideFile->open(QIODevice::ReadOnly)) {
@@ -232,7 +232,7 @@ void PLYMeshData::processRawData() {
     delete [] lFaceLookup;
 
     // Allocate space for a direct-indexed vertex buffer
-    if (mPackedData != NULL) { free(mPackedData); }
+    if (mPackedData != nullptr) { free(mPackedData); }
     mPackedData = malloc(mFaceCount * 3 * sizeof(PackedVertex));
 
     // Create a final direct-indexed list of triangles
@@ -266,13 +266,13 @@ void PLYMeshData::processRawData() {
 }
 
 void PLYMeshData::buildBuffers(QOpenGLContext* pGLContext) {
-    if (pGLContext == NULL) {
+    if (pGLContext == nullptr) {
         qWarning("No current OpenGL Context for building VBs");
         return;
     }
 
     QOpenGLFunctions* GL = pGLContext->functions();
-    if (GL == NULL) {
+    if (GL == nullptr) {
         qWarning("Could not get GL Functions object");
         return;
     }
@@ -326,7 +326,7 @@ void PLYMeshData::buildTextures() {
     // Create the textures
     if (mTextureFile[0].suffix() == "psz" || mTextureFile[0].suffix() == "zip") {
         // Locate and extract textures from the archive if there is one
-        QuaZipFile* lInsideFile = NULL;
+        QuaZipFile* lInsideFile = nullptr;
         for(int i=0; i<4; i++) {
             QString lTexName = QString("model%1.png").arg(i);
             lInsideFile = new QuaZipFile(mTextureFile[0].filePath(), lTexName);
@@ -353,27 +353,27 @@ void PLYMeshData::buildTextures() {
         }
     }
 
-    if (mGLTexture[0] == NULL || !mGLTexture[0]->isCreated()) {
+    if (mGLTexture[0] == nullptr || !mGLTexture[0]->isCreated()) {
         qWarning("Error reading/creating texture for mesh.");
     }
 }
 
 void PLYMeshData::releaseBuffers() {
-    if (mVAO != NULL && mVAO->isCreated()) {
+    if (mVAO != nullptr && mVAO->isCreated()) {
         mVAO->release();
     }
 
-    if (mVertexBuffer != NULL && mVertexBuffer->isCreated()) {
+    if (mVertexBuffer != nullptr && mVertexBuffer->isCreated()) {
         mVertexBuffer->release();
     }
 }
 
 void PLYMeshData::destroyBuffers() {
-    if (mVAO != NULL && mVAO->isCreated()) {
+    if (mVAO != nullptr && mVAO->isCreated()) {
         mVAO->destroy();
     }
 
-    if (mVertexBuffer != NULL && mVertexBuffer->isCreated()) {
+    if (mVertexBuffer != nullptr && mVertexBuffer->isCreated()) {
         mVertexBuffer->destroy();
     }
 }
@@ -382,7 +382,7 @@ bool PLYMeshData::parsePLYFileStream(QString pFilename, QuaZipFile* pInsideFile)
     // Open file and read header info
     PLY::Header header;
     PLY::Reader reader(header);
-    if (pInsideFile != NULL) {
+    if (pInsideFile != nullptr) {
         if (!reader.use_io_device(pInsideFile)) {
             qWarning("Failed to use archive stream");
             return false;

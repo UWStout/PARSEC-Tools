@@ -63,8 +63,8 @@ PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFi
     }
 
     // Sanity check
-    if(reader == NULL || reader->name() != "model" || !reader->isStartElement()) {
-        return NULL;
+    if(reader == nullptr || reader->name() != "model" || !reader->isStartElement()) {
+        return nullptr;
     }
 
     // Make a new object
@@ -108,7 +108,7 @@ PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFi
                     }
 
                     // Pass property up to parent for parsing if one exists
-                    if (pParent != NULL) {
+                    if (pParent != nullptr) {
                         pParent->parseProperty(lPropertyName, lPropertyValue);
                     }
                 }
@@ -126,5 +126,5 @@ PSModelData* PSModelData::makeFromXML(QXmlStreamReader* reader, QFileInfo pZipFi
     }
 
     // Should never reach this except when XML is malformed
-    return NULL;
+    return nullptr;
 }

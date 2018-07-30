@@ -131,7 +131,7 @@ namespace PLY {
 		/// Get a Value.
 		/** \param elem the Element describing the Object.
 		 *  \param prop the Property describing the Value.
-		 *  \return the Value or NULL if the Value is not
+		 *  \return the Value or nullptr if the Value is not
 		 *  contained in this Object.
 		 */
 		virtual Value* get_value(const Element& elem, const Property& prop) = 0;
@@ -217,7 +217,7 @@ namespace PLY {
 		/// Get a collection of [Objects](\ref Object).
 		/** \param header the Header describing the [Objects](\ref Object).
 		 *  \param elem the Element describing the Object.
-		 *  \return the Array or NULL if the Element is not
+		 *  \return the Array or nullptr if the Element is not
 		 *  contained in this Storage.
 		 */
 		Array* get_collection(const Header& header, const Element& elem);

@@ -21,9 +21,9 @@ class GLModelWidget : public QWidget
     Q_OBJECT
 
 public:
-    GLModelWidget(QWidget* parent = NULL);
-    GLModelWidget(const PSSessionData* pSession, QWidget* parent = NULL);
-    GLModelWidget(const PSModelData* pModel, QWidget* parent = NULL);
+    GLModelWidget(QWidget* parent = nullptr);
+    GLModelWidget(const PSSessionData* pSession, QWidget* parent = nullptr);
+    GLModelWidget(const PSModelData* pModel, QWidget* parent = nullptr);
     ~GLModelWidget();
 
     void loadNewModel(const PSSessionData* pSession);

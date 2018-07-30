@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     QString collectionPath = "";
     if(argc != 2) {
         // Show the collection selection dialog
-        CollectionSelectionDialog collSelDiag(NULL);
+        CollectionSelectionDialog collSelDiag(nullptr);
         collSelDiag.exec();
 
         // Was it rejected and what was the selected path
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Construct the main window and make sure we have valid settings
-    PSHelperMainWindow* myWindow = new PSHelperMainWindow(NULL);
+    PSHelperMainWindow* myWindow = new PSHelperMainWindow(nullptr);
     if(!myWindow->validateSettings()) {
         exit(-1);
     }
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     myProgressDiag->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
     // Scan the given directory for PSZ files and images
-    PSandPhotoScanner* lScanner = NULL;
+    PSandPhotoScanner* lScanner = nullptr;
     try {
         // Use a future watcher to signal the progress dialog to close
         QFutureWatcher<PSSessionData*>* lWatcher = new QFutureWatcher<PSSessionData*>();
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
         delete myProgressDiag;
     } catch(const exception& e) {
 
-        QMessageBox::critical(NULL, "Error Scanning Files", "Error: failed to scan '" + collectionPath + "'.");
+        QMessageBox::critical(nullptr, "Error Scanning Files", "Error: failed to scan '" + collectionPath + "'.");
 
         // Something went wrong scanning the given file/folder
         qWarning("Error: failed to scan '%s'.", collectionPath.toLocal8Bit().data());

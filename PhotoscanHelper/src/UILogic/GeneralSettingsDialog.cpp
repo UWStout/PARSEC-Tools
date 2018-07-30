@@ -30,7 +30,7 @@ void GeneralSettingsDialog::restoreSettings() {
         mGUI->IDLineEdit->setText(mProjectData->getID());
     }
 
-    mGUI->DescriptionLineEdit->setText(mProjectData->getNameStrict());
+    mGUI->DescriptionLineEdit->setText(mProjectData->getName());
     mGUI->SpecialNotesTextEdit->setPlainText(mProjectData->getNotes().join("; "));
 }
 

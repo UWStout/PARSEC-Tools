@@ -59,8 +59,8 @@ namespace PLY {
 		 *  as a reference.
 		 *  \param [in,out] h the Header to use.
 		 */
-        Reader(Header& h): header(h), tStream(NULL),
-            source(NULL), srcOwned(false) {}
+        Reader(Header& h): header(h), tStream(nullptr),
+            source(nullptr), srcOwned(false) {}
 
 		/// Construct from existing stream.
 		/** It is assumed that the stream was opened
@@ -71,7 +71,7 @@ namespace PLY {
 		 *  \param [in,out] is the stream to use.
 		 */
         Reader(Header& h, QIODevice* dev): header(h),
-            tStream(NULL), source(NULL), srcOwned(false) {
+            tStream(nullptr), source(nullptr), srcOwned(false) {
             use_io_device(dev);
         }
 
@@ -82,8 +82,8 @@ namespace PLY {
 		 *  \param file_name the name of the file to read.
 		 */
         Reader(Header& h, const char* file_name):
-            header(h), tStream(NULL),
-            source(NULL), srcOwned(true) {
+            header(h), tStream(nullptr),
+            source(nullptr), srcOwned(true) {
             if (!open_file(file_name)) close_file();
         }
 
@@ -158,7 +158,7 @@ namespace PLY {
 	struct Writer {
 		Header& header;					///< The Header to write.
         QTextStream* tStream;           ///< The stream to write to for ASCII data.
-        QIODevice* source;              ///< The data source (NULL unless we own it).
+        QIODevice* source;              ///< The data source (nullptr unless we own it).
         bool srcOwned;                  ///< Are we responsible for 'source'?
 
 		/// Base constructor.
@@ -167,8 +167,8 @@ namespace PLY {
 		 *  as a reference.
 		 *  \param [in,out] h the Header to use.
 		 */
-        Writer(Header& h): header(h), tStream(NULL),
-            source(NULL), srcOwned(false) {}
+        Writer(Header& h): header(h), tStream(nullptr),
+            source(nullptr), srcOwned(false) {}
 		/// Construct from existing stream.
 		/** It is assumed that the stream was opened
 		 *  correctly. In order to be able to write any
@@ -178,8 +178,8 @@ namespace PLY {
 		 *  \param [in,out] os the stream to use.
 		 */
         Writer(Header& h, QIODevice* dev, const Stream_type& type = ASCII):
-            header(h), tStream(NULL),
-            source(NULL), srcOwned(false) {
+            header(h), tStream(nullptr),
+            source(nullptr), srcOwned(false) {
             use_io_device(dev, type);
         }
 
@@ -190,8 +190,8 @@ namespace PLY {
 		 *  \param type the storage type to use for the data.
 		 */
 		Writer(Header& h, const char* file_name, const Stream_type& type = ASCII)
-            : header(h), tStream(NULL),
-              source(NULL), srcOwned(true) {
+            : header(h), tStream(nullptr),
+              source(nullptr), srcOwned(true) {
             if (!open_file(file_name, type)) close_file();
         }
 

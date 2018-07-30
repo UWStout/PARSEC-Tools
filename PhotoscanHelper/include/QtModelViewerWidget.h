@@ -34,7 +34,7 @@ public:
 
     DECLARE_ENUM(RenderMode, RENDER_MODE_ENUM)
 
-    QtModelViewerWidget(QWidget* parent = NULL);
+    QtModelViewerWidget(QWidget* parent = nullptr);
     virtual ~QtModelViewerWidget();
 
     void setModelData(QImage mColorTexture[], PLYMeshData* pMeshData);

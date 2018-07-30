@@ -10,9 +10,9 @@ PSCameraData::PSCameraData(long pID) : ID(pID) {
     mLabel = "";
     mEnabled = false;
 
-    mTransform = NULL;
-    mImageData = NULL;
-    mSensorData = NULL;
+    mTransform = nullptr;
+    mImageData = nullptr;
+    mSensorData = nullptr;
 }
 
 PSCameraData::~PSCameraData() {}
@@ -26,8 +26,8 @@ PSCameraData* PSCameraData::makeFromXML(QXmlStreamReader* reader) {
     }
 
     // Sanity check
-    if(reader == NULL || reader->name() != "camera" || !reader->isStartElement()) {
-        return NULL;
+    if(reader == nullptr || reader->name() != "camera" || !reader->isStartElement()) {
+        return nullptr;
     }
 
     // Build the basic Camera
@@ -64,7 +64,7 @@ PSCameraData* PSCameraData::makeFromXML(QXmlStreamReader* reader) {
     }
 
     // Should never reach this except when XML is malformed
-    return NULL;
+    return nullptr;
 }
 
 QString PSCameraData::getLabel() const { return mLabel; }
@@ -74,7 +74,7 @@ long PSCameraData::getSensorID() const { return mSensorID; }
 PSSensorData *PSCameraData::getSensorData() { return mSensorData; }
 
 bool PSCameraData::isEnabled() const { return mEnabled; }
-bool PSCameraData::isAligned() const { return (mImageData != NULL); }
+bool PSCameraData::isAligned() const { return (mImageData != nullptr); }
 
 void PSCameraData::setLabel(QString pLabel) { mLabel = pLabel; }
 void PSCameraData::setImageData(PSImageData *pImageData) { mImageData = pImageData; }

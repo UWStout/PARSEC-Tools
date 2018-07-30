@@ -43,7 +43,7 @@ namespace PLY {
     // Use the given IO Device for reading.
     bool Reader::use_io_device(QIODevice* dev) {
         // Sanity check
-        if (dev == NULL)
+        if (dev == nullptr)
             HANDLE_FAULT("Reader::use_io_device : invalid device");
 
         // Ensure device is open and ready for reading
@@ -80,7 +80,7 @@ namespace PLY {
 	// Close the reader.
 	void Reader::close_file() {
         delete tStream;
-        tStream = NULL;
+        tStream = nullptr;
 
         if (source) {
             source->close();
@@ -89,14 +89,14 @@ namespace PLY {
             delete source;
         }
         srcOwned = false;
-        source = NULL;
+        source = nullptr;
     }
 	
     bool Reader::init_stream() {
         // Wrap io device with streams
         if (header.stream_type == ASCII) {
             tStream = new QTextStream(source);
-            if (tStream == NULL || tStream->status() != QTextStream::Ok)
+            if (tStream == nullptr || tStream->status() != QTextStream::Ok)
                 HANDLE_FAULT("Reader::init_stream : invalid stream");
         }
 
@@ -413,7 +413,7 @@ namespace PLY {
 	
     bool Writer::use_io_device(QIODevice* dev, const Stream_type& type) {
         // Sanity check
-        if (dev == NULL)
+        if (dev == nullptr)
             HANDLE_FAULT("Writer::use_io_device : invalid device");
 
         // Ensure device is open and ready for writing
@@ -440,7 +440,7 @@ namespace PLY {
 	// Close the writer.
 	void Writer::close_file() {
         delete tStream;
-        tStream = NULL;
+        tStream = nullptr;
 
         if (source) {
             source->close();
@@ -449,7 +449,7 @@ namespace PLY {
             delete source;
         }
         srcOwned = false;
-        source = NULL;
+        source = nullptr;
     }
 
 	// Write the ply header to the current stream.
