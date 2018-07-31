@@ -114,7 +114,6 @@ void PSSessionData::examineProject() {
 
         // Parse the PhotoScan XML file
         if(mPSProjectFile.filePath() != "") {
-            qDebug() << "Working fine";
             mPSProject = new PSProjectFileData(mPSProjectFile);
         }
 
@@ -135,6 +134,11 @@ void PSSessionData::examineProject() {
 
         // NOTE: image files lists will not be created until the first time
         //       their getters are called (to shorten loading time).
+
+        // TODO: Get rid of this once we don't need it anymore
+        if(mPSProjectFile.filePath() != "") {
+            mPSProject = new PSProjectFileData(mPSProjectFile);
+        }
 
         // Update state
         isExternal = false;
@@ -364,6 +368,17 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.setValue("ProcessedImageCount", mProcessedFileCount);
     lSettings.setValue("MaskImageCount", mMaskFileCount);
     lSettings.endGroup();
+
+    lSettings.beginGroup("Synchronization");
+    if (mPSProjectFile.filePath() != "") {
+        lSettings.setValue("ProjectFileName", mPSProjectFile.fileName());
+        lSettings.setValue("ProjectFileTimestamp", mPSProjectFile.lastModified().toSecsSinceEpoch());
+    }
+    // Write last modified for each image folder
+    lSettings.setValue("RawTimestamp", QFileInfo(mRawFolder, QString()).lastModified().toSecsSinceEpoch());
+    lSettings.setValue("ProcessedTimestamp", QFileInfo(mProcessedFolder, QString()).lastModified().toSecsSinceEpoch());
+    lSettings.setValue("MasksTimestamp", QFileInfo(mMasksFolder, QString()).lastModified().toSecsSinceEpoch());
+    lSettings.endGroup();
 }
 
 void PSSessionData::readGeneralSettings() {
@@ -390,8 +405,49 @@ void PSSessionData::readGeneralSettings() {
 
     // Read most recent status
     mStatus = static_cast<Status>(lSettings.value("Status", "0").toInt());
-
     lSettings.endGroup();
+
+    // Read the image counts
+    lSettings.beginGroup("Images");
+    mRawFileCount = lSettings.value("RawImageCount", -1).toInt();
+    mProcessedFileCount = lSettings.value("ProcessedImageCount", -1).toInt();
+    mMaskFileCount = lSettings.value("MaskImageCount", -1).toInt();
+    lSettings.endGroup();
+
+    // Read the synchronization
+    lSettings.beginGroup("Synchronization");
+    QString lLastProjFileName = lSettings.value("ProjectFileName", QString()).toString();
+    QDateTime lProjFileTimestamp = QDateTime::fromSecsSinceEpoch(lSettings.value("ProjectFileTimestamp", 0).toLongLong(), Qt::TimeZone);
+    // Read last modified for each image folder
+    QDateTime lRawTimestamp = QDateTime::fromSecsSinceEpoch(lSettings.value("RawTimestamp", 0).toLongLong(), Qt::TimeZone);
+    QDateTime lProcessedTimestamp = QDateTime::fromSecsSinceEpoch(lSettings.value("ProcessedTimestamp", 0).toLongLong(), Qt::TimeZone);
+    QDateTime lMasksTimestamp = QDateTime::fromSecsSinceEpoch(lSettings.value("MasksTimestamp", 0).toLongLong(), Qt::TimeZone);
+    lSettings.endGroup();
+
+    // Check Synchronization
+    checkSynchronization(lLastProjFileName, lProjFileTimestamp, lRawTimestamp, lProcessedTimestamp, lMasksTimestamp);
+}
+
+void PSSessionData::checkSynchronization(QString pProjName, QDateTime pProjTime, QDateTime pRawTime, QDateTime pProcTime, QDateTime pMaskTime) {
+    if(pProjName != mPSProjectFile.fileName()) {
+        isSynchronized = false;
+        qWarning() << "Project name is no longer synchronized";
+    } else if (pProjTime.toSecsSinceEpoch() != mPSProjectFile.lastModified().toSecsSinceEpoch()) {
+        isSynchronized = false;
+        qWarning() << "Project QDateTime is no longer synchronized";
+    } else if (pRawTime.toSecsSinceEpoch() != QFileInfo(mRawFolder, QString()).lastModified().toSecsSinceEpoch()) {
+        isSynchronized = false;
+        qWarning() << "RawFiles DateTime is no longer synchronized";
+    } else if (pProcTime.toSecsSinceEpoch() != QFileInfo(mProcessedFolder, QString()).lastModified().toSecsSinceEpoch()) {
+        isSynchronized = false;
+        qWarning() << "ProcessedFiles DateTime is no longer synchronized";
+    } else if (pMaskTime.toSecsSinceEpoch() != QFileInfo(mMasksFolder, QString()).lastModified().toSecsSinceEpoch()) {
+        isSynchronized = false;
+        qWarning() << "MasksFiles DateTime is no longer synchronized";
+    } else {
+        isSynchronized = true;
+        qWarning() << "Files are synchronized";
+    }
 }
 
 void PSSessionData::writeExposureSettings(ExposureSettings pExpSettings) {

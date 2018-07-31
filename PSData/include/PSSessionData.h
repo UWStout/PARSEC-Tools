@@ -120,6 +120,7 @@ private:
     void findFilesAndImages();
     void initAsExternalSession();
 
+    void checkSynchronization(QString pProjName, QDateTime pProjTime, QDateTime pRawTime, QDateTime pProcTime, QDateTime pMaskTime);
     void updateOutOfSyncSession();
 
     // Session state
