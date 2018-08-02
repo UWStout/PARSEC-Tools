@@ -12,7 +12,7 @@ class QXmlStreamReader;
 
 class PSDATASHARED_EXPORT PSXMLReader {
 public:
-    static QXmlStreamReader* explodeTag(QXmlStreamReader* reader, QStack<QFileInfo> currentFileStack);
+    static QXmlStreamReader* explodeTag(QXmlStreamReader* reader, QStack<QFileInfo> &currentFileStack);
     static QFileInfo checkForAndUpdatePath(QXmlStreamReader* reader, QFileInfo currentFile);
     static QXmlStreamReader* getXMLStreamFromFile(QFileInfo pFile);
 

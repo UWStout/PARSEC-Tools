@@ -11,12 +11,12 @@
 // Sometimes a portion of the XML file is stripped out and placed
 // in it's own file under the .files directory. This function will
 // look for that attribute and follow it if found.
-QXmlStreamReader* PSXMLReader::explodeTag(QXmlStreamReader* reader, QStack<QFileInfo> currentFileStack) {
+QXmlStreamReader* PSXMLReader::explodeTag(QXmlStreamReader* reader, QStack<QFileInfo>& currentFileStack) {
     // Is there a path tag we need to follow?
     if(!reader->attributes().value("", "path").isEmpty()) {
         // Construct the absolute path to the new QFile and let it become the current QFile
         QFileInfo newXMLFile = checkForAndUpdatePath(reader, currentFileStack.top());
-        currentFileStack.push(newXMLFile);        
+        currentFileStack.push(newXMLFile);
 
         // Turn into an input stream
         QXmlStreamReader* newReader = getXMLStreamFromFile(newXMLFile);
@@ -35,7 +35,6 @@ QFileInfo PSXMLReader::checkForAndUpdatePath(QXmlStreamReader* reader, QFileInfo
 
         // Retrieve relative path
         QString newFilePath = reader->attributes().value("", "path").toString();
-
         qDebug("Opening %s with parent %s", newFilePath.toLocal8Bit().data(), currentFile.filePath().toLocal8Bit().data());
 
         // Fill in project name if needed

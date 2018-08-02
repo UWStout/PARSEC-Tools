@@ -61,7 +61,7 @@ void PSChunkData::init(QXmlStreamReader* reader) {
     mOptimize_durationSeconds = 0;
     mModelGeneration_durationSeconds = 0;
 
-    if (reader != nullptr && !mSourceFile.fileName().endsWith("psx")) {
+    if (reader != nullptr) {
         parseXMLChunk(reader);
     }
 }
@@ -213,7 +213,6 @@ void PSChunkData::parseXMLFrame(QXmlStreamReader* reader) {
                     // Return to old stream
                     if(reader != preModelReader) {
                         mTempFileStack.pop();
-                        delete reader->device();
                         delete reader;
                         reader = preFrameReader;
                     }
