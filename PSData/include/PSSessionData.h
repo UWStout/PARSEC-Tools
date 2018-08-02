@@ -124,7 +124,7 @@ private:
     void updateOutOfSyncSession();
 
     // Session state
-    bool isExternal, isConsistent, isSynchronized;
+    bool isSynchronized;
 
     // INI filename to store all metadata
     QString mSettings;
