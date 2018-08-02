@@ -83,8 +83,7 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder)
     mStatus = PSS_UNKNOWN;
     mRawFileCount = mProcessedFileCount = mMaskFileCount = 0;
 
-    isExternal = true;
-    isConsistent = isSynchronized = false;
+    isSynchronized = false;
 
     mName = "";
     mNotes = QStringList();
@@ -123,10 +122,6 @@ void PSSessionData::examineProject() {
         // Update status and create initial INI file
         autoSetStatus();
         writeGeneralSettings();
-
-        // Update state
-        isExternal = false;
-        isSynchronized = isConsistent = true;
     } else {
         // Read from INI file
         readGeneralSettings();
@@ -139,12 +134,6 @@ void PSSessionData::examineProject() {
         if(mPSProjectFile.filePath() != "") {
             mPSProject = new PSProjectFileData(mPSProjectFile);
         }
-
-        // Update state
-        isExternal = false;
-
-        // TODO: Fix these so they actually check project filename and last modified timestamp
-        isSynchronized = isConsistent = true;
     }
 }
 
@@ -379,6 +368,9 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.setValue("ProcessedTimestamp", QFileInfo(mProcessedFolder, QString()).lastModified().toSecsSinceEpoch());
     lSettings.setValue("MasksTimestamp", QFileInfo(mMasksFolder, QString()).lastModified().toSecsSinceEpoch());
     lSettings.endGroup();
+
+    // Update state
+    isSynchronized = true;
 }
 
 void PSSessionData::readGeneralSettings() {
@@ -426,6 +418,11 @@ void PSSessionData::readGeneralSettings() {
 
     // Check Synchronization
     checkSynchronization(lLastProjFileName, lProjFileTimestamp, lRawTimestamp, lProcessedTimestamp, lMasksTimestamp);
+
+    // Update synchronization if needed
+    if(!isSynchronized) {
+        updateOutOfSyncSession();
+    }
 }
 
 void PSSessionData::checkSynchronization(QString pProjName, QDateTime pProjTime, QDateTime pRawTime, QDateTime pProcTime, QDateTime pMaskTime) {
@@ -448,6 +445,21 @@ void PSSessionData::checkSynchronization(QString pProjName, QDateTime pProjTime,
         isSynchronized = true;
         qWarning() << "Files are synchronized";
     }
+}
+
+void PSSessionData::updateOutOfSyncSession() {
+    // Parse the PhotoScan XML file
+    if(mPSProjectFile.filePath() != "") {
+        mPSProject = new PSProjectFileData(mPSProjectFile);
+    }
+
+    // Reset image counts
+    mRawFileCount = mProcessedFileCount = mMaskFileCount = -1;
+
+    // Ensure the image files lists are initialized and image counts are accurate
+    getRawFileList(); getProcessedFileList(); getMaskFileList();
+
+    writeGeneralSettings();
 }
 
 void PSSessionData::writeExposureSettings(ExposureSettings pExpSettings) {
