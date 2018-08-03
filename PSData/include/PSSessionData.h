@@ -45,8 +45,8 @@ public:
     DECLARE_ENUM(Field, FIELDS_ENUM)
 
     // The number of fields shown for base and extended modes
-    static const char BASE_LENGTH;
-    static const char EXTENDED_LENGTH;
+    static const uchar BASE_LENGTH;
+    static const uchar EXTENDED_LENGTH;
 
     explicit PSSessionData(QDir pPSProjectFolder);
 
@@ -71,6 +71,7 @@ public:
     void addNotes(QString pNotes);
     void setName(QString pName);
 
+    inline bool hasProject() const { return mPSProjectFile.filePath() != ""; }
     QFileInfo getPSProjectFile() const;
 	
     QDir getSessionFolder() const;
@@ -98,19 +99,19 @@ public:
     PSProjectFileData* getProject() const;
 
     QString describeImageAlignPhase() const;
-    char getAlignPhaseStatus() const;
+    uchar getAlignPhaseStatus() const;
 
     QString describeDenseCloudPhase() const;
     int getDenseCloudDepthImages() const;
-    char getDenseCloudPhaseStatus() const;
+    uchar getDenseCloudPhaseStatus() const;
 
     QString describeModelGenPhase() const;
-    char getModelGenPhaseStatus() const;
-    long getModelFaceCount() const;
-    long getModelVertexCount() const;
+    uchar getModelGenPhaseStatus() const;
+    long long getModelFaceCount() const;
+    long long getModelVertexCount() const;
 
     QString describeTextureGenPhase() const;
-    char getTextureGenPhaseStatus() const;
+    uchar getTextureGenPhaseStatus() const;
 
 private:
     void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
@@ -122,6 +123,7 @@ private:
 
     void checkSynchronization(QString pProjName, QDateTime pProjTime, QDateTime pRawTime, QDateTime pProcTime, QDateTime pMaskTime);
     void updateOutOfSyncSession();
+    void parseProjectXMLAndCache();
 
     // Session state
     bool isSynchronized;
@@ -145,7 +147,21 @@ private:
     Status mStatus;
 
     // Chunk Variables
+    int mChunkCount, mActiveChunkIndex;
     int mChunkImages, mChunkCameras;
+
+    QString mAlignmentLevelString;
+    int mAlignmentFeatureLimit;
+    int mAlignmentTieLimit;
+
+    QString mDenseCloudLevelString;
+    int mDenseCloudImagesUsed;
+
+    bool mHasMesh;
+    long long mMeshFaces, mMeshVerts;
+
+    int mTextureCount;
+    int mTextureWidth, mTextureHeight;
 
     // Capture and exposure information
     ExposureSettings mExposure;

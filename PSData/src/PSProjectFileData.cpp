@@ -145,7 +145,7 @@ QString PSProjectFileData::describeImageAlignPhase() const {
     return QString("N/A");
 }
 
-char PSProjectFileData::getAlignPhaseStatus() const {
+uchar PSProjectFileData::getAlignPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getAlignPhaseStatus();
     }
@@ -169,7 +169,7 @@ int PSProjectFileData::getDenseCloudDepthImages() const {
     return 0;
 }
 
-char PSProjectFileData::getDenseCloudPhaseStatus() const {
+uchar PSProjectFileData::getDenseCloudPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getDenseCloudPhaseStatus();
     }
@@ -185,7 +185,7 @@ QString PSProjectFileData::describeModelGenPhase() const {
     return QString("N/A");
 }
 
-char PSProjectFileData::getModelGenPhaseStatus() const {
+uchar PSProjectFileData::getModelGenPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelGenPhaseStatus();
     }
@@ -193,7 +193,7 @@ char PSProjectFileData::getModelGenPhaseStatus() const {
     return 0;
 }
 
-long PSProjectFileData::getModelFaceCount() const {
+long long PSProjectFileData::getModelFaceCount() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelFaceCount();
     }
@@ -201,7 +201,7 @@ long PSProjectFileData::getModelFaceCount() const {
     return 0;
 }
 
-long PSProjectFileData::getModelVertexCount() const {
+long long PSProjectFileData::getModelVertexCount() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getModelVertexCount();
     }
@@ -217,7 +217,7 @@ QString PSProjectFileData::describeTextureGenPhase() const {
     return QString("N/A");
 }
 
-char PSProjectFileData::getTextureGenPhaseStatus() const {
+uchar PSProjectFileData::getTextureGenPhaseStatus() const {
     if(mActiveChunk < (unsigned int)mChunks.size()) {
         return mChunks[mActiveChunk]->getTextureGenPhaseStatus();
     }

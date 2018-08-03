@@ -43,16 +43,16 @@ public:
     PSModelData* getModelData() const;
 
     QString describeImageAlignPhase() const;
-    char getAlignPhaseStatus() const;
+    uchar getAlignPhaseStatus() const;
     QString describeDenseCloudPhase() const;
     int getDenseCloudDepthImages() const;
-    char getDenseCloudPhaseStatus() const;
+    uchar getDenseCloudPhaseStatus() const;
     QString describeModelGenPhase() const;
-    char getModelGenPhaseStatus() const;
-    long getModelFaceCount() const;
-    long getModelVertexCount() const;
+    uchar getModelGenPhaseStatus() const;
+    long long getModelFaceCount() const;
+    long long getModelVertexCount() const;
     QString describeTextureGenPhase() const;
-    char getTextureGenPhaseStatus() const;
+    uchar getTextureGenPhaseStatus() const;
 
 private:
     QFileInfo mPSProjectFile;

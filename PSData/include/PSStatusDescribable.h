@@ -36,19 +36,19 @@ public:
     // Functions for describing stages in the processing of an image set
     // These are 'abstract' pure-virtual functions that must be overridden
     virtual QString describeImageAlignPhase() const = 0;
-    virtual char getAlignPhaseStatus() const = 0;
+    virtual uchar getAlignPhaseStatus() const = 0;
 
     virtual QString describeDenseCloudPhase() const = 0;
-    virtual char getDenseCloudPhaseStatus() const = 0;
+    virtual uchar getDenseCloudPhaseStatus() const = 0;
     virtual int getDenseCloudDepthImages() const = 0;
 
     virtual QString describeModelGenPhase() const = 0;
-    virtual char getModelGenPhaseStatus() const = 0;
-    virtual long getModelFaceCount() const = 0;
-    virtual long getModelVertexCount() const = 0;
+    virtual uchar getModelGenPhaseStatus() const = 0;
+    virtual long long getModelFaceCount() const = 0;
+    virtual long long getModelVertexCount() const = 0;
 
     virtual QString describeTextureGenPhase() const = 0;
-    virtual char getTextureGenPhaseStatus() const = 0;
+    virtual uchar getTextureGenPhaseStatus() const = 0;
 };
 
 #endif

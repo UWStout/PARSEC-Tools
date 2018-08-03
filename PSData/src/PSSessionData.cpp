@@ -17,8 +17,8 @@ using namespace std;
 DEFINE_ENUM(Field, FIELDS_ENUM, PSSessionData)
 
 // The number of fields shown for base and extended modes
-const char PSSessionData::BASE_LENGTH = 6;
-const char PSSessionData::EXTENDED_LENGTH = 11;
+const uchar PSSessionData::BASE_LENGTH = 6;
+const uchar PSSessionData::EXTENDED_LENGTH = 11;
 
 // Values to control how containers of PSSessionData objects are sorted
 PSSessionData::Field PSSessionData::mSortBy = PSSessionData::F_PROJECT_ID;
@@ -112,9 +112,7 @@ void PSSessionData::examineProject() {
         extractInfoFromFolderName(mSessionFolder.dirName());
 
         // Parse the PhotoScan XML file
-        if(mPSProjectFile.filePath() != "") {
-            mPSProject = new PSProjectFileData(mPSProjectFile);
-        }
+        parseProjectXMLAndCache();
 
         // Ensure the image files lists are initialized and image counts are accurate
         getRawFileList(); getProcessedFileList(); getMaskFileList();
@@ -131,9 +129,7 @@ void PSSessionData::examineProject() {
         //       their getters are called (to shorten loading time).
 
         // TODO: Get rid of this once we don't need it anymore
-        if(mPSProjectFile.filePath() != "") {
-            mPSProject = new PSProjectFileData(mPSProjectFile);
-        }
+        parseProjectXMLAndCache();
     }
 }
 
@@ -178,6 +174,52 @@ int PSSessionData::compareTo(const PSSessionData* o) const {
 
 bool compareFileInfo(const QFileInfo& A, const QFileInfo& B) {
     return (A.fileName().compare(B.fileName()) < 0);
+}
+
+void PSSessionData::parseProjectXMLAndCache() {
+    // Make sure there's something to parse first
+    if(!hasProject()) { return; }
+
+    // Parse the actual project (this is where the XML reading happens)
+    mPSProject = new PSProjectFileData(mPSProjectFile);
+
+    // Extract the critical information from the PSProjectFileData structure
+    // and cache that data locally in this object
+    mChunkCount = static_cast<int>(mPSProject->getChunkCount());
+    mActiveChunkIndex = static_cast<int>(mPSProject->getActiveChunkIndex());
+
+    PSChunkData* lActiveChunk = mPSProject->getActiveChunk();
+    mChunkImages = static_cast<int>(lActiveChunk->getImageCount());
+    mChunkCameras = static_cast<int>(lActiveChunk->getCameraCount());
+
+    mAlignmentLevelString = lActiveChunk->getImageAlignment_LevelString();
+    mAlignmentFeatureLimit = static_cast<int>(lActiveChunk->getImageAlignment_featureLimit());
+    mAlignmentTieLimit = static_cast<int>(lActiveChunk->getImageAlignment_tiePointLimit());
+
+    mDenseCloudLevelString = lActiveChunk->getDenseCloud_levelString();
+    mDenseCloudImagesUsed = lActiveChunk->getDenseCloud_imagesUsed();
+
+    PSModelData* lModel = lActiveChunk->getModelData();
+    if (lModel != nullptr) {
+        mHasMesh = true;
+        mMeshFaces = lModel->getFaceCount();
+        mMeshVerts = lModel->getVertexCount();
+    } else {
+        mMeshFaces = mMeshVerts = 0;
+    }
+
+    mTextureCount = lActiveChunk->getTextureGeneration_count();
+    if (mTextureCount > 0) {
+        mTextureWidth = lActiveChunk->getTextureGeneration_width();
+        mTextureHeight = lActiveChunk->getTextureGeneration_height();
+    } else {
+        mTextureWidth = mTextureHeight = 0;
+    }
+
+    // Delete temporary data
+    // TODO: Enable this once the project dependency is completely removed
+    // delete mPSProject;
+    // mPSProject = NULL;
 }
 
 bool PSSessionData::examineDirectory(QDir pDirToExamine) {
@@ -359,10 +401,14 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.endGroup();
 
     lSettings.beginGroup("Synchronization");
-    if (mPSProjectFile.filePath() != "") {
+    if (hasProject()) {
         lSettings.setValue("ProjectFileName", mPSProjectFile.fileName());
         lSettings.setValue("ProjectFileTimestamp", mPSProjectFile.lastModified().toSecsSinceEpoch());
+    } else {
+        lSettings.remove("ProjectFileName");
+        lSettings.remove("ProjectFileTimestamp");
     }
+
     // Write last modified for each image folder
     lSettings.setValue("RawTimestamp", QFileInfo(mRawFolder, QString()).lastModified().toSecsSinceEpoch());
     lSettings.setValue("ProcessedTimestamp", QFileInfo(mProcessedFolder, QString()).lastModified().toSecsSinceEpoch());
@@ -449,9 +495,7 @@ void PSSessionData::checkSynchronization(QString pProjName, QDateTime pProjTime,
 
 void PSSessionData::updateOutOfSyncSession() {
     // Parse the PhotoScan XML file
-    if(mPSProjectFile.filePath() != "") {
-        mPSProject = new PSProjectFileData(mPSProjectFile);
-    }
+    parseProjectXMLAndCache();
 
     // Reset image counts
     mRawFileCount = mProcessedFileCount = mMaskFileCount = -1;
@@ -512,132 +556,99 @@ PSProjectFileData* PSSessionData::getProject() const {
 }
 
 QString PSSessionData::describeImageAlignPhase() const {
-    QString lData = mPSProject->getActiveChunk()->getImageAlignment_LevelString();
-    long featLimit = mPSProject->getActiveChunk()->getImageAlignment_featureLimit()/1000;
-    long tieLimit = mPSProject->getActiveChunk()->getImageAlignment_tiePointLimit()/1000;
+    QString lData(mAlignmentLevelString);
     lData += " (" + QString::number(mChunkImages) + " - " +
-            QString::number(featLimit) + "k/" +
-            QString::number(tieLimit) + "k)";
+            QString::number(mAlignmentFeatureLimit/1000) + "k/" +
+            QString::number(mAlignmentTieLimit/1000) + "k)";
     return lData;
 }
 
-char PSSessionData::getAlignPhaseStatus() const {
-    long allImages = mChunkCameras;
-    long alignedImages = mChunkImages;
-    double ratio = alignedImages/(double)allImages;
-
-    if(alignedImages == 0 || describeImageAlignPhase() == "N/A") {
-        return 5;
-    } else if(ratio < .100) {
+uchar PSSessionData::getAlignPhaseStatus() const {
+    if(hasProject() && mChunkImages > 0 && mChunkCameras > 0) {
+        double ratio = mChunkImages/static_cast<double>(mChunkCameras);
+        if(ratio >= .95) { return 0; }
+        if(ratio >= .6667) { return 1; }
+        if(ratio >= .3333) { return 2; }
+        if(ratio >= .1) { return 3; }
         return 4;
-    } else if(ratio < .3333) {
-        return 3;
-    } else if(ratio < .6667) {
-        return 2;
-    } else if(ratio < .950) {
-        return 1;
-    } else {
-        return 0;
     }
+    return 5;
 }
 
 QString PSSessionData::describeDenseCloudPhase() const {
-    QString lData = mPSProject->getActiveChunk()->getDenseCloud_levelString();
-    lData += " (" + QString::number(mPSProject->getActiveChunk()->getDenseCloud_imagesUsed()) + ")";
+    QString lData(mDenseCloudLevelString);
+    lData += " (" + QString::number(mDenseCloudImagesUsed) + ")";
     return lData;
 }
 
 int PSSessionData::getDenseCloudDepthImages() const {
-    return mPSProject->getActiveChunk()->getDenseCloud_imagesUsed();
+    return mDenseCloudImagesUsed;
 }
 
-char PSSessionData::getDenseCloudPhaseStatus() const {
-    long projectImages = mChunkCameras;
-    long depthImages = mPSProject->getActiveChunk()->getDenseCloud_imagesUsed();
-    double ratio = depthImages/(double)projectImages;
-    if(depthImages == 0) {
-        if(describeDenseCloudPhase() == "N/A") {
-            return 5;
-        } else {
-            return 3;
-        }
-    } else if(ratio < .100) {
+uchar PSSessionData::getDenseCloudPhaseStatus() const {
+    if (mChunkCameras > 0 && mDenseCloudImagesUsed > 0) {
+        double ratio = mDenseCloudImagesUsed/static_cast<double>(mChunkCameras);
+        if(ratio >= .950) { return 0; }
+        if(ratio < .6667) { return 1; }
+        if(ratio < .3333) { return 2; }
+        if(ratio < .100) { return 3; }
         return 4;
-    } else if(ratio < .3333) {
-        return 3;
-    } else if(ratio < .6667) {
-        return 2;
-    } else if(ratio < .950) {
-        return 1;
-    } else {
-        return 0;
     }
+    return 5;
 }
 
 QString PSSessionData::describeModelGenPhase() const {
-    double faces = getModelFaceCount();
-    if(faces < 0) {
-        if(mPSProject->getActiveChunk()->hasMesh()) { return "?"; }
-        else { return "N/A"; }
-    }
-
-    faces /= 1000;
-    if(faces >= 1000) {
-        return QString::asprintf("%.1fM faces", faces/1000);
+    if(!mHasMesh) { return "N/A"; }
+    if(mMeshFaces >= 1000000) {
+        return QString::asprintf("%.1fM faces", mMeshFaces/1000000.0);
     } else {
-        return QString::asprintf("%.1fK faces", faces);
+        return QString::asprintf("%.1fK faces", mMeshFaces/1000.0);
     }
 }
 
-char PSSessionData::getModelGenPhaseStatus() const {
-    long faceCount = getModelFaceCount();
-
+uchar PSSessionData::getModelGenPhaseStatus() const {
     // Examine the model resolution
-    if(faceCount < 0) {
+    if(!mHasMesh || mMeshFaces == 0) {
         return 5;
-    } else if(faceCount < 5000) {
+    } else if(mMeshFaces < 5000) {
         return 4;
-    } else if(faceCount < 10000) {
+    } else if(mMeshFaces < 10000) {
         return 3;
-    } else if(faceCount < 50000) {
+    } else if(mMeshFaces < 50000) {
         return 2;
-    } else if(faceCount < 1000000) {
+    } else if(mMeshFaces < 1000000) {
         return 1;
     } else {
         return 0;
     }
 }
 
-long PSSessionData::getModelFaceCount() const {
-    if(!mPSProject->getActiveChunk()->hasMesh()) return -1L;
-    return mPSProject->getActiveChunk()->getModelData()->getFaceCount();
+long long PSSessionData::getModelFaceCount() const {
+    if(!mHasMesh) return -1L;
+    return mMeshFaces;
 }
 
-long PSSessionData::getModelVertexCount() const {
-    if(!mPSProject->getActiveChunk()->hasMesh()) return -1L;
-    return mPSProject->getActiveChunk()->getModelData()->getVertexCount();
+long long PSSessionData::getModelVertexCount() const {
+    if(!mHasMesh) return -1L;
+    return mMeshVerts;
 }
 
 QString PSSessionData::describeTextureGenPhase() const {
-    if(mPSProject->getActiveChunk()->getTextureGeneration_count() != 0) {
-        return QString::asprintf("%d @ (%d x %d)", mPSProject->getActiveChunk()->getTextureGeneration_count(),
-                mPSProject->getActiveChunk()->getTextureGeneration_width(), mPSProject->getActiveChunk()->getTextureGeneration_height());
-    }
-
-    return "N/A";
+    if(mTextureCount == 0) { return "N/A"; }
+    return QString::asprintf("%d @ (%d x %d)", mTextureCount, mTextureWidth, mTextureHeight);
 }
 
-char PSSessionData::getTextureGenPhaseStatus() const {
+uchar PSSessionData::getTextureGenPhaseStatus() const {
     // Examine the texture resolution
-    if(mPSProject->getActiveChunk()->getTextureGeneration_width() == 0 || mPSProject->getActiveChunk()->getTextureGeneration_height() == 0) {
+    if(mTextureWidth == 0 || mTextureHeight == 0) {
         return 5;
-    } else if(mPSProject->getActiveChunk()->getTextureGeneration_width() < 1024 || mPSProject->getActiveChunk()->getTextureGeneration_height() < 1024) {
+    } else if(mTextureWidth < 1024 || mTextureHeight < 1024) {
         return 4;
-    } else if(mPSProject->getActiveChunk()->getTextureGeneration_width() < 2048 || mPSProject->getActiveChunk()->getTextureGeneration_height() < 2048) {
+    } else if(mTextureWidth < 2048 || mTextureHeight < 2048) {
         return 3;
-    } else if(mPSProject->getActiveChunk()->getTextureGeneration_width() < 3072 || mPSProject->getActiveChunk()->getTextureGeneration_height() < 3072) {
+    } else if(mTextureWidth < 3072 || mTextureHeight < 3072) {
         return 2;
-    } else if(mPSProject->getActiveChunk()->getTextureGeneration_width() < 4096 || mPSProject->getActiveChunk()->getTextureGeneration_height() < 4069) {
+    } else if(mTextureWidth < 4096 || mTextureHeight < 4069) {
         return 1;
     } else {
         return 0;

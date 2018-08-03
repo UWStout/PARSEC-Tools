@@ -104,8 +104,8 @@ public:
     void addCamera(PSCameraData* pNewCamera);
     void addImage(PSImageData* pNewImage);
 
-    unsigned int getImageCount() const { return (unsigned int)mImages.size(); }
-    unsigned int getCameraCount() const { return (unsigned int)mCameras.size(); }
+    int getImageCount() const { return mImages.size(); }
+    int getCameraCount() const { return mCameras.size(); }
 
     void addSensor() { mSensorCount_inChunk++; }
     long getSensorCount() const { return mSensorCount_inChunk; }
@@ -283,18 +283,18 @@ public:
         mTextureGeneration_uvGenDuration = pTextureGeneration_uvGenDuration;
     }
 
-    char getTextureGeneration_mappingMode() const { return mTextureGeneration_mappingMode; }
-    void setTextureGeneration_mappingMode(char pTextureGeneration_mappingMode) {
+    uchar getTextureGeneration_mappingMode() const { return mTextureGeneration_mappingMode; }
+    void setTextureGeneration_mappingMode(uchar pTextureGeneration_mappingMode) {
         mTextureGeneration_mappingMode = pTextureGeneration_mappingMode;
     }
 
-    char getTextureGeneration_blendMode() const { return mTextureGeneration_blendMode; }
-    void setTextureGeneration_blendMode(char pTextureGeneration_blendMode) {
+    uchar getTextureGeneration_blendMode() const { return mTextureGeneration_blendMode; }
+    void setTextureGeneration_blendMode(uchar pTextureGeneration_blendMode) {
         mTextureGeneration_blendMode = pTextureGeneration_blendMode;
     }
 
-    char getTextureGeneration_count() const { return mTextureGeneration_count; }
-    void setTextureGeneration_count(char pTextureGeneration_count) {
+    uchar getTextureGeneration_count() const { return mTextureGeneration_count; }
+    void setTextureGeneration_count(uchar pTextureGeneration_count) {
         mTextureGeneration_count = pTextureGeneration_count;
     }
 
@@ -309,13 +309,13 @@ public:
     }
 
     // Compute ratio of total images to aligned images and return status
-    char getAlignPhaseStatus() const;
+    uchar getAlignPhaseStatus() const;
     int getDenseCloudDepthImages() const;
-    char getDenseCloudPhaseStatus() const;
-    long getModelFaceCount() const;
-    long getModelVertexCount() const;
-    char getModelGenPhaseStatus() const;
-    char getTextureGenPhaseStatus() const;
+    uchar getDenseCloudPhaseStatus() const;
+    long long getModelFaceCount() const;
+    long long getModelVertexCount() const;
+    uchar getModelGenPhaseStatus() const;
+    uchar getTextureGenPhaseStatus() const;
 
 private:
     // What files was this chunk data read from
@@ -368,7 +368,7 @@ private:
     double mDenseCloud_cloudDurationSeconds;
     DenseCloudDetail mDenseCloud_level;
     DenseCloudFilter mDenseCloud_filterLevel;
-    char mDenseCloud_imagesUsed;
+    uchar mDenseCloud_imagesUsed;
 
     // Model Generation phase
     double mModelGeneration_resolution;
@@ -380,9 +380,9 @@ private:
     // Texture Generation phase
     double mTextureGeneration_blendDuration;
     double mTextureGeneration_uvGenDuration;
-    char mTextureGeneration_mappingMode;
-    char mTextureGeneration_blendMode;
-    char mTextureGeneration_count;
+    uchar mTextureGeneration_mappingMode;
+    uchar mTextureGeneration_blendMode;
+    uchar mTextureGeneration_count;
     int mTextureGeneration_width;
     int mTextureGeneration_height;
 

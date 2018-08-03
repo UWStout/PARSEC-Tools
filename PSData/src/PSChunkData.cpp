@@ -244,10 +244,10 @@ void PSChunkData::parseProperty(const QString& pPropN, const QString& pPropV) {
     long long lPropVL = pPropV.toLongLong();
 
     // Texture Generation Properties
-    if(pPropN == "atlas/atlas_blend_mode") { this->setTextureGeneration_blendMode((char)lPropVL); }
-    else if(pPropN == "atlas/atlas_count") { this->setTextureGeneration_count((char)lPropVL); }
+    if(pPropN == "atlas/atlas_blend_mode") { this->setTextureGeneration_blendMode((uchar)lPropVL); }
+    else if(pPropN == "atlas/atlas_count") { this->setTextureGeneration_count((uchar)lPropVL); }
     else if(pPropN == "atlas/atlas_height") { this->setTextureGeneration_height((int)lPropVL); }
-    else if(pPropN == "atlas/atlas_mapping_mode") { this->setTextureGeneration_mappingMode((char)lPropVL); }
+    else if(pPropN == "atlas/atlas_mapping_mode") { this->setTextureGeneration_mappingMode((uchar)lPropVL); }
     else if(pPropN == "atlas/atlas_width") { this->setTextureGeneration_width((int)lPropVL); }
 
     // Model Generation Properties
@@ -540,7 +540,7 @@ QString PSChunkData::describeImageAlignPhase() const {
 }
 
 // Compute ratio of total images to aligned images and return status
-char PSChunkData::getAlignPhaseStatus() const {
+uchar PSChunkData::getAlignPhaseStatus() const {
     long allImages = mCameras.size();
     long alignedImages = mImages.size();
     double ratio = alignedImages/(double)allImages;
@@ -570,7 +570,7 @@ int PSChunkData::getDenseCloudDepthImages() const {
     return getDenseCloud_imagesUsed();
 }
 
-char PSChunkData::getDenseCloudPhaseStatus() const {
+uchar PSChunkData::getDenseCloudPhaseStatus() const {
     long projectImages = mCameras.size();
     long depthImages = mDenseCloud_imagesUsed;
     double ratio = depthImages/(double)projectImages;
@@ -617,18 +617,18 @@ QFileInfo PSChunkData::getModelArchiveFile() const {
     return QFileInfo();
 }
 
-long PSChunkData::getModelFaceCount() const {
+long long PSChunkData::getModelFaceCount() const {
     if(!hasMesh()) return -1L;
     return mModelData->getFaceCount();
 }
 
-long PSChunkData::getModelVertexCount() const {
+long long PSChunkData::getModelVertexCount() const {
     if(!hasMesh()) return -1L;
     return mModelData->getVertexCount();
 }
 
-char PSChunkData::getModelGenPhaseStatus() const {
-    long faceCount = getModelFaceCount();
+uchar PSChunkData::getModelGenPhaseStatus() const {
+    long long faceCount = getModelFaceCount();
 
     // Examine the model resolution
     if(faceCount < 0) {
@@ -647,7 +647,7 @@ char PSChunkData::getModelGenPhaseStatus() const {
 }
 
 QString PSChunkData::getModelGeneration_levelString() const {
-    char lStatus = getModelGenPhaseStatus();
+    uchar lStatus = getModelGenPhaseStatus();
     return QString::fromLocal8Bit(getDescription((ModelGenerationDetail)lStatus));
 }
 
@@ -660,7 +660,7 @@ QString PSChunkData::describeTextureGenPhase() const {
     return "N/A";
 }
 
-char PSChunkData::getTextureGenPhaseStatus() const {
+uchar PSChunkData::getTextureGenPhaseStatus() const {
     // Examine the texture resolution
     if(getTextureGeneration_width() == 0 || getTextureGeneration_height() == 0) {
         return 5;
