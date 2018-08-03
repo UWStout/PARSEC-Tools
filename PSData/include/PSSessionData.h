@@ -169,6 +169,7 @@ private:
 
     // The list of project files in the directory
     QFileInfo mPSProjectFile;
+    //TODO: Remove/comment out this line
     PSProjectFileData* mPSProject;
 
     // Class level static values
