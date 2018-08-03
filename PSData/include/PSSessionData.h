@@ -144,6 +144,9 @@ private:
     QStringList mNotes;
     Status mStatus;
 
+    // Chunk Variables
+    int mChunkImages, mChunkCameras;
+
     // Capture and exposure information
     ExposureSettings mExposure;
     QDateTime mDateTimeCaptured;
