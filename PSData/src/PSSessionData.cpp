@@ -205,6 +205,7 @@ void PSSessionData::parseProjectXMLAndCache() {
         mMeshFaces = lModel->getFaceCount();
         mMeshVerts = lModel->getVertexCount();
     } else {
+        mHasMesh = false;
         mMeshFaces = mMeshVerts = 0;
     }
 
@@ -556,6 +557,7 @@ PSProjectFileData* PSSessionData::getProject() const {
 }
 
 QString PSSessionData::describeImageAlignPhase() const {
+    if (!hasProject()) { return "N/A"; }
     QString lData(mAlignmentLevelString);
     lData += " (" + QString::number(mChunkImages) + " - " +
             QString::number(mAlignmentFeatureLimit/1000) + "k/" +
@@ -576,17 +578,19 @@ uchar PSSessionData::getAlignPhaseStatus() const {
 }
 
 QString PSSessionData::describeDenseCloudPhase() const {
+    if (!hasProject()) { return "N/A"; }
     QString lData(mDenseCloudLevelString);
     lData += " (" + QString::number(mDenseCloudImagesUsed) + ")";
     return lData;
 }
 
 int PSSessionData::getDenseCloudDepthImages() const {
+    if(!hasProject()) { return 0; }
     return mDenseCloudImagesUsed;
 }
 
 uchar PSSessionData::getDenseCloudPhaseStatus() const {
-    if (mChunkCameras > 0 && mDenseCloudImagesUsed > 0) {
+    if (hasProject() && mChunkCameras > 0 && mDenseCloudImagesUsed > 0) {
         double ratio = mDenseCloudImagesUsed/static_cast<double>(mChunkCameras);
         if(ratio >= .950) { return 0; }
         if(ratio < .6667) { return 1; }
@@ -598,7 +602,7 @@ uchar PSSessionData::getDenseCloudPhaseStatus() const {
 }
 
 QString PSSessionData::describeModelGenPhase() const {
-    if(!mHasMesh) { return "N/A"; }
+    if(!hasProject() || !mHasMesh) { return "N/A"; }
     if(mMeshFaces >= 1000000) {
         return QString::asprintf("%.1fM faces", mMeshFaces/1000000.0);
     } else {
@@ -608,7 +612,7 @@ QString PSSessionData::describeModelGenPhase() const {
 
 uchar PSSessionData::getModelGenPhaseStatus() const {
     // Examine the model resolution
-    if(!mHasMesh || mMeshFaces == 0) {
+    if(!hasProject() || !mHasMesh || mMeshFaces == 0) {
         return 5;
     } else if(mMeshFaces < 5000) {
         return 4;
@@ -624,23 +628,23 @@ uchar PSSessionData::getModelGenPhaseStatus() const {
 }
 
 long long PSSessionData::getModelFaceCount() const {
-    if(!mHasMesh) return -1L;
+    if(!hasProject() || !mHasMesh) return -1L;
     return mMeshFaces;
 }
 
 long long PSSessionData::getModelVertexCount() const {
-    if(!mHasMesh) return -1L;
+    if(!hasProject() || !mHasMesh) return -1L;
     return mMeshVerts;
 }
 
 QString PSSessionData::describeTextureGenPhase() const {
-    if(mTextureCount == 0) { return "N/A"; }
+    if(!hasProject() || mTextureCount == 0) { return "N/A"; }
     return QString::asprintf("%d @ (%d x %d)", mTextureCount, mTextureWidth, mTextureHeight);
 }
 
 uchar PSSessionData::getTextureGenPhaseStatus() const {
     // Examine the texture resolution
-    if(mTextureWidth == 0 || mTextureHeight == 0) {
+    if(!hasProject() || mTextureWidth == 0 || mTextureHeight == 0) {
         return 5;
     } else if(mTextureWidth < 1024 || mTextureHeight < 1024) {
         return 4;
