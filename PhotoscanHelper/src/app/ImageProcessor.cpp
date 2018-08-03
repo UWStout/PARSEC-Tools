@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QProcessEnvironment>
 #include <QProcess>
+#include <QDateTime>
 
 #include "ImageProcessor.h"
 
@@ -119,4 +120,13 @@ QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSe
 #else
     return developRawImageDCRaw(pImageFile, pSettings, pAsPreview);
 #endif
+}
+
+QDateTime ImageProcessor::getDateFromMetadata(QFileInfo pImageFile) {
+    Exiv2::Image::AutoPtr lImage = Exiv2::ImageFactory::open(pImageFile.filePath());
+    // Extract Date here
+    QString lMetaDataDate;
+    QString lFormat = "yyyy:MM:dd hh:mm:ss";
+    QDateTime lDateTime = QDateTime::fromString(lMetaDataDate, lFormat);
+    return lDateTime;
 }
