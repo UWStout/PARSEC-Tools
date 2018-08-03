@@ -113,6 +113,9 @@ public:
     QString describeTextureGenPhase() const;
     uchar getTextureGenPhaseStatus() const;
 
+    int getActiveChunkIndex() const;
+    int getChunkCount() const;
+
 private:
     void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
     void initSettingsFile();

@@ -189,6 +189,7 @@ void PSSessionData::parseProjectXMLAndCache() {
     mActiveChunkIndex = static_cast<int>(lPSProject->getActiveChunkIndex());
 
     PSChunkData* lActiveChunk = lPSProject->getActiveChunk();
+
     mChunkImages = static_cast<int>(lActiveChunk->getImageCount());
     mChunkCameras = static_cast<int>(lActiveChunk->getCameraCount());
 
@@ -554,10 +555,6 @@ ExposureSettings PSSessionData::readExposureSettings() const {
                 static_cast<ExposureSettings::BrightnessMode>(lBrightMOrdinal), lBrightScaler);
 }
 
-PSProjectFileData* PSSessionData::getProject() const {
-    return mPSProject;
-}
-
 QString PSSessionData::describeImageAlignPhase() const {
     if (!hasProject()) { return "N/A"; }
     QString lData(mAlignmentLevelString);
@@ -659,4 +656,12 @@ uchar PSSessionData::getTextureGenPhaseStatus() const {
     } else {
         return 0;
     }
+}
+
+int PSSessionData::getActiveChunkIndex() const {
+    return mActiveChunkIndex;
+}
+
+int PSSessionData::getChunkCount() const {
+    return mChunkCount;
 }
