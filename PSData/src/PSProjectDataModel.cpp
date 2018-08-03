@@ -86,7 +86,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
 
     // Get the correct data for this row
     PSSessionData* curItem = mData[row];
-    PSProjectFileData* lProject = curItem->getProject();
+    //PSProjectFileData* lProject = curItem->getProject();
 
     // Respond to the requested role differently for each column
     switch(role)
@@ -106,7 +106,7 @@ QVariant PSProjectDataModel::data(const QModelIndex& index, int role) const {
                     }
 
                 case PSSessionData::F_ACTIVE_VERSION: return QString::asprintf("%03d", 1);
-                case PSSessionData::F_ACTIVE_CHUNK: return QString::asprintf("%d of %d", lProject->getActiveChunkIndex()+1, lProject->getChunkCount());
+                case PSSessionData::F_ACTIVE_CHUNK: return QString::asprintf("%d of %d", curItem->getActiveChunkIndex()+1, curItem->getChunkCount());
                 case PSSessionData::F_IMAGE_COUNT_REAL: return QString::asprintf("%ld/%ld", curItem->getProcessedImageCount(), curItem->getRawImageCount());
 
                 // Detailed processing info (extended info)

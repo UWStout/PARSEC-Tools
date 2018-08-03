@@ -181,14 +181,15 @@ void PSSessionData::parseProjectXMLAndCache() {
     if(!hasProject()) { return; }
 
     // Parse the actual project (this is where the XML reading happens)
-    mPSProject = new PSProjectFileData(mPSProjectFile);
+    PSProjectFileData* lPSProject = new PSProjectFileData(mPSProjectFile);
 
     // Extract the critical information from the PSProjectFileData structure
     // and cache that data locally in this object
-    mChunkCount = static_cast<int>(mPSProject->getChunkCount());
-    mActiveChunkIndex = static_cast<int>(mPSProject->getActiveChunkIndex());
+    mChunkCount = static_cast<int>(lPSProject->getChunkCount());
+    mActiveChunkIndex = static_cast<int>(lPSProject->getActiveChunkIndex());
 
-    PSChunkData* lActiveChunk = mPSProject->getActiveChunk();
+    PSChunkData* lActiveChunk = lPSProject->getActiveChunk();
+
     mChunkImages = static_cast<int>(lActiveChunk->getImageCount());
     mChunkCameras = static_cast<int>(lActiveChunk->getCameraCount());
 
@@ -322,10 +323,12 @@ QDir PSSessionData::getSessionFolder() const {
 }
 
 PSModelData* PSSessionData::getModelData() const {
+    //TODO: Transition function in ChunkData to here
     return mPSProject->getModelData();
 }
 
 QFileInfo PSSessionData::getModelArchiveFile() const {
+    //TODO: Transition function in ChunkData to here
     return mPSProject->getModelArchiveFile();
 }
 
@@ -552,10 +555,6 @@ ExposureSettings PSSessionData::readExposureSettings() const {
                 static_cast<ExposureSettings::BrightnessMode>(lBrightMOrdinal), lBrightScaler);
 }
 
-PSProjectFileData* PSSessionData::getProject() const {
-    return mPSProject;
-}
-
 QString PSSessionData::describeImageAlignPhase() const {
     if (!hasProject()) { return "N/A"; }
     QString lData(mAlignmentLevelString);
@@ -657,4 +656,12 @@ uchar PSSessionData::getTextureGenPhaseStatus() const {
     } else {
         return 0;
     }
+}
+
+int PSSessionData::getActiveChunkIndex() const {
+    return mActiveChunkIndex;
+}
+
+int PSSessionData::getChunkCount() const {
+    return mChunkCount;
 }

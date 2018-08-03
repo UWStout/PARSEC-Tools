@@ -123,7 +123,7 @@ QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSe
 }
 
 QDateTime ImageProcessor::getDateFromMetadata(QFileInfo pImageFile) {
-    Exiv2::Image::AutoPtr lImage = Exiv2::ImageFactory::open(pImageFile.filePath());
+    //Exiv2::Image::AutoPtr lImage = Exiv2::ImageFactory::open(pImageFile.filePath());
     // Extract Date here
     QString lMetaDataDate;
     QString lFormat = "yyyy:MM:dd hh:mm:ss";

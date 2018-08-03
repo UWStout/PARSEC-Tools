@@ -113,6 +113,9 @@ public:
     QString describeTextureGenPhase() const;
     uchar getTextureGenPhaseStatus() const;
 
+    int getActiveChunkIndex() const;
+    int getChunkCount() const;
+
 private:
     void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
     void initSettingsFile();
@@ -169,6 +172,7 @@ private:
 
     // The list of project files in the directory
     QFileInfo mPSProjectFile;
+    //TODO: Remove/comment out this line
     PSProjectFileData* mPSProject;
 
     // Class level static values
