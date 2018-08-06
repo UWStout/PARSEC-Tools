@@ -216,9 +216,7 @@ void PSSessionData::parseProjectXMLAndCache() {
     }
 
     // Delete temporary data
-    // TODO: Enable this once the project dependency is completely removed
-    // delete mPSProject;
-    // mPSProject = NULL;
+    delete lPSProject;
 }
 
 bool PSSessionData::examineDirectory(QDir pDirToExamine) {
@@ -317,11 +315,6 @@ QFileInfo PSSessionData::getPSProjectFile() const {
 
 QDir PSSessionData::getSessionFolder() const {
     return mSessionFolder;
-}
-
-PSModelData* PSSessionData::getModelData() const {
-    //TODO: Transition function in ChunkData to here
-    return mPSProject->getModelData();
 }
 
 int PSSessionData::getRawImageCount() const { return mRawFileCount; }

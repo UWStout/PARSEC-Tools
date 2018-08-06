@@ -75,7 +75,6 @@ public:
     QFileInfo getPSProjectFile() const;
 	
     QDir getSessionFolder() const;
-    PSModelData* getModelData() const;
 
     int getRawImageCount() const;
     int getProcessedImageCount() const;
@@ -169,8 +168,6 @@ private:
 
     // The list of project files in the directory
     QFileInfo mPSProjectFile;
-    //TODO: Remove/comment out this line
-    PSProjectFileData* mPSProject;
 
     // Class level static values
     static const QString sRawFolderName;
