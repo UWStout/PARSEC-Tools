@@ -9,6 +9,7 @@
 #include "PSandPhotoScanner.h"
 #include "PSProjectDataModel.h"
 #include "PSSessionData.h"
+#include "PSProjectFileData.h"
 //#include "ProgramPreferencesDialog.h"
 #include "RawImageExposureDialog.h"
 #include "GeneralSettingsDialog.h"
@@ -302,7 +303,8 @@ void PSHelperMainWindow::viewModel() {
         // Parent is left NULL so this doesn't live INSIDE the main window
         mModelViewer = new GLModelWidget(static_cast<QWidget*>(nullptr));
     }
-    mModelViewer->loadNewModel(mLastData->getModelData());
+    PSProjectFileData* lPSProject = new PSProjectFileData(mLastData->getPSProjectFile());
+    mModelViewer->loadNewModel(lPSProject->getModelData());
     mModelViewer->show();
 }
 

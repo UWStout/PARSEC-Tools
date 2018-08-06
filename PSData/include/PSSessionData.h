@@ -76,7 +76,6 @@ public:
 	
     QDir getSessionFolder() const;
     PSModelData* getModelData() const;
-    QFileInfo getModelArchiveFile() const;
 
     int getRawImageCount() const;
     int getProcessedImageCount() const;
@@ -95,8 +94,6 @@ public:
     QStringList getNotes() const;
     QString getName() const;
     Status getStatus() const;
-
-    PSProjectFileData* getProject() const;
 
     QString describeImageAlignPhase() const;
     uchar getAlignPhaseStatus() const;
