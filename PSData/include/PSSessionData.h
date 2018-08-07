@@ -58,6 +58,8 @@ public:
 
     static void setSortBy(Field pNewSortBy);
 
+    void convertToPSSession();
+
     void examineProject();
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o) const;
@@ -111,6 +113,8 @@ public:
 
     int getActiveChunkIndex() const;
     int getChunkCount() const;
+
+    static QVector<PSSessionData*> getNeedsApproval();
 
 private:
     void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
@@ -173,6 +177,7 @@ private:
     static const QString sRawFolderName;
     static const QString sProcessedFolderName;
     static const QString sMasksFolderName;
+    static QVector<PSSessionData*> sNeedsApproval;
 
     static Field mSortBy;
     static uint64_t mNextID;

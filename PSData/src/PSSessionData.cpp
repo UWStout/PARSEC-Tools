@@ -70,6 +70,8 @@ const QStringList gRawFileExtensions = {
     "*.x3f"
 };
 
+QVector<PSSessionData*> PSSessionData::sNeedsApproval = QVector<PSSessionData*>();
+
 // Images sub-folder names
 const QString PSSessionData::sRawFolderName = "Raw";
 const QString PSSessionData::sProcessedFolderName = "Processed";
@@ -108,18 +110,8 @@ void PSSessionData::examineProject() {
 
     // Is this an external session folder that needs to be fully examined (no INI file yet)
     if (!QFileInfo(mSettings).exists()) {
-        // Try to guess some info from the folder name
-        extractInfoFromFolderName(mSessionFolder.dirName());
-
-        // Parse the PhotoScan XML file
-        parseProjectXMLAndCache();
-
-        // Ensure the image files lists are initialized and image counts are accurate
-        getRawFileList(); getProcessedFileList(); getMaskFileList();
-
-        // Update status and create initial INI file
-        autoSetStatus();
-        writeGeneralSettings();
+        // Add to sNeedsApproval vector
+        sNeedsApproval.append(this);
     } else {
         // Read from INI file
         readGeneralSettings();
@@ -128,6 +120,26 @@ void PSSessionData::examineProject() {
         // NOTE: image files lists will not be created until the first time
         //       their getters are called (to shorten loading time).
     }
+}
+
+void PSSessionData::convertToPSSession() {
+    // Ensure the image folders exist and files are copied into them
+    initImageDir(mMasksFolder, gPSMaskFileExtensions, "Masks");
+    initImageDir(mRawFolder, gRawFileExtensions, "Raw");
+    initImageDir(mProcessedFolder, gPSImageFileExtensions, "Processed");
+
+    // Try to guess some info from the folder name
+    extractInfoFromFolderName(mSessionFolder.dirName());
+
+    // Parse the PhotoScan XML file
+    parseProjectXMLAndCache();
+
+    // Ensure the image files lists are initialized and image counts are accurate
+    getRawFileList(); getProcessedFileList(); getMaskFileList();
+
+    // Update status and create initial INI file
+    autoSetStatus();
+    writeGeneralSettings();
 }
 
 void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
@@ -229,11 +241,6 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     mPSProjectFile = QFileInfo();
     mDateTimeCaptured = QDateTime();
 
-    // Ensure the image folders exist and files are copied into them
-    initImageDir(mMasksFolder, gPSMaskFileExtensions, "Masks");
-    initImageDir(mRawFolder, gRawFileExtensions, "Raw");
-    initImageDir(mProcessedFolder, gPSImageFileExtensions, "Processed");
-
     // Find the project file
     QFileInfoList lProjectFiles = pDirToExamine.entryInfoList(
                 gPSProjectFileExtensions, QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
@@ -268,6 +275,7 @@ inline void PSSessionData::initImageDir(const QDir &pDir, const QStringList& pFi
 
         // Move matched files into the given folder
         QString newName = pDir.absolutePath() + QDir::separator() + lIt.fileName();
+        QFile::rename(lIt.filePath(), newName);
     }
 }
 
@@ -686,4 +694,8 @@ int PSSessionData::getActiveChunkIndex() const {
 
 int PSSessionData::getChunkCount() const {
     return mChunkCount;
+}
+
+QVector<PSSessionData*> PSSessionData::getNeedsApproval() {
+    return sNeedsApproval;
 }
