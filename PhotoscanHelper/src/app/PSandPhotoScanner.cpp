@@ -6,6 +6,7 @@
 
 #include "DirLister.h"
 #include "PSSessionData.h"
+#include "ImageProcessor.h"
 
 const QStringList gIgnoreExceptions = { "_Finished", "_TouchUp", "_TouchedUpPleaseReview" };
 
@@ -159,6 +160,14 @@ void PSandPhotoScanner::finishDataParallel() {
     for(PSSessionData* data : mData) {
         data->readGeneralSettings();
         data->readExposureSettings();
+
+        if (data->getDateTimeCaptured().isNull() && data->getRawImageCount() > 0) {
+            QFileInfo lRawFile = data->getRawFileList()[0];
+            QDateTime lTimestamp = ImageProcessor::getDateFromMetadata(lRawFile);
+            qDebug("Read timestamp as %s", lTimestamp.toString().toLocal8Bit().data());
+            data->setDateTimeCaptured(lTimestamp);
+            data->writeGeneralSettings();
+        }
     }
     mDataScanned = true;
 }

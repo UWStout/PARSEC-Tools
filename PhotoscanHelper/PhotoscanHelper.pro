@@ -19,6 +19,11 @@ macx:LIBS += -lquazip
 win32:CONFIG(debug, debug|release): LIBS += -lquazipd -lopengl32 -lglu32
 else:win32:CONFIG(debug, debug|release): LIBS += -lquazip -lopengl32 -lglu32
 
+# Link in exiv2 on windows
+win32:DEFINES += USE_EXIV2 EXV_USING_CPP_ELEVEN
+win32:CONFIG(debug, debug|release): LIBS += -lexiv2d -lxmpsdkd -llibexpatd -lzlibd
+else:win32:CONFIG(debug, debug|release): LIBS += -lexiv2 -lxmpsdk -llibexpat -lzlib
+
 # Uncomment to enable libraw
 #macx:LIBS += -lraw -ljpeg
 #win32:CONFIG(debug, debug|release): LIBS += -llibrawd -llibjpegd

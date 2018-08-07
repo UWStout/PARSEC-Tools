@@ -23,7 +23,6 @@
   @brief   XMP property and type information.<BR>References:<BR>
   <a href="http://www.adobe.com/devnet/xmp/pdfs/xmp_specification.pdf">XMP Specification</a> from Adobe
   <I>(Property descriptions copied from the XMP specification with the permission of Adobe)</I>
-  @version $Rev: 3091 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @author  Gilles Caulier (cgilles)
@@ -246,10 +245,11 @@ namespace Exiv2 {
     /*!
       @brief Concrete keys for XMP metadata.
      */
-    class EXIV2API XmpKey : public Key {
+    class EXIV2API XmpKey : public Key
+    {
     public:
         //! Shortcut for an %XmpKey auto pointer.
-        typedef std::auto_ptr<XmpKey> AutoPtr;
+        typedef SmartPtr<XmpKey> AutoPtr;
 
         //! @name Creators
         //@{
@@ -312,12 +312,12 @@ namespace Exiv2 {
     private:
         // Pimpl idiom
         struct Impl;
-        Impl* p_;
+        SmartPtr<Impl> p_;
 
-    }; // class XmpKey
+    };  // class XmpKey
 
-// *****************************************************************************
-// free functions
+    // *****************************************************************************
+    // free functions
 
     //! Output operator for property info
     EXIV2API std::ostream& operator<<(std::ostream& os, const XmpPropertyInfo& propertyInfo);

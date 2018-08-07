@@ -21,7 +21,6 @@
 /*!
   @file    types.hpp
   @brief   Type definitions for %Exiv2 and related functionality
-  @version $Rev: 3090 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    09-Jan-04, ahu: created<BR>
@@ -86,6 +85,14 @@
 //! Simple common max macro
 #define EXV_MAX(a,b) ((a) > (b) ? (a) : (b))
 
+#if defined(__GNUC__) && (__GNUC__ >= 4) || defined(__clang__)
+#define EXV_WARN_UNUSED_RESULT __attribute__ ((warn_unused_result))
+#elif defined(_MSC_VER) && (_MSC_VER >= 1700)
+#define EXV_WARN_UNUSED_RESULT _Check_return_
+#else
+#define EXV_WARN_UNUSED_RESULT
+#endif
+
 // *****************************************************************************
 // forward declarations
 struct tm;
@@ -117,6 +124,17 @@ namespace Exiv2 {
     //! An identifier for each mode of metadata support
     enum AccessMode { amNone=0, amRead=1, amWrite=2, amReadWrite=3 };
 
+    //! Smart pointer types to use based on desired C++ standard
+#ifdef EXV_USING_CPP_ELEVEN
+    template <class T>
+    using SmartPtr = std::unique_ptr<T>;
+    #define EXV_MOVE(P) std::move((P))
+#else
+    template <class T>
+    using SmartPtr = std::auto_ptr<T>;
+    #define EXV_MOVE(P) (P)
+#endif
+
     /*!
       @brief %Exiv2 value type identifiers.
 
@@ -137,6 +155,9 @@ namespace Exiv2 {
         tiffFloat          =11, //!< TIFF FLOAT type, single precision (4-byte) IEEE format.
         tiffDouble         =12, //!< TIFF DOUBLE type, double precision (8-byte) IEEE format.
         tiffIfd            =13, //!< TIFF IFD type, 32-bit (4-byte) unsigned integer.
+        unsignedLongLong   =16, //!< Exif LONG LONG type, 64-bit (8-byte) unsigned integer.
+        signedLongLong     =17, //!< Exif LONG LONG type, 64-bit (8-byte) signed integer.
+        tiffIfd8           =18, //!< TIFF IFD type, 64-bit (8-byte) unsigned integer.
         string        =0x10000, //!< IPTC string type.
         date          =0x10001, //!< IPTC date type.
         time          =0x10002, //!< IPTC time type.
@@ -233,7 +254,13 @@ namespace Exiv2 {
                  buffer as a data pointer and size pair, resets the internal
                  buffer.
          */
-        std::pair<byte*, long> release();
+        EXV_WARN_UNUSED_RESULT std::pair<byte*, long> release();
+
+         /*!
+           @brief Free the internal buffer and reset the size to 0.
+          */
+        void free();
+
         //! Reset value
         void reset(std::pair<byte*, long> =std::make_pair((byte*)(0),long(0)));
         //@}
@@ -266,6 +293,8 @@ namespace Exiv2 {
     EXIV2API uint16_t getUShort(const byte* buf, ByteOrder byteOrder);
     //! Read a 4 byte unsigned long value from the data buffer
     EXIV2API uint32_t getULong(const byte* buf, ByteOrder byteOrder);
+    //! Read a 8 byte unsigned long value from the data buffer
+    EXIV2API uint64_t getULongLong(const byte* buf, ByteOrder byteOrder);
     //! Read an 8 byte unsigned rational value from the data buffer
     EXIV2API URational getURational(const byte* buf, ByteOrder byteOrder);
     //! Read a 2 byte signed short value from the data buffer

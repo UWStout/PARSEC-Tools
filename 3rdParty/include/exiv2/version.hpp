@@ -24,7 +24,6 @@
            References: Similar versioning defines are used in KDE, GTK and other
            libraries. See http://apr.apache.org/versioning.html for accompanying
            guidelines.
-  @version $Rev: 3371 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    31-May-06, ahu: created
@@ -37,20 +36,8 @@
 // + standard includes
 #include <vector>
 
-/*!
- @brief CPLUSPLUS11 is the value of macro --cplusplus for C++11
-*/
-#define CPLUSPLUS11 201103L
-
-#if __cplusplus >= CPLUSPLUS11
-# include <regex>
-  /*!
-   @brief exv_grep_keys_t is a vector of keys to match to strings
-  */
-  typedef std::vector<std::regex> exv_grep_keys_t ;
-#else
-# if EXV_HAVE_REGEX
-#  include <regex.h>
+#if defined(EXV_HAVE_REGEX_H)
+# include <regex.h>
   /*!
    @brief exv_grep_keys_t is a vector of keys to match to strings
   */
@@ -76,7 +63,6 @@
    @brief exv_grep_keys_t is a vector of keys to match to strings
   */
    typedef std::vector<Exiv2_grep_key_t> exv_grep_keys_t ;
-# endif
 #endif
 
 /*!

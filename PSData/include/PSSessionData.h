@@ -70,6 +70,7 @@ public:
     void setID(uint64_t mID);
     void addNotes(QString pNotes);
     void setName(QString pName);
+    void setDateTimeCaptured(QDateTime pDateTimeCaptured);
 
     inline bool hasProject() const { return mPSProjectFile.filePath() != ""; }
     QFileInfo getPSProjectFile() const;

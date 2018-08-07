@@ -21,7 +21,6 @@
 /*!
   @file    datasets.hpp
   @brief   IPTC dataset and type information
-  @version $Rev: 3091 $
   @author  Brad Schick (brad) <brad@robotbattle.com>
   @date    24-Jul-04, brad: created
  */
@@ -280,7 +279,7 @@ namespace Exiv2 {
     class EXIV2API IptcKey : public Key {
     public:
         //! Shortcut for an %IptcKey auto pointer.
-        typedef std::auto_ptr<IptcKey> AutoPtr;
+        typedef SmartPtr<IptcKey> AutoPtr;
 
         //! @name Creators
         //@{

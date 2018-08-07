@@ -21,7 +21,6 @@
 /*!
   @file    webpimage.hpp
   @brief   An Image subclass to support WEBP image files
-  @version $Rev$
   @author  Ben Touchette
            <a href="mailto:draekko.software+exiv2@gmail.com">draekko.software+exiv2@gmail.com</a>
   @date    29-Jul-16
@@ -33,7 +32,6 @@
 // included header files
 #include "exif.hpp"
 #include "image.hpp"
-#include "tags_int.hpp"
 
 // *****************************************************************************
 // namespace extensions
@@ -77,7 +75,7 @@ namespace Exiv2 {
         //@}
 
         /*!
-          @brief Not supported. Calling this function will throw an Error(32).
+          @brief Not supported. Calling this function will throw an Error(kerInvalidSettingForImage).
          */
         void setComment(const std::string& comment);
         void setIptcData(const IptcData& /*iptcData*/);

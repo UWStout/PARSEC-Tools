@@ -21,7 +21,6 @@
 /*!
   @file    xmpsidecar.hpp
   @brief   An Image subclass to support XMP sidecar files
-  @version $Rev: 3090 $
   @author  Andreas Huggel
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    07-Mar-08, ahu: created
@@ -79,7 +78,7 @@ namespace Exiv2 {
         void writeMetadata();
         /*!
           @brief Not supported. XMP sidecar files do not contain a comment.
-              Calling this function will throw an instance of Error(32).
+              Calling this function will throw an instance of Error(kerInvalidSettingForImage).
          */
         void setComment(const std::string& comment);
         //@}

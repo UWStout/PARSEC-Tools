@@ -21,7 +21,6 @@
 /*!
   @file    tags.hpp
   @brief   Exif tag and type information
-  @version $Rev: 3090 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    15-Jan-04, ahu: created<BR>
@@ -150,7 +149,7 @@ namespace Exiv2 {
     class EXIV2API ExifKey : public Key {
     public:
         //! Shortcut for an %ExifKey auto pointer.
-        typedef std::auto_ptr<ExifKey> AutoPtr;
+        typedef SmartPtr<ExifKey> AutoPtr;
 
         //! @name Creators
         //@{
@@ -223,7 +222,7 @@ namespace Exiv2 {
     private:
         // Pimpl idiom
         struct Impl;
-        Impl* p_;
+        SmartPtr<Impl> p_;
 
     }; // class ExifKey
 

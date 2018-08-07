@@ -20,7 +20,6 @@
  */
 /*
   File:      basicio.hpp
-  Version:   $Rev: 4633 $
  */
 #ifndef BASICIO_HPP_
 #define BASICIO_HPP_
@@ -32,7 +31,7 @@
 
 // + standard includes
 #include <string>
-#include <memory>       // for std::auto_ptr
+#include <memory>       // for std::auto_ptr or std::unique_ptr
 #include <fstream>      // write the temporary file
 #include <fcntl.h>      // _O_BINARY in FileIo::FileIo
 #include <ctime>        // timestamp for the name of temporary file
@@ -42,12 +41,6 @@
 // it uses MemIo. Otherwises, it uses FileIo.
 #ifndef EXV_XPATH_MEMIO
 #define EXV_XPATH_MEMIO 0
-#endif
-#ifndef EXV_USE_CURL
-#define EXV_USE_CURL 0
-#endif
-#ifndef EXV_USE_SSH
-#define EXV_USE_SSH 0
 #endif
 
 // *****************************************************************************
@@ -66,8 +59,8 @@ namespace Exiv2 {
      */
     class EXIV2API BasicIo {
     public:
-        //! BasicIo auto_ptr type
-        typedef std::auto_ptr<BasicIo> AutoPtr;
+        //! BasicIo SmartPtr type
+        typedef SmartPtr<BasicIo> AutoPtr;
 
         //! Seek starting positions
         enum Position { beg, cur, end };
@@ -533,8 +526,7 @@ namespace Exiv2 {
 
         // Pimpl idiom
         class Impl;
-        Impl* p_;
-
+        SmartPtr<Impl> p_;
     }; // class FileIo
 
     /*!
@@ -733,8 +725,7 @@ namespace Exiv2 {
 
         // Pimpl idiom
         class Impl;
-        Impl* p_;
-
+        SmartPtr<Impl> p_;
     }; // class MemIo
 
     /*!
@@ -1117,7 +1108,7 @@ namespace Exiv2 {
         //@}
     };
 
-#if EXV_USE_CURL == 1
+#ifdef EXV_USE_CURL
     /*!
         @brief Provides the http, https read/write access and ftp read access for the RemoteIo.
             This class is based on libcurl.
@@ -1173,7 +1164,7 @@ namespace Exiv2 {
     };
 #endif
 
-#if EXV_USE_SSH == 1
+#ifdef EXV_USE_SSH
     /*!
         @brief Provides the ssh read/write access and sftp read access for the RemoteIo.
             This class is based on libssh.
@@ -1262,7 +1253,7 @@ namespace Exiv2 {
     EXIV2API std::wstring ReplaceStringInPlace(std::wstring subject, const std::wstring& search,
                           const std::wstring& replace);
 #endif
-#if EXV_USE_CURL == 1
+#ifdef EXV_USE_CURL
     /*!
       @brief The callback function is called by libcurl to write the data
     */

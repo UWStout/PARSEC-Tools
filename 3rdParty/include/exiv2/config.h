@@ -4,6 +4,18 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+
+#ifdef  __cplusplus
+# ifndef CPLUSPLUS11
+#  define CPLUSPLUS11 201103L
+# endif
+# if     __cplusplus >= CPLUSPLUS11
+#  ifndef  EXV_USING_CPP_ELEVEN
+#   define EXV_USING_CPP_ELEVEN
+#  endif
+# endif
+#endif
+
 ///// Start of Visual Studio Support /////
 #ifdef  _MSC_VER
 
@@ -42,14 +54,6 @@
 # endif
 #endif
 
-#if _MSC_VER >= _MSC_VER_2010
-# define EXV_HAVE_STDINT_H 1
-#else
-# ifdef  EXV_HAVE_STDINT_H
-#  undef EXV_HAVE_STDINT_H
-# endif
-#endif
-
 #if _MSC_VER_ == _MSC_VER_2012
 #define HAVE_NTOHLL 1
 #endif
@@ -74,19 +78,17 @@ typedef int pid_t;
 # define CURL_STATICLIB
 #endif
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#define NOMINMAX
+#include <windows.h>
+
 #endif // _MSC_VER
 ///// End of Visual Studio Support /////
 
-///// Include exv_platform.h file  /////
-#ifdef _MSC_VER
-# ifdef EXV_MSVC_CONFIGURE
-#  include "exv_msvc_configure.h"
-# else
-#  include "exv_msvc.h"
-# endif
-#else
-# include "exv_conf.h"
-#endif
+#include "exv_conf.h"
 ////////////////////////////////////////
 
 ///// End symbol visibility /////////
@@ -142,11 +144,6 @@ typedef int pid_t;
 ///// End symbol visibility /////////
 
 ///// Start of platform marcos /////////
-// Linux GCC 4.8 appears to be confused about strerror_r
-#if !defined(EXV_STRERROR_R_CHAR_P) &&  defined( __gnu_linux__) && defined(__GLIBC__)
-#define EXV_STRERROR_R_CHAR_P
-#endif
-
 #if defined(__MINGW32__) || defined(__MINGW64__)
 # ifndef  __MING__
 #  define __MING__  1
@@ -154,10 +151,7 @@ typedef int pid_t;
 # ifndef  __MINGW__
 #  define __MINGW__ 1
 # endif
-// Don't know why MinGW refuses to link libregex
-# ifdef  EXV_HAVE_REGEX
-#  undef EXV_HAVE_REGEX
-# endif
+
 #ifdef EXV_UNICODE_PATH
 #error EXV_UNICODE_PATH is not supported for MinGW builds
 #endif
@@ -210,7 +204,6 @@ typedef int pid_t;
 #endif
 //////////////////////////////////////
 
-
 # include <stdio.h>
 #ifdef   EXV_HAVE_UNISTD_H
 #include <unistd.h>
@@ -218,6 +211,23 @@ typedef int pid_t;
 #ifdef __cplusplus
 #include <string>
 #include <iostream>
+#endif
+
+// Define build-env for Adobe XMPsdk
+#ifdef  EXV_ADOBE_XMPSDK
+# if     defined(__APPLE__)
+#  ifndef MAC_ENV
+#   define MAC_ENV 1
+#  endif
+# elif   defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW__)
+#  ifndef WIN_ENV
+#   define WIN_ENV 1
+#  endif
+# else
+#  ifndef UNIX_ENV
+#   define UNIX_ENV 1
+#  endif
+# endif
 #endif
 
 //

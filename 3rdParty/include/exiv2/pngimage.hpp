@@ -23,7 +23,6 @@
   @brief   PNG image, implemented using the following references:
            <a href="http://www.w3.org/TR/PNG/">PNG specification</a> by W3C<br>
            <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/PNG.html">PNG tags list</a> by Phil Harvey<br>
-  @version $Rev: 3091 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @author  Gilles Caulier (cgilles)
@@ -111,9 +110,9 @@ namespace Exiv2
         /*!
           @brief Provides the main implementation of writeMetadata() by
                 writing all buffered metadata to the provided BasicIo.
+          @throw Error on input-output errors or when the image data is not valid.
           @param oIo BasicIo instance to write to (a temporary location).
 
-          @return 4 if opening or writing to the associated BasicIo fails
          */
         EXV_DLLLOCAL void doWriteMetadata(BasicIo& oIo);
         //@}

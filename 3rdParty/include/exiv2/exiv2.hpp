@@ -21,7 +21,6 @@
 /*!
   @file    exiv2.hpp
   @brief   Include all Exiv2 header files.
-  @version $Rev: 3091 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    21-Jun-10, ahu: created
@@ -53,24 +52,28 @@
 #include "exiv2/mrwimage.hpp"
 #include "exiv2/orfimage.hpp"
 #include "exiv2/pgfimage.hpp"
+
 #ifdef   EXV_HAVE_LIBZ
 #include "exiv2/pngimage.hpp"
 #endif
+
 #include "exiv2/preview.hpp"
 #include "exiv2/properties.hpp"
 #include "exiv2/psdimage.hpp"
 #include "exiv2/rafimage.hpp"
 #include "exiv2/rw2image.hpp"
-#if EXV_USE_SSH == 1
+
+#ifdef EXV_USE_SSH
 #include "exiv2/ssh.hpp"
 #endif
+
 #include "exiv2/tags.hpp"
 #include "exiv2/tgaimage.hpp"
 #include "exiv2/tiffimage.hpp"
 #include "exiv2/types.hpp"
 #include "exiv2/value.hpp"
 #include "exiv2/version.hpp"
-#include "exiv2/xmp.hpp"
+#include "exiv2/xmp_exiv2.hpp"
 #include "exiv2/xmpsidecar.hpp"
 
 #endif                                  // #ifndef EXIV2_HPP_

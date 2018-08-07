@@ -313,6 +313,9 @@ uint64_t PSSessionData::getID() const { return mID; }
 uint64_t PSSessionData::getNextID() { return mNextID; }
 void PSSessionData::addNotes(QString pNotes) { mNotes.append(pNotes); }
 void PSSessionData::setName(QString pName) { mName = pName; }
+void PSSessionData::setDateTimeCaptured(QDateTime pDateTimeCaptured) {
+    mDateTimeCaptured = pDateTimeCaptured;
+}
 
 QFileInfo PSSessionData::getPSProjectFile() const {
     return mPSProjectFile;
@@ -391,7 +394,9 @@ void PSSessionData::writeGeneralSettings() {
         lSettings.endArray();
     }
 
-    if(!mDateTimeCaptured.isNull()) { lSettings.setValue("DateTime", mDateTimeCaptured.toString()); }
+    if(!mDateTimeCaptured.isNull()) {
+        lSettings.setValue("DateTime", mDateTimeCaptured.toString());
+    }
 
     // Only write custom status states
     lSettings.setValue("Status", static_cast<int>(mStatus));

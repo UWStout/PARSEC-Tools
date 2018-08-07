@@ -23,7 +23,6 @@
   @brief   Truevision TARGA v2 image, implemented using the following references:
            <a href="http://en.wikipedia.org/wiki/Truevision_TGA">Truevision TGA page on Wikipedia</a><br>
            <a href="http://www.gamers.org/dEngine/quake3/TGA.ps.gz">TGA(tm) File Format Specification</a>
-  @version $Rev: 3090 $
   @author  Marco Piovanelli, Ovolab (marco)
            <a href="mailto:marco.piovanelli@pobox.com">marco.piovanelli@pobox.com</a>
   @date    05-Mar-2007, marco: created
@@ -89,22 +88,22 @@ namespace Exiv2 {
         void readMetadata();
         /*!
           @brief Todo: Write metadata back to the image. This method is not
-              yet(?) implemented. Calling it will throw an Error(31).
+              yet(?) implemented. Calling it will throw an Error(kerWritingImageFormatUnsupported).
          */
         void writeMetadata();
         /*!
           @brief Todo: Not supported yet(?). Calling this function will throw
-              an instance of Error(32).
+              an instance of Error(kerInvalidSettingForImage).
          */
         void setExifData(const ExifData& exifData);
         /*!
           @brief Todo: Not supported yet(?). Calling this function will throw
-              an instance of Error(32).
+              an instance of Error(kerInvalidSettingForImage).
          */
         void setIptcData(const IptcData& iptcData);
         /*!
           @brief Not supported. Calling this function will throw an instance
-              of Error(32).
+              of Error(kerInvalidSettingForImage).
          */
         void setComment(const std::string& comment);
         //@}

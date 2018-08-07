@@ -21,7 +21,6 @@
 /*!
   @file    cr2image.hpp
   @brief   Class Cr2Image
-  @version $Rev: 3091 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    22-Apr-06, ahu: created
@@ -89,7 +88,7 @@ namespace Exiv2 {
         void printStructure(std::ostream& out, PrintStructureOption option,int depth);
         /*!
           @brief Not supported. CR2 format does not contain a comment.
-              Calling this function will throw an Error(32).
+              Calling this function will throw an Error(kerInvalidSettingForImage).
          */
         void setComment(const std::string& comment);
         //@}

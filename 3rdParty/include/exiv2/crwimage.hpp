@@ -23,7 +23,6 @@
   @brief   Class CrwImage to access Canon CRW images.<BR>
            References:<BR>
            <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/canon_raw.html">The Canon RAW (CRW) File Format</a> by Phil Harvey
-  @version $Rev: 3091 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    28-Aug-05, ahu: created
@@ -90,7 +89,7 @@ namespace Exiv2 {
         void writeMetadata();
         /*!
           @brief Not supported. CRW format does not contain IPTC metadata.
-              Calling this function will throw an Error(32).
+              Calling this function will throw an Error(kerInvalidSettingForImage).
          */
         void setIptcData(const IptcData& iptcData);
         //@}

@@ -21,7 +21,6 @@
 /*!
   @file    metadatum.hpp
   @brief   Provides abstract base classes Metadatum and Key
-  @version $Rev: 3091 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @author  Brad Schick (brad)
@@ -60,7 +59,7 @@ namespace Exiv2 {
     class EXIV2API Key {
     public:
         //! Shortcut for a %Key auto pointer.
-        typedef std::auto_ptr<Key> AutoPtr;
+        typedef SmartPtr<Key> AutoPtr;
 
         //! @name Creators
         //@{

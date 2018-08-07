@@ -2,6 +2,10 @@
 #include <libraw/libraw.h>
 #endif
 
+#ifdef  USE_EXIV2
+#include <exiv2/exiv2.hpp>
+#endif
+
 #include <QDebug>
 #include <QProcessEnvironment>
 #include <QProcess>
@@ -123,10 +127,38 @@ QFileInfo ImageProcessor::developRawImage(QFileInfo pImageFile, const ExposureSe
 }
 
 QDateTime ImageProcessor::getDateFromMetadata(QFileInfo pImageFile) {
-    //Exiv2::Image::AutoPtr lImage = Exiv2::ImageFactory::open(pImageFile.filePath());
-    // Extract Date here
-    QString lMetaDataDate;
+#ifdef  USE_EXIV2
+    Exiv2::Image::AutoPtr lImage = Exiv2::ImageFactory::open(pImageFile.filePath().toStdString());
+    if(lImage.get() == nullptr || !lImage->good()) {
+        qWarning("Error opening %s to read exif data", pImageFile.fileName().toLocal8Bit().data());
+        return QDateTime();
+    }
+
+    lImage->readMetadata();
+    Exiv2::ExifData &exifData = lImage->exifData();
+    if (exifData.empty()) {
+        qWarning("No exif data found in file %s", pImageFile.fileName().toLocal8Bit().data());
+        return QDateTime();
+    }
+
+    // Uncomment the chunk below to print ALL exif data found
+//    qWarning("EXIF data for %s = ", pImageFile.fileName().toLocal8Bit().data());
+//    Exiv2::ExifData::const_iterator end = exifData.end();
+//    for (Exiv2::ExifData::const_iterator i = exifData.begin(); i != end; ++i) {
+//      qDebug("%s : %s", i->key().c_str(), i->value().toString().c_str());
+//    }
+
+    // Locate and extract the original date-time
+    if (exifData.findKey(Exiv2::ExifKey("Exif.Photo.DateTimeOriginal")) == exifData.end()) {
+        qWarning("No creation date found in file %s", pImageFile.fileName().toLocal8Bit().data());
+        return QDateTime();
+    }
+
+    QString lMetaDataDate = QString::fromStdString(exifData["Exif.Photo.DateTimeOriginal"].toString());
     QString lFormat = "yyyy:MM:dd hh:mm:ss";
-    QDateTime lDateTime = QDateTime::fromString(lMetaDataDate, lFormat);
-    return lDateTime;
+    return QDateTime::fromString(lMetaDataDate, lFormat);
+
+#else
+    return QDateTime();
+#endif
 }

@@ -22,7 +22,6 @@
   @file    psdimage.hpp
   @brief   Photoshop image, implemented using the following references:
            <a href="http://www.fine-view.com/jp/lab/doc/ps6ffspecsv2.pdf">Adobe Photoshop 6.0 File Format Specification</a> by Adobe<br>
-  @version $Rev: 3091 $
   @author  Marco Piovanelli, Ovolab (marco)
            <a href="mailto:marco.piovanelli@pobox.com">marco.piovanelli@pobox.com</a>
   @author  Michael Ulbrich
@@ -89,7 +88,7 @@ namespace Exiv2 {
         void readMetadata();
         void writeMetadata();
         /*!
-          @brief Not supported. Calling this function will throw an Error(32).
+          @brief Not supported. Calling this function will throw an Error(kerInvalidSettingForImage).
          */
         void setComment(const std::string& comment);
         //@}

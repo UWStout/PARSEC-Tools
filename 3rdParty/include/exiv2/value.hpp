@@ -21,7 +21,6 @@
 /*!
   @file    value.hpp
   @brief   Value interface and concrete subclasses
-  @version $Rev: 3090 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    09-Jan-04, ahu: created
@@ -44,6 +43,7 @@
 #include <sstream>
 #include <memory>
 #include <cstring>
+#include <climits>
 
 // *****************************************************************************
 // namespace extensions
@@ -63,7 +63,7 @@ namespace Exiv2 {
     class EXIV2API Value {
     public:
         //! Shortcut for a %Value auto pointer.
-        typedef std::auto_ptr<Value> AutoPtr;
+        typedef SmartPtr<Value> AutoPtr;
 
         //! @name Creators
         //@{
@@ -265,7 +265,7 @@ namespace Exiv2 {
     class EXIV2API DataValue : public Value {
     public:
         //! Shortcut for a %DataValue auto pointer.
-        typedef std::auto_ptr<DataValue> AutoPtr;
+        typedef SmartPtr<DataValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -352,7 +352,7 @@ namespace Exiv2 {
     class EXIV2API StringValueBase : public Value {
     public:
         //! Shortcut for a %StringValueBase auto pointer.
-        typedef std::auto_ptr<StringValueBase> AutoPtr;
+        typedef SmartPtr<StringValueBase> AutoPtr;
 
         //! @name Creators
         //@{
@@ -434,7 +434,7 @@ namespace Exiv2 {
     class EXIV2API StringValue : public StringValueBase {
     public:
         //! Shortcut for a %StringValue auto pointer.
-        typedef std::auto_ptr<StringValue> AutoPtr;
+        typedef SmartPtr<StringValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -466,7 +466,7 @@ namespace Exiv2 {
     class EXIV2API AsciiValue : public StringValueBase {
     public:
         //! Shortcut for a %AsciiValue auto pointer.
-        typedef std::auto_ptr<AsciiValue> AutoPtr;
+        typedef SmartPtr<AsciiValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -553,7 +553,7 @@ namespace Exiv2 {
         }; // class CharsetInfo
 
         //! Shortcut for a %CommentValue auto pointer.
-        typedef std::auto_ptr<CommentValue> AutoPtr;
+        typedef SmartPtr<CommentValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -640,7 +640,7 @@ namespace Exiv2 {
     class EXIV2API XmpValue : public Value {
     public:
         //! Shortcut for a %XmpValue auto pointer.
-        typedef std::auto_ptr<XmpValue> AutoPtr;
+        typedef SmartPtr<XmpValue> AutoPtr;
 
         //! XMP array types.
         enum XmpArrayType { xaNone, xaAlt, xaBag, xaSeq };
@@ -731,7 +731,7 @@ namespace Exiv2 {
     class EXIV2API XmpTextValue : public XmpValue {
     public:
         //! Shortcut for a %XmpTextValue auto pointer.
-        typedef std::auto_ptr<XmpTextValue> AutoPtr;
+        typedef SmartPtr<XmpTextValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -813,7 +813,7 @@ namespace Exiv2 {
     class EXIV2API XmpArrayValue : public XmpValue {
     public:
         //! Shortcut for a %XmpArrayValue auto pointer.
-        typedef std::auto_ptr<XmpArrayValue> AutoPtr;
+        typedef SmartPtr<XmpArrayValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -910,7 +910,7 @@ namespace Exiv2 {
     class EXIV2API LangAltValue : public XmpValue {
     public:
         //! Shortcut for a %LangAltValue auto pointer.
-        typedef std::auto_ptr<LangAltValue> AutoPtr;
+        typedef SmartPtr<LangAltValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -998,7 +998,7 @@ namespace Exiv2 {
     class EXIV2API DateValue : public Value {
     public:
         //! Shortcut for a %DateValue auto pointer.
-        typedef std::auto_ptr<DateValue> AutoPtr;
+        typedef SmartPtr<DateValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -1099,7 +1099,7 @@ namespace Exiv2 {
     class EXIV2API TimeValue : public Value {
     public:
         //! Shortcut for a %TimeValue auto pointer.
-        typedef std::auto_ptr<TimeValue> AutoPtr;
+        typedef SmartPtr<TimeValue> AutoPtr;
 
         //! @name Creators
         //@{
@@ -1255,7 +1255,7 @@ namespace Exiv2 {
     class ValueType : public Value {
     public:
         //! Shortcut for a %ValueType\<T\> auto pointer.
-        typedef std::auto_ptr<ValueType<T> > AutoPtr;
+        typedef SmartPtr<ValueType<T> > AutoPtr;
 
         //! @name Creators
         //@{
@@ -1658,11 +1658,13 @@ namespace Exiv2 {
         ok_ = true;
         return static_cast<long>(value_[n]);
     }
+// #55 crash when value_[n].first == LONG_MIN
+#define LARGE_INT 1000000
     // Specialization for rational
     template<>
     inline long ValueType<Rational>::toLong(long n) const
     {
-        ok_ = (value_[n].second != 0);
+        ok_ = (value_[n].second != 0 && INT_MIN < value_[n].first && value_[n].first < INT_MAX );
         if (!ok_) return 0;
         return value_[n].first / value_[n].second;
     }
@@ -1670,7 +1672,7 @@ namespace Exiv2 {
     template<>
     inline long ValueType<URational>::toLong(long n) const
     {
-        ok_ = (value_[n].second != 0);
+        ok_ = (value_[n].second != 0 && value_[n].first < LARGE_INT);
         if (!ok_) return 0;
         return value_[n].first / value_[n].second;
     }
