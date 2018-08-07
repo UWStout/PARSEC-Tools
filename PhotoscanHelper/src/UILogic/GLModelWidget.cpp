@@ -9,6 +9,7 @@
 
 #include <quazip/quazipfile.h>
 
+#include <PSProjectFileData.h>
 #include <PSModelData.h>
 #include <PSSessionData.h>
 #include <PLYMeshData.h>
@@ -22,9 +23,12 @@ GLModelWidget::GLModelWidget(QWidget* parent) : QWidget(parent) {
 
 GLModelWidget::GLModelWidget(const PSSessionData* pSession, QWidget* parent) : QWidget(parent) {
     initMembers();
+
+    PSProjectFileData* lPSProject = new PSProjectFileData(pSession->getPSProjectFile());
+
     mName = pSession->getPSProjectFile().baseName();
-    if(pSession->getModelData() != nullptr) {
-        loadNewModel(pSession->getModelData());
+    if(lPSProject->getModelData() != nullptr) {
+        loadNewModel(lPSProject->getModelData());
     }
 }
 
@@ -58,7 +62,8 @@ void GLModelWidget::initMembers() {
 void GLModelWidget::loadNewModel(const PSSessionData* pSession) {
     if(pSession != nullptr) {
         mName = pSession->getPSProjectFile().baseName();
-        loadNewModel(pSession->getModelData());
+        PSProjectFileData* lPSProject = new PSProjectFileData(pSession->getPSProjectFile());
+        loadNewModel(lPSProject->getModelData());
     } else {
         loadNewModel((PSModelData*)nullptr);
     }

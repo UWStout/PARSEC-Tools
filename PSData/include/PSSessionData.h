@@ -58,6 +58,8 @@ public:
 
     static void setSortBy(Field pNewSortBy);
 
+    void convertToPSSession();
+
     void examineProject();
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o) const;
@@ -76,8 +78,6 @@ public:
     QFileInfo getPSProjectFile() const;
 	
     QDir getSessionFolder() const;
-    PSModelData* getModelData() const;
-    QFileInfo getModelArchiveFile() const;
 
     int getRawImageCount() const;
     int getProcessedImageCount() const;
@@ -97,8 +97,6 @@ public:
     QString getName() const;
     Status getStatus() const;
 
-    PSProjectFileData* getProject() const;
-
     QString describeImageAlignPhase() const;
     uchar getAlignPhaseStatus() const;
 
@@ -116,6 +114,8 @@ public:
 
     int getActiveChunkIndex() const;
     int getChunkCount() const;
+
+    static QVector<PSSessionData*> getNeedsApproval();
 
 private:
     void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
@@ -173,13 +173,12 @@ private:
 
     // The list of project files in the directory
     QFileInfo mPSProjectFile;
-    //TODO: Remove/comment out this line
-    PSProjectFileData* mPSProject;
 
     // Class level static values
     static const QString sRawFolderName;
     static const QString sProcessedFolderName;
     static const QString sMasksFolderName;
+    static QVector<PSSessionData*> sNeedsApproval;
 
     static Field mSortBy;
     static uint64_t mNextID;

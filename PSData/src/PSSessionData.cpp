@@ -70,6 +70,8 @@ const QStringList gRawFileExtensions = {
     "*.x3f"
 };
 
+QVector<PSSessionData*> PSSessionData::sNeedsApproval = QVector<PSSessionData*>();
+
 // Images sub-folder names
 const QString PSSessionData::sRawFolderName = "Raw";
 const QString PSSessionData::sProcessedFolderName = "Processed";
@@ -108,18 +110,8 @@ void PSSessionData::examineProject() {
 
     // Is this an external session folder that needs to be fully examined (no INI file yet)
     if (!QFileInfo(mSettings).exists()) {
-        // Try to guess some info from the folder name
-        extractInfoFromFolderName(mSessionFolder.dirName());
-
-        // Parse the PhotoScan XML file
-        parseProjectXMLAndCache();
-
-        // Ensure the image files lists are initialized and image counts are accurate
-        getRawFileList(); getProcessedFileList(); getMaskFileList();
-
-        // Update status and create initial INI file
-        autoSetStatus();
-        writeGeneralSettings();
+        // Add to sNeedsApproval vector
+        sNeedsApproval.append(this);
     } else {
         // Read from INI file
         readGeneralSettings();
@@ -127,10 +119,27 @@ void PSSessionData::examineProject() {
 
         // NOTE: image files lists will not be created until the first time
         //       their getters are called (to shorten loading time).
-
-        // TODO: Get rid of this once we don't need it anymore
-        parseProjectXMLAndCache();
     }
+}
+
+void PSSessionData::convertToPSSession() {
+    // Ensure the image folders exist and files are copied into them
+    initImageDir(mMasksFolder, gPSMaskFileExtensions, "Masks");
+    initImageDir(mRawFolder, gRawFileExtensions, "Raw");
+    initImageDir(mProcessedFolder, gPSImageFileExtensions, "Processed");
+
+    // Try to guess some info from the folder name
+    extractInfoFromFolderName(mSessionFolder.dirName());
+
+    // Parse the PhotoScan XML file
+    parseProjectXMLAndCache();
+
+    // Ensure the image files lists are initialized and image counts are accurate
+    getRawFileList(); getProcessedFileList(); getMaskFileList();
+
+    // Update status and create initial INI file
+    autoSetStatus();
+    writeGeneralSettings();
 }
 
 void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
@@ -219,9 +228,7 @@ void PSSessionData::parseProjectXMLAndCache() {
     }
 
     // Delete temporary data
-    // TODO: Enable this once the project dependency is completely removed
-    // delete mPSProject;
-    // mPSProject = NULL;
+    delete lPSProject;
 }
 
 bool PSSessionData::examineDirectory(QDir pDirToExamine) {
@@ -233,11 +240,6 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     // Clear old data
     mPSProjectFile = QFileInfo();
     mDateTimeCaptured = QDateTime();
-
-    // Ensure the image folders exist and files are copied into them
-    initImageDir(mMasksFolder, gPSMaskFileExtensions, "Masks");
-    initImageDir(mRawFolder, gRawFileExtensions, "Raw");
-    initImageDir(mProcessedFolder, gPSImageFileExtensions, "Processed");
 
     // Find the project file
     QFileInfoList lProjectFiles = pDirToExamine.entryInfoList(
@@ -273,6 +275,7 @@ inline void PSSessionData::initImageDir(const QDir &pDir, const QStringList& pFi
 
         // Move matched files into the given folder
         QString newName = pDir.absolutePath() + QDir::separator() + lIt.fileName();
+        QFile::rename(lIt.filePath(), newName);
     }
 }
 
@@ -323,16 +326,6 @@ QFileInfo PSSessionData::getPSProjectFile() const {
 
 QDir PSSessionData::getSessionFolder() const {
     return mSessionFolder;
-}
-
-PSModelData* PSSessionData::getModelData() const {
-    //TODO: Transition function in ChunkData to here
-    return mPSProject->getModelData();
-}
-
-QFileInfo PSSessionData::getModelArchiveFile() const {
-    //TODO: Transition function in ChunkData to here
-    return mPSProject->getModelArchiveFile();
 }
 
 int PSSessionData::getRawImageCount() const { return mRawFileCount; }
@@ -409,6 +402,24 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.setValue("MaskImageCount", mMaskFileCount);
     lSettings.endGroup();
 
+    lSettings.beginGroup("ChunkData");
+    lSettings.setValue("ChunkCount", mChunkCount);
+    lSettings.setValue("ActiveChunkIndex", mActiveChunkIndex);
+    lSettings.setValue("ChunkImages", mChunkImages);
+    lSettings.setValue("ChunkCameras", mChunkCameras);
+    lSettings.setValue("AlignmentLevelString", mAlignmentLevelString);
+    lSettings.setValue("AlignmentFeatureLimit", mAlignmentFeatureLimit);
+    lSettings.setValue("AlignmentTieLimit", mAlignmentTieLimit);
+    lSettings.setValue("DenseCloudLevelString", mDenseCloudLevelString);
+    lSettings.setValue("DenseCloudImagesUsed", mDenseCloudImagesUsed);
+    lSettings.setValue("HasMesh", mHasMesh);
+    lSettings.setValue("MeshFaces", mMeshFaces);
+    lSettings.setValue("MeshVerts", mMeshVerts);
+    lSettings.setValue("TextureCount", mTextureCount);
+    lSettings.setValue("TextureWidth", mTextureWidth);
+    lSettings.setValue("TextureHeight", mTextureHeight);
+    lSettings.endGroup();
+
     lSettings.beginGroup("Synchronization");
     if (hasProject()) {
         lSettings.setValue("ProjectFileName", mPSProjectFile.fileName());
@@ -459,6 +470,25 @@ void PSSessionData::readGeneralSettings() {
     mRawFileCount = lSettings.value("RawImageCount", -1).toInt();
     mProcessedFileCount = lSettings.value("ProcessedImageCount", -1).toInt();
     mMaskFileCount = lSettings.value("MaskImageCount", -1).toInt();
+    lSettings.endGroup();
+
+    // Read the chunk data
+    lSettings.beginGroup("ChunkData");
+    mChunkCount = lSettings.value("ChunkCount", 0).toInt(); // May need to test the fallback value
+    mActiveChunkIndex = lSettings.value("ActiveChunkIndex", 0).toInt(); // May need to test the fallback value
+    mChunkImages = lSettings.value("ChunkImages", -1).toInt();
+    mChunkCameras = lSettings.value("ChunkCameras", -1).toInt();
+    mAlignmentLevelString = lSettings.value("AlignmentLevelString", "N/A").toString();
+    mAlignmentFeatureLimit = lSettings.value("AlignmentFeatureLimit", 0).toInt();
+    mAlignmentTieLimit = lSettings.value("AlignmentTieLimit", 0).toInt();
+    mDenseCloudLevelString = lSettings.value("DenseCloudLevelString", "N/A").toString();
+    mDenseCloudImagesUsed = lSettings.value("DenseCloudImagesUsed", 0).toInt();
+    mHasMesh = lSettings.value("HasMesh", false).toBool();
+    mMeshFaces = lSettings.value("MeshFaces", 0).toLongLong();
+    mMeshVerts = lSettings.value("MeshVerts", 0).toLongLong();
+    mTextureCount = lSettings.value("TextureCount", 0).toInt();
+    mTextureWidth = lSettings.value("TextureWidth", 0).toInt();
+    mTextureHeight = lSettings.value("TextureHeight", 0).toInt();
     lSettings.endGroup();
 
     // Read the synchronization
@@ -669,4 +699,8 @@ int PSSessionData::getActiveChunkIndex() const {
 
 int PSSessionData::getChunkCount() const {
     return mChunkCount;
+}
+
+QVector<PSSessionData*> PSSessionData::getNeedsApproval() {
+    return sNeedsApproval;
 }
