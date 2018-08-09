@@ -85,7 +85,7 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder)
     mStatus = PSS_UNKNOWN;
     mRawFileCount = mProcessedFileCount = mMaskFileCount = 0;
 
-    isSynchronized = false;
+    mIsSynchronized = false;
 
     mName = "";
     mNotes = QStringList();
@@ -110,7 +110,6 @@ void PSSessionData::examineProject() {
 
     // Is this an external session folder that needs to be fully examined (no INI file yet)
     if (!QFileInfo(mSettings).exists()) {
-        // Add to sNeedsApproval vector
         sNeedsApproval.append(this);
     } else {
         // Read from INI file
@@ -140,6 +139,18 @@ void PSSessionData::convertToPSSession() {
     // Update status and create initial INI file
     autoSetStatus();
     writeGeneralSettings();
+}
+
+void PSSessionData::setExplicitlyIgnored(bool pIgnore) {
+    mExplicitlyIgnored = pIgnore;
+    QSettings lSettings(mSettings, QSettings::IniFormat);
+    lSettings.beginGroup("General");
+    lSettings.setValue("ExplicitlyIgnored", mExplicitlyIgnored);
+    lSettings.endGroup();
+}
+
+bool PSSessionData::getExplicitlyIgnored() {
+    return mExplicitlyIgnored;
 }
 
 void PSSessionData::extractInfoFromFolderName(QString pFolderName) {
@@ -393,6 +404,8 @@ void PSSessionData::writeGeneralSettings() {
 
     // Only write custom status states
     lSettings.setValue("Status", static_cast<int>(mStatus));
+
+    lSettings.setValue("ExplicitlyIgnored", mExplicitlyIgnored);
     lSettings.endGroup();
 
     // Store image counts so we can read them without scaning the image directories
@@ -436,12 +449,19 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.endGroup();
 
     // Update state
-    isSynchronized = true;
+    mIsSynchronized = true;
 }
 
 void PSSessionData::readGeneralSettings() {
     QSettings lSettings(mSettings, QSettings::IniFormat);
     lSettings.beginGroup("General");
+
+    // Is this an ignored folder
+    mExplicitlyIgnored = lSettings.value("ExplicitlyIgnored", false).toBool();
+    if (mExplicitlyIgnored) {
+        lSettings.endGroup();
+        return;
+    }
 
     // Retrieve the general settings
     mID = lSettings.value("ID", mID).toULongLong();
@@ -505,29 +525,29 @@ void PSSessionData::readGeneralSettings() {
     checkSynchronization(lLastProjFileName, lProjFileTimestamp, lRawTimestamp, lProcessedTimestamp, lMasksTimestamp);
 
     // Update synchronization if needed
-    if(!isSynchronized) {
+    if(!mIsSynchronized) {
         updateOutOfSyncSession();
     }
 }
 
 void PSSessionData::checkSynchronization(QString pProjName, QDateTime pProjTime, QDateTime pRawTime, QDateTime pProcTime, QDateTime pMaskTime) {
     if(pProjName != mPSProjectFile.fileName()) {
-        isSynchronized = false;
+        mIsSynchronized = false;
         qWarning() << "Project name is no longer synchronized";
     } else if (pProjTime.toSecsSinceEpoch() != mPSProjectFile.lastModified().toSecsSinceEpoch()) {
-        isSynchronized = false;
+        mIsSynchronized = false;
         qWarning() << "Project QDateTime is no longer synchronized";
     } else if (pRawTime.toSecsSinceEpoch() != QFileInfo(mRawFolder, QString()).lastModified().toSecsSinceEpoch()) {
-        isSynchronized = false;
+        mIsSynchronized = false;
         qWarning() << "RawFiles DateTime is no longer synchronized";
     } else if (pProcTime.toSecsSinceEpoch() != QFileInfo(mProcessedFolder, QString()).lastModified().toSecsSinceEpoch()) {
-        isSynchronized = false;
+        mIsSynchronized = false;
         qWarning() << "ProcessedFiles DateTime is no longer synchronized";
     } else if (pMaskTime.toSecsSinceEpoch() != QFileInfo(mMasksFolder, QString()).lastModified().toSecsSinceEpoch()) {
-        isSynchronized = false;
+        mIsSynchronized = false;
         qWarning() << "MasksFiles DateTime is no longer synchronized";
     } else {
-        isSynchronized = true;
+        mIsSynchronized = true;
         qWarning() << "Files are synchronized";
     }
 }

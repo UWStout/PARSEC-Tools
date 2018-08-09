@@ -116,6 +116,8 @@ public:
     int getChunkCount() const;
 
     static QVector<PSSessionData*> getNeedsApproval();
+    void setExplicitlyIgnored(bool pIgnore);
+    bool getExplicitlyIgnored();
 
 private:
     void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
@@ -130,7 +132,7 @@ private:
     void parseProjectXMLAndCache();
 
     // Session state
-    bool isSynchronized;
+    bool mIsSynchronized, mExplicitlyIgnored;
 
     // INI filename to store all metadata
     QString mSettings;

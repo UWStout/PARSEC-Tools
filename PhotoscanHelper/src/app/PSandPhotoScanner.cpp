@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <QtConcurrent>
+#include <QMessageBox>
 
 #include "DirLister.h"
 #include "PSSessionData.h"
@@ -156,10 +157,36 @@ void PSandPhotoScanner::finishDataParallel() {
         }
     }
 
-    std::sort(mData.begin(), mData.end(), greaterThanPSSD);
+    int length = PSSessionData::getNeedsApproval().length();
+    if(length > 0) {
+        //TODO: Use custom UI so the user can pick and choose which to approve or ignore
+        for(int i = 0; i < length; i++) {
+            QMessageBox lMsgBox;
+            lMsgBox.setText(PSSessionData::getNeedsApproval()[i]->getSessionFolder().dirName()+" is an uninitialized folder");
+            lMsgBox.setInformativeText("Would you like to convert this folder into a session?");
+            lMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Ignore | QMessageBox::Cancel);
+            lMsgBox.setDefaultButton(QMessageBox::Yes);
+            int lRet = lMsgBox.exec();
+
+            switch (lRet) {
+            case QMessageBox::Yes:
+                PSSessionData::getNeedsApproval()[i]->convertToPSSession();
+                PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(false);
+                break;
+            case QMessageBox::Ignore:
+                PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(true);
+                break;
+            case QMessageBox::Cancel:
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
     for(PSSessionData* data : mData) {
-        data->readGeneralSettings();
-        data->readExposureSettings();
+//        data->readGeneralSettings();
+//        data->readExposureSettings();
 
         if (data->getDateTimeCaptured().isNull() && data->getRawImageCount() > 0) {
             QFileInfo lRawFile = data->getRawFileList()[0];
@@ -168,6 +195,12 @@ void PSandPhotoScanner::finishDataParallel() {
             data->setDateTimeCaptured(lTimestamp);
             data->writeGeneralSettings();
         }
+
+        if (data->getExplicitlyIgnored() == true) {
+            mData.removeOne(data);
+        }
     }
+
+    std::sort(mData.begin(), mData.end(), greaterThanPSSD);
     mDataScanned = true;
 }
