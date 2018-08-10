@@ -101,9 +101,30 @@ int main(int argc, char *argv[]) {
         }
 
         lWatcher->waitForFinished();
-        lScanner->finishDataParallel();
+        lScanner->finishScanParallel();
+
+        QFutureWatcher<void>* lWatcher2 = new QFutureWatcher<void>();
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::progressRangeChanged,
+                myProgressDiag, &QProgressDialog::setRange);
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::progressValueChanged,
+                myProgressDiag, &QProgressDialog::setValue);
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::finished,
+                myProgressDiag, &QProgressDialog::reset);
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::canceled,
+                myProgressDiag, &QProgressDialog::cancel);
+
+        lWatcher2->setFuture(lScanner->startSyncAndInitParallel());
+
+        myProgressDiag->exec();
+        if(lWatcher->isCanceled()) {
+            exit(1);
+        }
+
+        lWatcher2->waitForFinished();
+        lScanner->finishSyncAndInitParallel();
 
         delete lWatcher;
+        delete lWatcher2;
         delete myProgressDiag;
     } catch(const exception& e) {
 

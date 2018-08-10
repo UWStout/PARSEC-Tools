@@ -23,13 +23,18 @@ public:
     int countDirsWithoutModels() const;
 
     QFuture<PSSessionData*> startScanParallel();
-    void finishDataParallel();
+    void finishScanParallel();
+
+    QFuture<void> startSyncAndInitParallel();
+    void finishSyncAndInitParallel();
 
 private:
     QFileInfo mRootPath;
     int mMaxRecursionDepth;
     QSettings* mPSProjectInfoStore;
-    QFuture<PSSessionData*> mFutureResults;
+
+    QFuture<PSSessionData*> mFutureScanResults;
+    QFuture<void> mFutureSyncAndInitResults;
 
     bool mDataScanned;
     QVector<PSSessionData*> mData;

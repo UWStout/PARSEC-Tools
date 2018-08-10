@@ -59,6 +59,10 @@ public:
     static void setSortBy(Field pNewSortBy);
 
     void convertToPSSession();
+    void updateOutOfSyncSession();
+
+    bool isInitialized() const { return mIsInitialized; }
+    bool isSynchronized() const { return mIsSynchronized; }
 
     void examineProject();
     void extractInfoFromFolderName(QString pFolderName);
@@ -128,11 +132,10 @@ private:
     void initAsExternalSession();
 
     void checkSynchronization(QString pProjName, QDateTime pProjTime, QDateTime pRawTime, QDateTime pProcTime, QDateTime pMaskTime);
-    void updateOutOfSyncSession();
     void parseProjectXMLAndCache();
 
     // Session state
-    bool mIsSynchronized, mExplicitlyIgnored;
+    bool mIsInitialized, mIsSynchronized, mExplicitlyIgnored;
 
     // INI filename to store all metadata
     QString mSettings;

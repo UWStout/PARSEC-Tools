@@ -85,6 +85,7 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder)
     mStatus = PSS_UNKNOWN;
     mRawFileCount = mProcessedFileCount = mMaskFileCount = 0;
 
+    mIsInitialized = false;
     mIsSynchronized = false;
 
     mName = "";
@@ -110,6 +111,7 @@ void PSSessionData::examineProject() {
 
     // Is this an external session folder that needs to be fully examined (no INI file yet)
     if (!QFileInfo(mSettings).exists()) {
+        mIsInitialized = false;
         sNeedsApproval.append(this);
     } else {
         // Read from INI file
@@ -415,23 +417,27 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.setValue("MaskImageCount", mMaskFileCount);
     lSettings.endGroup();
 
-    lSettings.beginGroup("ChunkData");
-    lSettings.setValue("ChunkCount", mChunkCount);
-    lSettings.setValue("ActiveChunkIndex", mActiveChunkIndex);
-    lSettings.setValue("ChunkImages", mChunkImages);
-    lSettings.setValue("ChunkCameras", mChunkCameras);
-    lSettings.setValue("AlignmentLevelString", mAlignmentLevelString);
-    lSettings.setValue("AlignmentFeatureLimit", mAlignmentFeatureLimit);
-    lSettings.setValue("AlignmentTieLimit", mAlignmentTieLimit);
-    lSettings.setValue("DenseCloudLevelString", mDenseCloudLevelString);
-    lSettings.setValue("DenseCloudImagesUsed", mDenseCloudImagesUsed);
-    lSettings.setValue("HasMesh", mHasMesh);
-    lSettings.setValue("MeshFaces", mMeshFaces);
-    lSettings.setValue("MeshVerts", mMeshVerts);
-    lSettings.setValue("TextureCount", mTextureCount);
-    lSettings.setValue("TextureWidth", mTextureWidth);
-    lSettings.setValue("TextureHeight", mTextureHeight);
-    lSettings.endGroup();
+    if (hasProject()) {
+        lSettings.beginGroup("ChunkData");
+        lSettings.setValue("ChunkCount", mChunkCount);
+        lSettings.setValue("ActiveChunkIndex", mActiveChunkIndex);
+        lSettings.setValue("ChunkImages", mChunkImages);
+        lSettings.setValue("ChunkCameras", mChunkCameras);
+        lSettings.setValue("AlignmentLevelString", mAlignmentLevelString);
+        lSettings.setValue("AlignmentFeatureLimit", mAlignmentFeatureLimit);
+        lSettings.setValue("AlignmentTieLimit", mAlignmentTieLimit);
+        lSettings.setValue("DenseCloudLevelString", mDenseCloudLevelString);
+        lSettings.setValue("DenseCloudImagesUsed", mDenseCloudImagesUsed);
+        lSettings.setValue("HasMesh", mHasMesh);
+        lSettings.setValue("MeshFaces", mMeshFaces);
+        lSettings.setValue("MeshVerts", mMeshVerts);
+        lSettings.setValue("TextureCount", mTextureCount);
+        lSettings.setValue("TextureWidth", mTextureWidth);
+        lSettings.setValue("TextureHeight", mTextureHeight);
+        lSettings.endGroup();
+    } else {
+        mChunkCount = mActiveChunkIndex = 0;
+    }
 
     lSettings.beginGroup("Synchronization");
     if (hasProject()) {
@@ -525,9 +531,9 @@ void PSSessionData::readGeneralSettings() {
     checkSynchronization(lLastProjFileName, lProjFileTimestamp, lRawTimestamp, lProcessedTimestamp, lMasksTimestamp);
 
     // Update synchronization if needed
-    if(!mIsSynchronized) {
-        updateOutOfSyncSession();
-    }
+//    if(!mIsSynchronized) {
+//        updateOutOfSyncSession();
+//    }
 }
 
 void PSSessionData::checkSynchronization(QString pProjName, QDateTime pProjTime, QDateTime pRawTime, QDateTime pProcTime, QDateTime pMaskTime) {

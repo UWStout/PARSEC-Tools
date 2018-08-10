@@ -3,11 +3,13 @@
 
 #include <QSettings>
 #include <QtConcurrent>
-#include <QMessageBox>
+#include <QDialogButtonBox>
 
 #include "DirLister.h"
 #include "PSSessionData.h"
 #include "ImageProcessor.h"
+
+#include "InitializeSessionDialog.h";
 
 const QStringList gIgnoreExceptions = { "_Finished", "_TouchUp", "_TouchedUpPleaseReview" };
 
@@ -17,8 +19,8 @@ PSandPhotoScanner::PSandPhotoScanner(QString pPath, int pMaxRecursionDepth) {
     mDataScanned = false;
 
     // Open/Create the settings QFileInfo
-    QString settingsFile = mRootPath.path() + "/PSHelperData.ini";
-    mPSProjectInfoStore = initInfoStore(settingsFile);
+    //QString settingsFile = mRootPath.path() + "/PSHelperData.ini";
+    //mPSProjectInfoStore = initInfoStore(settingsFile);
 }
 
 bool PSandPhotoScanner::buildDirectoryList(QFileInfo pRoot) {
@@ -138,20 +140,44 @@ PSSessionData* examineProjectFolder(QFileInfo pProjectFolder) {
     }
 }
 
+void syncOrInitializeSession(PSSessionData* pCurSession) {
+    if (pCurSession->getExplicitlyIgnored()) {
+        return;
+    }
+
+    if (!pCurSession->isInitialized()) {
+        pCurSession->convertToPSSession();
+    } else if (!pCurSession->isSynchronized()) {
+        pCurSession->updateOutOfSyncSession();
+    }
+
+    if (pCurSession->getDateTimeCaptured().isNull() && pCurSession->getRawImageCount() > 0) {
+        QFileInfo lRawFile = pCurSession->getRawFileList()[0];
+        QDateTime lTimestamp = ImageProcessor::getDateFromMetadata(lRawFile);
+        pCurSession->setDateTimeCaptured(lTimestamp);
+        pCurSession->writeGeneralSettings();
+    }
+}
+
 QFuture<PSSessionData*> PSandPhotoScanner::startScanParallel() {
     buildDirectoryList(mRootPath);
     // TODO: Remove when done debugging
 //    QThreadPool::globalInstance()->setMaxThreadCount(1);
-    mFutureResults = QtConcurrent::mapped(mProjectDirList.begin(), mProjectDirList.end(), examineProjectFolder);
-    return mFutureResults;
+    mFutureScanResults = QtConcurrent::mapped(mProjectDirList.begin(), mProjectDirList.end(), examineProjectFolder);
+    return mFutureScanResults;
+}
+
+QFuture<void> PSandPhotoScanner::startSyncAndInitParallel() {
+    mFutureSyncAndInitResults = QtConcurrent::map(mData, syncOrInitializeSession);
+    return mFutureSyncAndInitResults;
 }
 
 bool greaterThanPSSD(PSSessionData* A, PSSessionData* B) {
     return (A->compareTo(B) > 0);
 }
 
-void PSandPhotoScanner::finishDataParallel() {
-    for(PSSessionData* lResult : mFutureResults) {
+void PSandPhotoScanner::finishScanParallel() {
+    for(PSSessionData* lResult : mFutureScanResults) {
         if (lResult != nullptr) {
             mData.append(lResult);
         }
@@ -159,48 +185,50 @@ void PSandPhotoScanner::finishDataParallel() {
 
     int length = PSSessionData::getNeedsApproval().length();
     if(length > 0) {
-        //TODO: Use custom UI so the user can pick and choose which to approve or ignore
+        int lRet;
+        bool lApplyToAll = false;
         for(int i = 0; i < length; i++) {
-            QMessageBox lMsgBox;
-            lMsgBox.setText(PSSessionData::getNeedsApproval()[i]->getSessionFolder().dirName()+" is an uninitialized folder");
-            lMsgBox.setInformativeText("Would you like to convert this folder into a session?");
-            lMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Ignore | QMessageBox::Cancel);
-            lMsgBox.setDefaultButton(QMessageBox::Yes);
-            int lRet = lMsgBox.exec();
+            if(!lApplyToAll) {
+                InitializeSessionDialog lInitSession;
+                lInitSession.setTitle(PSSessionData::getNeedsApproval()[i]->getSessionFolder().dirName()+" is an uninitialized folder");
+                lRet = lInitSession.exec();
+                lApplyToAll = lInitSession.getApplyToAll();
+            }
 
             switch (lRet) {
-            case QMessageBox::Yes:
-                PSSessionData::getNeedsApproval()[i]->convertToPSSession();
-                PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(false);
-                break;
-            case QMessageBox::Ignore:
-                PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(true);
-                break;
-            case QMessageBox::Cancel:
-                break;
-            default:
-                break;
+                case QDialogButtonBox::Yes:
+//                    PSSessionData::getNeedsApproval()[i]->convertToPSSession();
+                    PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(false);
+                    break;
+
+                case QDialogButtonBox::Ignore:
+                    PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(true);
+                    break;
+
+                default:
+                    break;
             }
         }
     }
 
+    // Remove ignored session
+    QVector<PSSessionData*> lRemove;
     for(PSSessionData* data : mData) {
-//        data->readGeneralSettings();
-//        data->readExposureSettings();
-
-        if (data->getDateTimeCaptured().isNull() && data->getRawImageCount() > 0) {
-            QFileInfo lRawFile = data->getRawFileList()[0];
-            QDateTime lTimestamp = ImageProcessor::getDateFromMetadata(lRawFile);
-            qDebug("Read timestamp as %s", lTimestamp.toString().toLocal8Bit().data());
-            data->setDateTimeCaptured(lTimestamp);
-            data->writeGeneralSettings();
-        }
-
-        if (data->getExplicitlyIgnored() == true) {
-            mData.removeOne(data);
+        if (data->getExplicitlyIgnored()) {
+            lRemove.push_back(data);
         }
     }
 
-    std::sort(mData.begin(), mData.end(), greaterThanPSSD);
+    for(PSSessionData* data : lRemove) {
+        mData.removeOne(data);
+    }
+}
+
+void PSandPhotoScanner::finishSyncAndInitParallel() {
+
+    if (mData.size() > 0) {
+        std::sort(mData.begin(), mData.end(), greaterThanPSSD);
+    }
+
     mDataScanned = true;
 }

@@ -54,7 +54,8 @@ SOURCES += \
     src/UILogic/ScriptedPhotoScanDialog.cpp \
     src/UILogic/GLModelWidget.cpp \
     src/UILogic/QtModelViewerWidget.cpp \
-    src/UILogic/QtTrackball.cpp
+    src/UILogic/QtTrackball.cpp \
+    src/UILogic/InitializeSessionDialog.cpp
 
 HEADERS += \
     include/PSandPhotoScanner.h \
@@ -77,7 +78,8 @@ HEADERS += \
     include/ScriptedPhotoScanDialog.h \
     include/GLModelWidget.h \
     include/QtModelViewerWidget.h \
-    include/QtTrackball.h
+    include/QtTrackball.h \
+    include/InitializeSessionDialog.h
 
 FORMS += \
     forms/AboutDialog.ui \
@@ -93,7 +95,8 @@ FORMS += \
     forms/StageProgressDialog.ui \
     forms/InteractivePhotoScanDialog.ui \
     forms/QuickPreviewDialog.ui \
-    forms/ScriptedPhotoScanDialog.ui
+    forms/ScriptedPhotoScanDialog.ui \
+    forms/InitializeSessionDialog.ui
 
 RESOURCES += \
     PSHelper.qrc
