@@ -10,6 +10,7 @@
 #include <QProcessEnvironment>
 #include <QProcess>
 #include <QDateTime>
+#include <QImageWriter>
 
 #include "ImageProcessor.h"
 
@@ -19,6 +20,18 @@ double ImageProcessor::mMultipliers[] = { 1.0, 0.5, 1.0, 0.5 };
 QString gDCRawCommand = "c:/program files/graphicsmagick/dcraw.exe";
 #else
 QString gDCRawCommand = "/opt/local/bin/dcraw";
+#endif
+
+#ifdef Q_OS_WIN32
+QString gGraphicsMagickCommand = "c:/program files/graphicsmagick/gm.exe";
+#else
+QString gGraphicsMagickCommand = "/opt/local/bin/gm";
+#endif
+
+#ifdef Q_OS_WIN32
+QString gEXIFToolCommand = "c:/program files/exiftool/exiftool.exe";
+#else
+QString gEXIFToolCommand = "/opt/local/bin/exiftool";
 #endif
 
 inline void extractMultipliersDCRaw(const QString& line) {
@@ -163,10 +176,69 @@ QDateTime ImageProcessor::getDateFromMetadata(QFileInfo pImageFile) {
 #endif
 }
 
-bool ImageProcessor::compressTIFF(QString pSourceImage, QString pDestination) {
-    qDebug() << "Compressing .tiff";
-    QImage lImage(pSourceImage);
-    if(lImage.isNull()) { return false; }
+bool ImageProcessor::postProcessTIFF(const QString& pRawImage, const QString& pOrigTIFFImage,
+                                     const QString& pDestination, bool pKeepOriginal) {
+    if (!compressTIFF(pOrigTIFFImage, pDestination, pKeepOriginal)) {
+        return false;
+    }
 
-    return lImage.save(pDestination, ".tiff", 0);
+    if (!copyTagsFromFile(pRawImage, pDestination)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool ImageProcessor::compressTIFF(const QString& pSourceImage, const QString& pDestination, bool pKeepOriginal) {
+    // Construct the command options
+    QStringList commandArgs;
+    commandArgs << "convert" << pSourceImage << "-compress" << "lzw" << pDestination;
+
+    // Run the command and capture all output from stderr
+    QByteArray lOutput;
+    QProcess mGraphicsMagickProc;
+    mGraphicsMagickProc.start(gGraphicsMagickCommand, commandArgs);
+
+    while(!mGraphicsMagickProc.waitForFinished(100)) {}
+    lOutput.append(mGraphicsMagickProc.readAllStandardError());
+    mGraphicsMagickProc.close();
+    lOutput = lOutput.trimmed();
+
+    // For debugging, show all output
+//    qDebug("GM Output ========");
+//    qDebug("%s", lOutput.data());
+//    qDebug("==================");
+
+    // Empty output means all is well, delete the original (if requested) and return true
+    if (lOutput.isEmpty()) {
+        if (!pKeepOriginal) { QFile::remove(pSourceImage); }
+        return true;
+    }
+
+    // Don't delete original regardless of pKeepOriginal as something went wrong
+    return false;
+}
+
+bool ImageProcessor::copyTagsFromFile(const QString& pSourceImage, const QString& pDestination) {
+    // Construct the command options
+    QStringList commandArgs;
+    commandArgs << "-overwrite_original" << "-tagsfromfile" << pSourceImage << pDestination;
+
+    // Run the command and capture all output from stderr
+    QByteArray lOutput;
+    QProcess mEXIFToolProc;
+    mEXIFToolProc.start(gEXIFToolCommand, commandArgs);
+
+    while(!mEXIFToolProc.waitForFinished(100)) {}
+    lOutput.append(mEXIFToolProc.readAllStandardError());
+    mEXIFToolProc.close();
+    lOutput = lOutput.trimmed();
+
+    // For debugging, show all output
+//    qDebug("ET Output ========");
+//    qDebug("%s", lOutput.data());
+//    qDebug("==================");
+
+    // Empty output means all is well
+    return lOutput.isEmpty();
 }

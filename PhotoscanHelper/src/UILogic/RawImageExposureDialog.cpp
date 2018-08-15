@@ -188,15 +188,14 @@ void RawImageExposureDialog::previewReady() {
     mGUI->PreviewButton->setText("Preview");
     mGUI->PreviewButton->setEnabled(true);
     QFileInfo lResult = mPreviewFileWatcher->result();
-    //Java instanceof used here to ensure lResult was only a File
+
     if(lResult.exists() && lResult.fileName() != "") {
-        // TODO: Update Multipliers
-//        mBlockUpdateFromGUI = true;
-//        mGUI->RSpinBox->setValue(ImageProcessor::mMultipliers[0]);
-//        mGUI->G1SpinBox->setValue(ImageProcessor::mMultipliers[1]);
-//        mGUI->BSpinBox->setValue(ImageProcessor::mMultipliers[2]);
-//        mGUI->G2SpinBox->setValue(ImageProcessor::mMultipliers[3]);
-//        mBlockUpdateFromGUI = false;
+        mBlockUpdateFromGUI = true;
+        mGUI->RSpinBox->setValue(ImageProcessor::mMultipliers[0]);
+        mGUI->G1SpinBox->setValue(ImageProcessor::mMultipliers[1]);
+        mGUI->BSpinBox->setValue(ImageProcessor::mMultipliers[2]);
+        mGUI->G2SpinBox->setValue(ImageProcessor::mMultipliers[3]);
+        mBlockUpdateFromGUI = false;
 
         // Put in label
         mPreviewImage = QPixmap::fromImage(QImage(lResult.filePath()));

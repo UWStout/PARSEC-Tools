@@ -10,6 +10,9 @@
 #include <QThreadPool>
 #include <QSurfaceFormat>
 
+#include <QImageReader>
+#include <QImageWriter>
+
 #include <string>
 #include <iostream>
 using namespace std;
@@ -43,6 +46,33 @@ int main(int argc, char *argv[]) {
 //    // The Java process owns the native menu bar and won't relinquish it to Qt
 //    QApplication::setAttribute(ApplicationAttribute.AA_DontUseNativeMenuBar);
     QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+
+    // Output image format support information
+    bool missingImageSupport[4] = { true, true, true, true };
+    #define JPEG_READ 0
+    #define TIFF_READ 1
+    #define JPEG_WRITE 2
+    #define TIFF_WRITE 3
+
+    qInfo("Image Read Support:");
+    for(const QByteArray& type: QImageReader::supportedImageFormats()) {
+        if (type == "jpeg" || type == "jpg") { missingImageSupport[JPEG_READ] = false; }
+        if (type == "tiff" || type == "tif") { missingImageSupport[TIFF_READ] = false; }
+        qInfo("\t%s", type.data());
+    }
+    qInfo("\n");
+
+    qInfo("Image Write Support:");
+    for(auto type: QImageWriter::supportedImageFormats()) {
+        if (type == "jpeg" || type == "jpg") { missingImageSupport[JPEG_WRITE] = false; }
+        if (type == "tiff" || type == "tif") { missingImageSupport[TIFF_WRITE] = false; }
+        qInfo("\t%s", type.data());
+    }
+    qInfo("\n");
+
+    if (missingImageSupport[0] || missingImageSupport[1] || missingImageSupport[2] || missingImageSupport[3]) {
+        qWarning("Image read/write support missing for at least one major file type.");
+    }
 
     int n = floor(QThreadPool::globalInstance()->maxThreadCount() * 0.75f);
     QThreadPool::globalInstance()->setMaxThreadCount(n);

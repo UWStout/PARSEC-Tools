@@ -68,7 +68,7 @@ public:
     void extractInfoFromFolderName(QString pFolderName);
     int compareTo(const PSSessionData* o) const;
 	
-    void autoSetStatus();
+    void autoSetStatus(bool pOverwriteCustom = false);
     void setCustomStatus(int statusIndex);
     uint64_t getID() const;
 	

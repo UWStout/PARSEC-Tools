@@ -324,7 +324,7 @@ void PSHelperMainWindow::runExposeImagesAction() {
     lExposureDialog->setProjectData(mLastData);
     int result = lExposureDialog->exec();
 
-    if(result == 1) {
+    if(result == QDialog::Accepted) {
         try {
             mRawExposer = new RawImageExposer(*mLastData, *lExposureDialog->getExposureSettings(),
                                               lExposureDialog->getDestinationPath());
@@ -338,6 +338,8 @@ void PSHelperMainWindow::runExposeImagesAction() {
         if(!mRawExposureProgressDialog->wasCanceled()) {
             try {
                 mLastData->getProcessedFileList(true);
+                mLastData->autoSetStatus();
+                mLastData->writeGeneralSettings();
                 mGUI->PSDataTableView->update(mDataModel->index(mLastDataRow, (int)PSSessionData::F_IMAGE_COUNT_REAL));
             } catch (std::exception e) {
                 qWarning() << "Error: exception while rebuilding PS Project Data.";
@@ -345,25 +347,6 @@ void PSHelperMainWindow::runExposeImagesAction() {
             }
         }
     }
-
-//    if(result == 1) {
-//        try {
-//            mRawExposer = new RawImageExposer(mLastData, lExposureDialog.getExposureSettings(),
-//                    lExposureDialog.getDestinationPath());
-//        } catch (Exception e) {}
-
-//        mRawExposureProgressDialog.setFuture(mRawExposer.runProcess());
-//        mRawExposureProgressDialog.exec();
-
-//        if(!mRawExposureProgressDialog.wasCanceled()) {
-//            try {
-//                mLastData.examineProjects(mDataInfoStore);
-//            } catch (IOException e) {
-//                System.err.println("Error: exception while rebuilding PS Project Data.");
-//                System.err.println(e.getMessage());
-//            }
-//        }
-//    }
 }
 
 void PSHelperMainWindow::runQuickPreviewAction()

@@ -301,11 +301,17 @@ inline void PSSessionData::initImageDir(const QDir &pDir, const QStringList& pFi
     }
 }
 
-void PSSessionData::autoSetStatus() {
-    // Pick one of the auto-status phases
-    if(getProcessedImageCount() == 0) {
-        mStatus = PSS_UNPROCESSSED;
-    } else if(describeImageAlignPhase() == "N/A") {
+void PSSessionData::autoSetStatus(bool pOverwriteCustom) {
+    // Avoid overwriting a custom status unless explicity requested
+    if (mStatus > PSS_TEXTURE_GEN_DONE && !pOverwriteCustom) {
+        return;
+    }
+
+    // Start out unknown (which can represent some unusual combination of factors)
+    mStatus = PSS_UNKNOWN;
+
+    // Pick one of the PhotoScan phases
+    if(describeImageAlignPhase() == "N/A") {
         mStatus = PSS_RAW_PROCESSING_DONE;
     } else if(describeDenseCloudPhase() == "N/A") {
         mStatus = PSS_ALIGNMENT_DONE;
@@ -315,6 +321,17 @@ void PSSessionData::autoSetStatus() {
         mStatus = PSS_MODEL_GEN_DONE;
     } else {
         mStatus = PSS_TEXTURE_GEN_DONE;
+    }
+
+    // Zero processed images + some raw images = unprocessed
+    if(getProcessedImageCount() == 0 && getRawImageCount() != 0) {
+        // If we have no project file then this makes sense
+        if (mStatus == PSS_UNKNOWN) { mStatus = PSS_UNPROCESSSED; }
+
+        // If we do have a project file (e.g. status got set to something above)
+        // then something is weird (processed images are expected but missing)
+        // so set the status back to unknown.
+        else { mStatus = PSS_UNKNOWN; }
     }
 }
 
