@@ -162,3 +162,11 @@ QDateTime ImageProcessor::getDateFromMetadata(QFileInfo pImageFile) {
     return QDateTime();
 #endif
 }
+
+bool ImageProcessor::compressTIFF(QString pSourceImage, QString pDestination) {
+    qDebug() << "Compressing .tiff";
+    QImage lImage(pSourceImage);
+    if(lImage.isNull()) { return false; }
+
+    return lImage.save(pDestination, ".tiff", 0);
+}

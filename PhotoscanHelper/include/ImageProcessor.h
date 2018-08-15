@@ -2,16 +2,18 @@
 #define IMAGE_PROCESSOR_H
 
 #include <QFileInfo>
+#include <QImage>
 #include <ExposureSettings.h>
 
 class ImageProcessor {
 public:
     static double mMultipliers[];
     static QFileInfo developRawImage(QFileInfo pImageFile, const ExposureSettings& pSettings, bool pAsPreview);
+    static QDateTime getDateFromMetadata(QFileInfo pImageFile);
+    static bool compressTIFF(QString pSourceImage, QString pDestination);
 
 //    static bool compressTIFF(QFileInfo pImageFile);
 //    static bool copyMetadataTags(QFileInfo pDestinationFile, QFileInfo pSourceFile);
-    static QDateTime getDateFromMetadata(QFileInfo pImageFile);
 //    static void extractMultipliers(LibRaw* pCommandOptions);
 };
 

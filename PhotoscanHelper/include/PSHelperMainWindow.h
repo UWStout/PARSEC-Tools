@@ -39,10 +39,10 @@ public:
 private:
     QMenu* mContextMenu;
     PSSessionData* mLastData;
+    int mLastDataRow;
 
     Ui_PSHelperMainWindow* mGUI;
     PSProjectDataModel* mDataModel;
-    QSettings* mDataInfoStore;
 
     QList<QueueableProcess<QObject>*> mProcessQueue;
 

@@ -10,8 +10,8 @@ class PSSessionData;
 
 class RawImageExposer : public QueueableProcess<QFileInfo> {
 public:
-    RawImageExposer(const PSSessionData &pProject, const ExposureSettings& pSettings, const QFileInfo& pDestination);
-    RawImageExposer(const PSSessionData &pProject, const ExposureSettings& pSettings);
+    RawImageExposer(PSSessionData &pProject, const ExposureSettings& pSettings, const QFileInfo& pDestination);
+    RawImageExposer(PSSessionData &pProject, const ExposureSettings& pSettings);
 
     ~RawImageExposer();
 

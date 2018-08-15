@@ -87,9 +87,9 @@ public:
     int getProcessedImageCount() const;
     int getMaskImageCount() const;
 
-    const QFileInfoList& getRawFileList() const;
-    const QFileInfoList& getProcessedFileList() const;
-    const QFileInfoList& getMaskFileList() const;
+    const QFileInfoList& getRawFileList(bool pForceRecheck = false);
+    const QFileInfoList& getProcessedFileList(bool pForceRecheck = false);
+    const QFileInfoList& getMaskFileList(bool pForceRecheck = false);
 
     void writeGeneralSettings();
     void readGeneralSettings();
@@ -140,14 +140,17 @@ private:
     // INI filename to store all metadata
     QString mSettings;
 
+    // When true, writeGeneralSettings() will always immediately return
+    bool mBlockWritingOfSettings;
+
     // Various folders relevant to the session
     QDir mSessionFolder, mRawFolder, mProcessedFolder, mMasksFolder;
 
     // Information about images
-    mutable int mRawFileCount, mProcessedFileCount, mMaskFileCount;
-    mutable QFileInfoList mRawFileList;
-    mutable QFileInfoList mProcessedFileList;
-    mutable QFileInfoList mMaskFileList;
+    int mRawFileCount, mProcessedFileCount, mMaskFileCount;
+    QFileInfoList mRawFileList;
+    QFileInfoList mProcessedFileList;
+    QFileInfoList mMaskFileList;
 
     // General PS Project information
     uint64_t mID;

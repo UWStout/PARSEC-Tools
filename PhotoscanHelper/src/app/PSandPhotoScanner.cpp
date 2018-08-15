@@ -9,7 +9,7 @@
 #include "PSSessionData.h"
 #include "ImageProcessor.h"
 
-#include "InitializeSessionDialog.h";
+#include "InitializeSessionDialog.h"
 
 const QStringList gIgnoreExceptions = { "_Finished", "_TouchUp", "_TouchedUpPleaseReview" };
 
@@ -17,10 +17,6 @@ PSandPhotoScanner::PSandPhotoScanner(QString pPath, int pMaxRecursionDepth) {
     mRootPath = QFileInfo(pPath);
     mMaxRecursionDepth = pMaxRecursionDepth;
     mDataScanned = false;
-
-    // Open/Create the settings QFileInfo
-    //QString settingsFile = mRootPath.path() + "/PSHelperData.ini";
-    //mPSProjectInfoStore = initInfoStore(settingsFile);
 }
 
 bool PSandPhotoScanner::buildDirectoryList(QFileInfo pRoot) {
@@ -50,26 +46,6 @@ bool PSandPhotoScanner::buildDirectoryList(QFileInfo pRoot) {
     return (!mProjectDirList.empty());
 }
 
-QSettings* PSandPhotoScanner::initInfoStore(QString pSettingsFile) {
-    QSettings* newSettings = new QSettings(pSettingsFile, QSettings::IniFormat);
-
-    // Initialize the ini QFileInfo if it doesn't exist yet
-    QFileInfo settings(pSettingsFile);
-    if(!settings.exists()) {
-        newSettings->beginGroup("Collection");
-        newSettings->setValue("Name", "None");
-        newSettings->setValue("Owner", "None");
-        newSettings->endGroup();
-    }
-
-    return newSettings;
-}
-
-QSettings* PSandPhotoScanner::getInfoStore() const {
-    return mPSProjectInfoStore;
-}
-
-bool PSandPhotoScanner::isReady() const { return mDataScanned; }
 const QVector<PSSessionData*> PSandPhotoScanner::getPSProjectData() const { return mData; }
 
 int PSandPhotoScanner::countUniqueDirs() const {

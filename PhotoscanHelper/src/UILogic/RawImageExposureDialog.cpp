@@ -52,11 +52,10 @@ void RawImageExposureDialog::setEnqueueMode(bool pEnabled) {
     }
 }
 
-void RawImageExposureDialog::setProjectData(PSSessionData* pData, QSettings* pInfoStore) {
+void RawImageExposureDialog::setProjectData(PSSessionData* pData) {
     mProjectData = pData;
-    mProjectInfoStore = pInfoStore;
     try {
-        mGUI->DestinationDirLineEdit->setText(mProjectData->getSessionFolder().canonicalPath());
+        mGUI->DestinationDirLineEdit->setText(mProjectData->getSessionFolder().canonicalPath() + QDir::separator() + "Processed");
     } catch(...) {}
     projectDataChanged();
 }

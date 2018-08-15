@@ -14,6 +14,12 @@ using namespace std;
 #include "PSModelData.h"
 #include "DirLister.h"
 
+// Helper to get a clean last-modified date-time
+inline qint64 lastModified(const QFileInfo& file) {
+    if (!file.exists()) { return 0; }
+    return file.lastModified().toSecsSinceEpoch();
+}
+
 DEFINE_ENUM(Field, FIELDS_ENUM, PSSessionData)
 
 // The number of fields shown for base and extended modes
@@ -84,6 +90,7 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder)
     mSessionFolder = pPSProjectFolder;
     mStatus = PSS_UNKNOWN;
     mRawFileCount = mProcessedFileCount = mMaskFileCount = 0;
+    mBlockWritingOfSettings = false;
 
     mIsInitialized = false;
     mIsSynchronized = false;
@@ -136,7 +143,9 @@ void PSSessionData::convertToPSSession() {
     parseProjectXMLAndCache();
 
     // Ensure the image files lists are initialized and image counts are accurate
+    mBlockWritingOfSettings = true;
     getRawFileList(); getProcessedFileList(); getMaskFileList();
+    mBlockWritingOfSettings = false;
 
     // Update status and create initial INI file
     autoSetStatus();
@@ -345,29 +354,38 @@ int PSSessionData::getRawImageCount() const { return mRawFileCount; }
 int PSSessionData::getProcessedImageCount() const { return mProcessedFileCount; }
 int PSSessionData::getMaskImageCount() const { return mMaskFileCount; }
 
-const QFileInfoList& PSSessionData::getRawFileList() const {
-    if(mRawFileList.length() != mRawFileCount) {
+const QFileInfoList& PSSessionData::getRawFileList(bool pForceRecheck) {
+    if(pForceRecheck || (mRawFileList.length() != mRawFileCount)) {
         mRawFileList = mRawFolder.entryInfoList(gRawFileExtensions,
                            QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        mRawFileCount = mRawFileList.length();
+        if(mRawFileList.length() != mRawFileCount) {
+            mRawFileCount = mRawFileList.length();
+            writeGeneralSettings();
+        }
     }
     return mRawFileList;
 }
 
-const QFileInfoList& PSSessionData::getProcessedFileList() const {
-    if(mProcessedFileList.length() != mProcessedFileCount) {
+const QFileInfoList& PSSessionData::getProcessedFileList(bool pForceRecheck) {
+    if(pForceRecheck || (mProcessedFileList.length() != mProcessedFileCount)) {
         mProcessedFileList = mProcessedFolder.entryInfoList(gPSImageFileExtensions,
                                  QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        mProcessedFileCount = mProcessedFileList.length();
+        if (mProcessedFileList.length() != mProcessedFileCount) {
+            mProcessedFileCount = mProcessedFileList.length();
+            writeGeneralSettings();
+        }
     }
     return mProcessedFileList;
 }
 
-const QFileInfoList& PSSessionData::getMaskFileList() const {
-    if(mMaskFileList.length() != mMaskFileCount) {
+const QFileInfoList& PSSessionData::getMaskFileList(bool pForceRecheck) {
+    if(pForceRecheck || (mMaskFileList.length() != mMaskFileCount)) {
         mMaskFileList = mMasksFolder.entryInfoList(gPSMaskFileExtensions,
                                  QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-        mMaskFileCount = mMaskFileList.length();
+        if(mMaskFileList.length() != mMaskFileCount) {
+            mMaskFileCount = mMaskFileList.length();
+            writeGeneralSettings();
+        }
     }
     return mMaskFileList;
 }
@@ -381,6 +399,8 @@ void PSSessionData::initSettingsFile() {
 }
 
 void PSSessionData::writeGeneralSettings() {
+    if (mBlockWritingOfSettings) { return; }
+
     QSettings lSettings(mSettings, QSettings::IniFormat);
     lSettings.beginGroup("General");
     if (lSettings.status() != QSettings::NoError) {
@@ -442,16 +462,16 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.beginGroup("Synchronization");
     if (hasProject()) {
         lSettings.setValue("ProjectFileName", mPSProjectFile.fileName());
-        lSettings.setValue("ProjectFileTimestamp", mPSProjectFile.lastModified().toSecsSinceEpoch());
+        lSettings.setValue("ProjectFileTimestamp", lastModified(mPSProjectFile));
     } else {
         lSettings.remove("ProjectFileName");
         lSettings.remove("ProjectFileTimestamp");
     }
 
     // Write last modified for each image folder
-    lSettings.setValue("RawTimestamp", QFileInfo(mRawFolder, QString()).lastModified().toSecsSinceEpoch());
-    lSettings.setValue("ProcessedTimestamp", QFileInfo(mProcessedFolder, QString()).lastModified().toSecsSinceEpoch());
-    lSettings.setValue("MasksTimestamp", QFileInfo(mMasksFolder, QString()).lastModified().toSecsSinceEpoch());
+    lSettings.setValue("RawTimestamp", lastModified(QFileInfo(mRawFolder, QString())));
+    lSettings.setValue("ProcessedTimestamp", lastModified(QFileInfo(mProcessedFolder, QString())));
+    lSettings.setValue("MasksTimestamp", lastModified(QFileInfo(mMasksFolder, QString())));
     lSettings.endGroup();
 
     // Update state
@@ -540,16 +560,16 @@ void PSSessionData::checkSynchronization(QString pProjName, QDateTime pProjTime,
     if(pProjName != mPSProjectFile.fileName()) {
         mIsSynchronized = false;
         qWarning() << "Project name is no longer synchronized";
-    } else if (pProjTime.toSecsSinceEpoch() != mPSProjectFile.lastModified().toSecsSinceEpoch()) {
+    } else if (pProjTime.toSecsSinceEpoch() != lastModified(mPSProjectFile)) {
         mIsSynchronized = false;
         qWarning() << "Project QDateTime is no longer synchronized";
-    } else if (pRawTime.toSecsSinceEpoch() != QFileInfo(mRawFolder, QString()).lastModified().toSecsSinceEpoch()) {
+    } else if (pRawTime.toSecsSinceEpoch() != lastModified(QFileInfo(mRawFolder, QString()))) {
         mIsSynchronized = false;
         qWarning() << "RawFiles DateTime is no longer synchronized";
-    } else if (pProcTime.toSecsSinceEpoch() != QFileInfo(mProcessedFolder, QString()).lastModified().toSecsSinceEpoch()) {
+    } else if (pProcTime.toSecsSinceEpoch() != lastModified(QFileInfo(mProcessedFolder, QString()))) {
         mIsSynchronized = false;
         qWarning() << "ProcessedFiles DateTime is no longer synchronized";
-    } else if (pMaskTime.toSecsSinceEpoch() != QFileInfo(mMasksFolder, QString()).lastModified().toSecsSinceEpoch()) {
+    } else if (pMaskTime.toSecsSinceEpoch() != lastModified(QFileInfo(mMasksFolder, QString()))) {
         mIsSynchronized = false;
         qWarning() << "MasksFiles DateTime is no longer synchronized";
     } else {
@@ -566,7 +586,9 @@ void PSSessionData::updateOutOfSyncSession() {
     mRawFileCount = mProcessedFileCount = mMaskFileCount = -1;
 
     // Ensure the image files lists are initialized and image counts are accurate
+    mBlockWritingOfSettings = true;
     getRawFileList(); getProcessedFileList(); getMaskFileList();
+    mBlockWritingOfSettings = false;
 
     writeGeneralSettings();
 }

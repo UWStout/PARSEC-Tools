@@ -27,7 +27,7 @@ public:
     ExposureSettings* getExposureSettings() const;
 
     void setEnqueueMode(bool pEnabled);
-    void setProjectData(PSSessionData *pData, QSettings *pInfoStore);
+    void setProjectData(PSSessionData *pData);
     void applySettings(const ExposureSettings* pSettings);
     void setWBCustomEnabled(bool pEnable);
 
@@ -43,7 +43,6 @@ private:
     PSSessionData* mProjectData;
     QPixmap mPreviewImage;
     QFutureWatcher<QFileInfo>* mPreviewFileWatcher;
-    QSettings* mProjectInfoStore;
     QTemporaryFile mTempFile;
 
     ExposureSettings* mDefaultSettings;

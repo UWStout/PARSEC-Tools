@@ -27,14 +27,14 @@
 QFileInfo RawImageExposer::msDestination;
 ExposureSettings* RawImageExposer::msSettings = nullptr;
 
-RawImageExposer::RawImageExposer(const PSSessionData& pProject, const ExposureSettings &pSettings, const QFileInfo &pDestination) :
+RawImageExposer::RawImageExposer(PSSessionData& pProject, const ExposureSettings &pSettings, const QFileInfo &pDestination) :
     mProjectName(pProject.getName()) {
     updateSettings(pSettings.makeIndependentlyConsistent());
     msDestination = pDestination;
     mRawFiles = pProject.getRawFileList();
 }
 
-RawImageExposer::RawImageExposer(const PSSessionData& pProject, const ExposureSettings &pSettings) :
+RawImageExposer::RawImageExposer(PSSessionData& pProject, const ExposureSettings &pSettings) :
     mProjectName(pProject.getName()) {
     updateSettings(pSettings.makeIndependentlyConsistent());
     msDestination = QFileInfo();
@@ -59,22 +59,22 @@ QFileInfo RawImageExposer::map(QFileInfo pRawFile) {
     try {
         lDevelopedImage = ImageProcessor::developRawImage(pRawFile, *msSettings, false);
 //        QThread::msleep(100);
-        //ImageProcessor::compressTIFF(lDevelopedImage);
+        ImageProcessor::compressTIFF(lDevelopedImage.filePath(), msDestination.filePath() + QDir::separator() + lDevelopedImage.fileName());
 //        QThread::msleep(100);
         //ImageProcessor::copyMetadataTags(lDevelopedImage, pRawFile);
     } catch (std::exception e) {
         qWarning() << e.what();
     }
 
-    if(msDestination.filePath() != "" && lDevelopedImage.filePath() != "") {
-        try {
-            qDebug() << QFile::rename(lDevelopedImage.filePath(), msDestination.filePath() + QDir::separator() + lDevelopedImage.fileName());
-            return lDevelopedImage;
-        } catch (std::exception e) {
-            qWarning() << "Error: could not move developed image.";
-            qWarning() << e.what();
-        }
-    }
+//    if(msDestination.filePath() != "" && lDevelopedImage.filePath() != "") {
+//        try {
+//            qDebug() << QFile::rename(lDevelopedImage.filePath(), msDestination.filePath() + QDir::separator() + lDevelopedImage.fileName());
+//            return lDevelopedImage;
+//        } catch (std::exception e) {
+//            qWarning() << "Error: could not move developed image.";
+//            qWarning() << e.what();
+//        }
+//    }
 
     return lDevelopedImage;
 }

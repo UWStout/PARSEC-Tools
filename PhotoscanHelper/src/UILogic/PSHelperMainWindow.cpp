@@ -65,7 +65,7 @@ PSHelperMainWindow::~PSHelperMainWindow() {
 
 void PSHelperMainWindow::setModelData(PSandPhotoScanner* pScanner) {
     mDataModel = new PSProjectDataModel(pScanner->getPSProjectData(), this);
-    mDataInfoStore = pScanner->getInfoStore();
+    //mDataInfoStore = pScanner->getInfoStore();
 
     mGUI->PSDataTableView->setModel(mDataModel);
     mGUI->PSDataTableView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -104,6 +104,7 @@ void PSHelperMainWindow::setModelData(PSandPhotoScanner* pScanner) {
 void PSHelperMainWindow::showContextMenu(const QPoint& pos) {
     QModelIndex lIndex = mGUI->PSDataTableView->indexAt(pos);
     mLastData = mDataModel->getDataAtIndex(lIndex.row());
+    mLastDataRow = lIndex.row();
     mContextMenu->popup(QCursor::pos());
 }
 
@@ -320,7 +321,7 @@ void PSHelperMainWindow::runExposeImagesAction() {
     if(mLastData == nullptr) return;
 
     RawImageExposureDialog* lExposureDialog = new RawImageExposureDialog(this);
-    lExposureDialog->setProjectData(mLastData, mDataInfoStore);
+    lExposureDialog->setProjectData(mLastData);
     int result = lExposureDialog->exec();
 
     if(result == 1) {
@@ -336,7 +337,8 @@ void PSHelperMainWindow::runExposeImagesAction() {
 
         if(!mRawExposureProgressDialog->wasCanceled()) {
             try {
-                mLastData->examineProject();
+                mLastData->getProcessedFileList(true);
+                mGUI->PSDataTableView->update(mDataModel->index(mLastDataRow, (int)PSSessionData::F_IMAGE_COUNT_REAL));
             } catch (std::exception e) {
                 qWarning() << "Error: exception while rebuilding PS Project Data.";
                 qWarning() << e.what();
@@ -384,7 +386,7 @@ void PSHelperMainWindow::queueExposeImagesAction() {
     if(mLastData == nullptr) return;
     RawImageExposureDialog* lExposureDialog = new RawImageExposureDialog(this);
     lExposureDialog->setEnqueueMode(true);
-    lExposureDialog->setProjectData(mLastData, mDataInfoStore);
+    lExposureDialog->setProjectData(mLastData);
     int result = lExposureDialog->exec();
 
     if(result == QDialog::Accepted) {
