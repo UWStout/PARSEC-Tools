@@ -33,6 +33,7 @@ public:
     virtual ~PSHelperMainWindow();
 
     void setModelData(PSandPhotoScanner* pScanner);
+    void addModelData(PSandPhotoScanner* pScanner);
     void showContextMenu(const QPoint &pos);
     bool validateSettings();
 
@@ -42,6 +43,7 @@ private:
     int mLastDataRow;
 
     Ui_PSHelperMainWindow* mGUI;
+    QString mCollectionDir;
     PSProjectDataModel* mDataModel;
 
     QList<QueueableProcess<QObject>*> mProcessQueue;
@@ -84,6 +86,8 @@ private slots:
     void queueExposeImagesAction();
     void queuePhotoScanPhase1Action() {}
     void queuePhotoScanPhase2Action() {}
+
+    void scanForNewSessions();
 };
 
 #endif

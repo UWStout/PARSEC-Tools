@@ -51,6 +51,8 @@ public:
     // Prepare string values to be written to an RFC 4180 CSV standard file
     QString encodeForCSV(QString input);
     bool outputToCSVFile(QString destFilename);
+
+    QVector<PSSessionData*> getData();
 };
 
 #endif

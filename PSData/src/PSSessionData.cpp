@@ -89,7 +89,7 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder)
     // Fill everything with default values
     mSessionFolder = pPSProjectFolder;
     mStatus = PSS_UNKNOWN;
-    mRawFileCount = mProcessedFileCount = mMaskFileCount = 0;
+    mRawFileCount = mProcessedFileCount = mMaskFileCount = -1;
     mBlockWritingOfSettings = false;
 
     mIsInitialized = false;
@@ -104,20 +104,16 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder)
 
 PSSessionData::~PSSessionData() {}
 
+bool PSSessionData::iniFileExists() {
+    return QFileInfo(mSettings).exists();
+}
+
 void PSSessionData::examineProject() {
-    // Build folder names
-    mRawFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sRawFolderName);
-    mProcessedFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sProcessedFolderName);
-    mMasksFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sMasksFolderName);
-
-    // Reset image counts
-    mRawFileCount = mProcessedFileCount = mMaskFileCount = -1;
-
     // Preliminary examination of directory
     examineDirectory(mSessionFolder);
 
     // Is this an external session folder that needs to be fully examined (no INI file yet)
-    if (!QFileInfo(mSettings).exists()) {
+    if (!iniFileExists()) {
         mIsInitialized = false;
         sNeedsApproval.append(this);
     } else {
@@ -131,10 +127,24 @@ void PSSessionData::examineProject() {
 }
 
 void PSSessionData::convertToPSSession() {
+    // Build folder names
+    QDir lRawFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sRawFolderName);
+    QDir lProcessedFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sProcessedFolderName);
+    QDir lMasksFolder = QDir(mSessionFolder.absolutePath() + QDir::separator() + sMasksFolderName);
+
+    convertToPSSession(lRawFolder, lProcessedFolder, lMasksFolder);
+}
+
+void PSSessionData::convertToPSSession(const QDir& pRawFolder, const QDir &pProcessedFolder, const QDir &pMasksFolder) {
+    // Build folder names
+    mRawFolder = pRawFolder;
+    mProcessedFolder = pProcessedFolder;
+    mMasksFolder = pMasksFolder;
+
     // Ensure the image folders exist and files are copied into them
-    initImageDir(mMasksFolder, gPSMaskFileExtensions, "Masks");
-    initImageDir(mRawFolder, gRawFileExtensions, "Raw");
-    initImageDir(mProcessedFolder, gPSImageFileExtensions, "Processed");
+    initImageDir(mMasksFolder, gPSMaskFileExtensions);
+    initImageDir(mRawFolder, gRawFileExtensions);
+    initImageDir(mProcessedFolder, gPSImageFileExtensions);
 
     // Try to guess some info from the folder name
     extractInfoFromFolderName(mSessionFolder.dirName());
@@ -150,6 +160,7 @@ void PSSessionData::convertToPSSession() {
     // Update status and create initial INI file
     autoSetStatus();
     writeGeneralSettings();
+    mIsInitialized = true;
 }
 
 void PSSessionData::setExplicitlyIgnored(bool pIgnore) {
@@ -278,12 +289,12 @@ bool PSSessionData::examineDirectory(QDir pDirToExamine) {
     return true;
 }
 
-inline void PSSessionData::initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName) {
+inline void PSSessionData::initImageDir(const QDir &pDir, const QStringList& pFilter) {
     // Check to see if directory exists
     if(!pDir.exists()) {
         // If not, try to create that directory
-        QString lNewDir = mSessionFolder.absolutePath() + QDir::separator() + pFolderName;
-        if (!mSessionFolder.mkdir(pFolderName) || !pDir.exists()) {
+        QString lNewDir = pDir.absolutePath();
+        if (!mSessionFolder.mkpath(lNewDir) || !pDir.exists()) {
             qDebug("Failed to create directory %s", lNewDir.toLocal8Bit().data());
         }
     }
@@ -452,6 +463,9 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.setValue("RawImageCount", mRawFileCount);
     lSettings.setValue("ProcessedImageCount", mProcessedFileCount);
     lSettings.setValue("MaskImageCount", mMaskFileCount);
+    lSettings.setValue("RawFolder", mSessionFolder.relativeFilePath(mRawFolder.absolutePath()));
+    lSettings.setValue("ProcessedFolder", mSessionFolder.relativeFilePath(mProcessedFolder.absolutePath()));
+    lSettings.setValue("MasksFolder", mSessionFolder.relativeFilePath(mMasksFolder.absolutePath()));
     lSettings.endGroup();
 
     if (hasProject()) {
@@ -533,6 +547,14 @@ void PSSessionData::readGeneralSettings() {
     mRawFileCount = lSettings.value("RawImageCount", -1).toInt();
     mProcessedFileCount = lSettings.value("ProcessedImageCount", -1).toInt();
     mMaskFileCount = lSettings.value("MaskImageCount", -1).toInt();
+    QString lRelRawFolderName = lSettings.value("RawFolder", sRawFolderName).toString();
+    QString lRelProcessedFolderName = lSettings.value("ProcessedFolder", sProcessedFolderName).toString();
+    QString lRelMasksFolderName = lSettings.value("MasksFolder", sMasksFolderName).toString();
+
+    mRawFolder.setPath(mSessionFolder.absolutePath() + QDir::separator() + lRelRawFolderName);
+    mProcessedFolder.setPath(mSessionFolder.absolutePath() + QDir::separator() + lRelProcessedFolderName);
+    mMasksFolder.setPath(mSessionFolder.absolutePath() + QDir::separator() + lRelMasksFolderName);
+
     lSettings.endGroup();
 
     // Read the chunk data
@@ -768,4 +790,8 @@ int PSSessionData::getChunkCount() const {
 
 QVector<PSSessionData*> PSSessionData::getNeedsApproval() {
     return sNeedsApproval;
+}
+
+void PSSessionData::clearNeedsApproval() {
+    sNeedsApproval.clear();
 }

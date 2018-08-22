@@ -59,6 +59,7 @@ public:
     static void setSortBy(Field pNewSortBy);
 
     void convertToPSSession();
+    void convertToPSSession(const QDir &pRawFolder, const QDir &pProcessedFolder, const QDir &pMasksFolder);
     void updateOutOfSyncSession();
 
     bool isInitialized() const { return mIsInitialized; }
@@ -120,11 +121,14 @@ public:
     int getChunkCount() const;
 
     static QVector<PSSessionData*> getNeedsApproval();
+    static void clearNeedsApproval();
     void setExplicitlyIgnored(bool pIgnore);
     bool getExplicitlyIgnored();
 
+    bool iniFileExists();
+
 private:
-    void initImageDir(const QDir &pDir, const QStringList& pFilter, const QString& pFolderName);
+    void initImageDir(const QDir &pDir, const QStringList& pFilter);
     void initSettingsFile();
 
     bool examineDirectory(QDir pDirToExamine);

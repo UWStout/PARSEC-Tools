@@ -325,3 +325,7 @@ bool PSProjectDataModel::outputToCSVFile(QString destFilename) {
     outFile.close();
     return true;
 }
+
+QVector<PSSessionData*> PSProjectDataModel::getData() {
+    return mData;
+}

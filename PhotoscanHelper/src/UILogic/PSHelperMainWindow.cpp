@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include <QProcess>
+#include <QProgressDialog>
 
 #include "PSHelperMainWindow.h"
 
@@ -42,6 +43,8 @@ PSHelperMainWindow::PSHelperMainWindow(QWidget* parent) : QMainWindow(parent) {
     mContextMenu->addAction("Queue For Expose Raw Images", this, &PSHelperMainWindow::queueExposeImagesAction);
     mContextMenu->addAction("Queue For PhotoScan Phase 1", this, &PSHelperMainWindow::queuePhotoScanPhase1Action);
     mContextMenu->addAction("Queue For PhotoScan Phase 2", this, &PSHelperMainWindow::queuePhotoScanPhase2Action);
+    mContextMenu->addSeparator();
+    mContextMenu->addAction("Scan For New Sessions", this, &PSHelperMainWindow::scanForNewSessions);
 
     mGUI = new Ui_PSHelperMainWindow();
     mGUI->setupUi(this);
@@ -64,8 +67,53 @@ PSHelperMainWindow::~PSHelperMainWindow() {
 }
 
 void PSHelperMainWindow::setModelData(PSandPhotoScanner* pScanner) {
+    mCollectionDir = pScanner->getRootPath();
     mDataModel = new PSProjectDataModel(pScanner->getPSProjectData(), this);
     //mDataInfoStore = pScanner->getInfoStore();
+
+    mGUI->PSDataTableView->setModel(mDataModel);
+    mGUI->PSDataTableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(
+        mGUI->PSDataTableView, &QTableView::customContextMenuRequested,
+        this, &PSHelperMainWindow::showContextMenu
+    );
+
+    QSettings settings;
+    settings.beginGroup("ViewOptions");
+    int extended = settings.value("ExtendedInfo", "0").toInt();
+    int colors = settings.value("ColorsForStatus", "0").toInt();
+    settings.endGroup();
+
+    if(extended == 1) {
+        mGUI->action_ShowExtendedInfo->setChecked(true);
+        mDataModel->setExtendedColsEnabled(true);
+    }
+
+    if(colors == 1) {
+        mGUI->action_ShowColorsForStatus->setChecked(true);
+        mDataModel->setShowColorForStatus(true);
+    }
+
+
+    mGUI->DataInfoLabel->setText(
+        QString::asprintf("%d projects (%d unique), %d w/o PSZ fies, %d w/o image align, %d w/o dense cloud, %d w/o model",
+        pScanner->getPSProjectData().size(), pScanner->countUniqueDirs(), pScanner->countDirsWithoutProjects(),
+        pScanner->countDirsWithoutImageAlign(), pScanner->countDirsWithoutDenseCloud(),
+        pScanner->countDirsWithoutModels())
+    );
+    mGUI->PSDataTableView->resizeColumnsToContents();
+    mGUI->PSDataTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+}
+
+void PSHelperMainWindow::addModelData(PSandPhotoScanner *pScanner) {
+    mCollectionDir = pScanner->getRootPath();
+
+    QVector<PSSessionData*> lData = mDataModel->getData();
+    for(int i = 0; i < pScanner->getPSProjectData().length(); i++) {
+        lData.append(pScanner->getPSProjectData()[i]);
+    }
+
+    mDataModel = new PSProjectDataModel(lData, this);
 
     mGUI->PSDataTableView->setModel(mDataModel);
     mGUI->PSDataTableView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -380,4 +428,77 @@ void PSHelperMainWindow::queueExposeImagesAction() {
 //            QListWidgetItem lNewItem = new QListWidgetItem(mRawExposer->describeProcess(), mGUI->QueueListWidget);
 //        } catch (std::exception& e) {}
     }
+}
+
+void PSHelperMainWindow::scanForNewSessions() {
+    // Clear NeedsApproval vector
+    PSSessionData::clearNeedsApproval();
+
+    // Prepare a progress dialog
+    QProgressDialog* myProgressDiag = new QProgressDialog("Scanning Files/Folders", "Cancel", 0, 0);
+    myProgressDiag->setWindowModality(Qt::WindowModal);
+    myProgressDiag->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+
+    // Scan the given directory for PSZ files and images
+    PSandPhotoScanner* lScanner = nullptr;
+    try {
+        // Use a future watcher to signal the progress dialog to close
+        QFutureWatcher<PSSessionData*>* lWatcher = new QFutureWatcher<PSSessionData*>();
+        QObject::connect(lWatcher, &QFutureWatcher<PSSessionData*>::progressRangeChanged,
+                myProgressDiag, &QProgressDialog::setRange);
+        QObject::connect(lWatcher, &QFutureWatcher<PSSessionData*>::progressValueChanged,
+                myProgressDiag, &QProgressDialog::setValue);
+        QObject::connect(lWatcher, &QFutureWatcher<PSSessionData*>::finished,
+                myProgressDiag, &QProgressDialog::reset);
+        QObject::connect(myProgressDiag, &QProgressDialog::canceled,
+                lWatcher, &QFutureWatcher<PSSessionData*>::cancel);
+
+        // Do the scanning in a separate thread with a future signal
+        lScanner = new PSandPhotoScanner(mCollectionDir, 0);
+        lWatcher->setFuture(lScanner->startScanParallel());
+
+        // Run dialog in a locally blocking event loop
+        myProgressDiag->exec();
+        if(lWatcher->isCanceled()) {
+            exit(1);
+        }
+
+        lWatcher->waitForFinished();
+        lScanner->finishScanParallelForUninitSessions();
+
+        QFutureWatcher<void>* lWatcher2 = new QFutureWatcher<void>();
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::progressRangeChanged,
+                myProgressDiag, &QProgressDialog::setRange);
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::progressValueChanged,
+                myProgressDiag, &QProgressDialog::setValue);
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::finished,
+                myProgressDiag, &QProgressDialog::reset);
+        QObject::connect(lWatcher2, &QFutureWatcher<void>::canceled,
+                myProgressDiag, &QProgressDialog::cancel);
+
+        lWatcher2->setFuture(lScanner->startSyncAndInitParallel());
+
+        myProgressDiag->exec();
+        if(lWatcher2->isCanceled()) {
+            exit(1);
+        }
+
+        lWatcher2->waitForFinished();
+        lScanner->finishSyncAndInitParallel();
+
+        delete lWatcher;
+        delete lWatcher2;
+        delete myProgressDiag;
+    } catch(const std::exception& e) {
+
+        QMessageBox::critical(nullptr, "Error Scanning Files", "Error: failed to scan '" + mCollectionDir + "'.");
+
+        // Something went wrong scanning the given file/folder
+        qWarning("Error: failed to scan '%s'.", mCollectionDir.toLocal8Bit().data());
+        qWarning("Exception: %s", e.what());
+        exit(1);
+    }
+
+    // Setup the main GUI window
+    addModelData(lScanner);
 }

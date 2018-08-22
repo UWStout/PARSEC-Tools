@@ -13,7 +13,7 @@
 
 const QStringList gIgnoreExceptions = { "_Finished", "_TouchUp", "_TouchedUpPleaseReview" };
 
-PSandPhotoScanner::PSandPhotoScanner(QString pPath, int pMaxRecursionDepth) {
+PSandPhotoScanner::PSandPhotoScanner(const QString& pPath, int pMaxRecursionDepth) {
     mRootPath = QFileInfo(pPath);
     mMaxRecursionDepth = pMaxRecursionDepth;
     mDataScanned = false;
@@ -155,6 +155,54 @@ bool greaterThanPSSD(PSSessionData* A, PSSessionData* B) {
 void PSandPhotoScanner::finishScanParallel() {
     for(PSSessionData* lResult : mFutureScanResults) {
         if (lResult != nullptr) {
+            mData.append(lResult);
+        }
+    }
+
+    int length = PSSessionData::getNeedsApproval().length();
+    if(length > 0) {
+        int lRet;
+        bool lApplyToAll = false;
+        for(int i = 0; i < length; i++) {
+            if(!lApplyToAll) {
+                InitializeSessionDialog lInitSession;
+                lInitSession.setTitle(PSSessionData::getNeedsApproval()[i]->getSessionFolder().dirName()+" is an uninitialized folder");
+                lRet = lInitSession.exec();
+                lApplyToAll = lInitSession.getApplyToAll();
+            }
+
+            switch (lRet) {
+                case QDialogButtonBox::Yes:
+//                    PSSessionData::getNeedsApproval()[i]->convertToPSSession();
+                    PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(false);
+                    break;
+
+                case QDialogButtonBox::Ignore:
+                    PSSessionData::getNeedsApproval()[i]->setExplicitlyIgnored(true);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    // Remove ignored session
+    QVector<PSSessionData*> lRemove;
+    for(PSSessionData* data : mData) {
+        if (data->getExplicitlyIgnored()) {
+            lRemove.push_back(data);
+        }
+    }
+
+    for(PSSessionData* data : lRemove) {
+        mData.removeOne(data);
+    }
+}
+
+void PSandPhotoScanner::finishScanParallelForUninitSessions() {
+    for(PSSessionData* lResult : mFutureScanResults) {
+        if (lResult != nullptr && !lResult->iniFileExists()) {
             mData.append(lResult);
         }
     }

@@ -11,8 +11,10 @@ class QSettings;
 
 class PSandPhotoScanner {
 public:
-    PSandPhotoScanner(QString pPath, int pMaxRecursionDepth);
+    PSandPhotoScanner(const QString &pPath, int pMaxRecursionDepth);
     const QVector<PSSessionData*> getPSProjectData() const;
+
+    const QString getRootPath() const { return mRootPath.absoluteFilePath(); }
 
     int countUniqueDirs() const;
     int countDirsWithoutProjects() const;
@@ -22,6 +24,7 @@ public:
 
     QFuture<PSSessionData*> startScanParallel();
     void finishScanParallel();
+    void finishScanParallelForUninitSessions();
 
     QFuture<void> startSyncAndInitParallel();
     void finishSyncAndInitParallel();
