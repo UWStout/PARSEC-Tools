@@ -55,7 +55,9 @@ SOURCES += \
     src/UILogic/GLModelWidget.cpp \
     src/UILogic/QtModelViewerWidget.cpp \
     src/UILogic/QtTrackball.cpp \
-    src/UILogic/InitializeSessionDialog.cpp
+    src/UILogic/InitializeSessionDialog.cpp \
+    src/UILogic/CreateNewSessionDialog.cpp \
+    src/UILogic/CaptureSessionDialog.cpp
 
 HEADERS += \
     include/PSandPhotoScanner.h \
@@ -79,7 +81,9 @@ HEADERS += \
     include/GLModelWidget.h \
     include/QtModelViewerWidget.h \
     include/QtTrackball.h \
-    include/InitializeSessionDialog.h
+    include/InitializeSessionDialog.h \
+    include/CreateNewSessionDialog.h \
+    include/CaptureSessionDialog.h
 
 FORMS += \
     forms/AboutDialog.ui \
@@ -96,7 +100,9 @@ FORMS += \
     forms/InteractivePhotoScanDialog.ui \
     forms/QuickPreviewDialog.ui \
     forms/ScriptedPhotoScanDialog.ui \
-    forms/InitializeSessionDialog.ui
+    forms/InitializeSessionDialog.ui \
+    forms/CreateNewSessionDialog.ui \
+    forms/CaptureSessionDialog.ui
 
 RESOURCES += \
     PSHelper.qrc

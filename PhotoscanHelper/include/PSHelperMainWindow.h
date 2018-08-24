@@ -34,6 +34,7 @@ public:
 
     void setModelData(PSandPhotoScanner* pScanner);
     void addModelData(PSandPhotoScanner* pScanner);
+    void addNewSession(PSSessionData* pSession);
     void showContextMenu(const QPoint &pos);
     bool validateSettings();
 
@@ -55,6 +56,8 @@ private:
 
     // Default search paths for im4Java
     static const QString WINDOWS_PATH, MAC_UNIX_PATH;
+
+    void updateProjectDataModel();
 
     void writeSettings();
     void readSettings();
@@ -87,6 +90,7 @@ private slots:
     void queuePhotoScanPhase1Action() {}
     void queuePhotoScanPhase2Action() {}
 
+    void createNewSession();
     void scanForNewSessions();
 };
 

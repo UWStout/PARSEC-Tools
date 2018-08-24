@@ -30,8 +30,16 @@ public:
     PSProjectDataModel(QVector<PSSessionData*> data, QObject* parent);
     ~PSProjectDataModel();
 
+    void appendNewSession(PSSessionData* pSession);
+
     void setExtendedColsEnabled(bool pExtendedColsEnabled);
     void setShowColorForStatus(bool pShowColorForStatus);
+
+    int countUniqueDirs() const;
+    int countDirsWithoutProjects() const;
+    int countDirsWithoutImageAlign() const;
+    int countDirsWithoutDenseCloud() const;
+    int countDirsWithoutModels() const;
 
     QModelIndex parent(const QModelIndex& child) const;
     Qt::ItemFlags flags(const QModelIndex& index) const;

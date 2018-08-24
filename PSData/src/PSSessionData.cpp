@@ -94,6 +94,7 @@ PSSessionData::PSSessionData(QDir pPSProjectFolder)
 
     mIsInitialized = false;
     mIsSynchronized = false;
+    mExplicitlyIgnored = false;
 
     mName = "";
     mNotes = QStringList();
@@ -136,6 +137,8 @@ void PSSessionData::convertToPSSession() {
 }
 
 void PSSessionData::convertToPSSession(const QDir& pRawFolder, const QDir &pProcessedFolder, const QDir &pMasksFolder) {
+    qDebug() << "converting to session";
+
     // Build folder names
     mRawFolder = pRawFolder;
     mProcessedFolder = pProcessedFolder;

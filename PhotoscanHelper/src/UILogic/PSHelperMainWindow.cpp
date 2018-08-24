@@ -26,6 +26,8 @@
 #include "QueueableProcess.h"
 #include "CancelableModalProgressDialog.h"
 #include "QuickPreviewDialog.h"
+#include "CreateNewSessionDialog.h"
+#include "CaptureSessionDialog.h"
 
 const QString PSHelperMainWindow::WINDOWS_PATH = "C:\\Windows;C:\\Program Files\\ImageMagick;C:\\Program Files\\GraphicsMagick;C:\\Program Files\\exiftool;C:\\Program Files\\dcraw";
 const QString PSHelperMainWindow::MAC_UNIX_PATH = "/usr/bin:/usr/local/bin:/opt/local/bin";
@@ -44,6 +46,7 @@ PSHelperMainWindow::PSHelperMainWindow(QWidget* parent) : QMainWindow(parent) {
     mContextMenu->addAction("Queue For PhotoScan Phase 1", this, &PSHelperMainWindow::queuePhotoScanPhase1Action);
     mContextMenu->addAction("Queue For PhotoScan Phase 2", this, &PSHelperMainWindow::queuePhotoScanPhase2Action);
     mContextMenu->addSeparator();
+    mContextMenu->addAction("Create New Session", this, &PSHelperMainWindow::createNewSession);
     mContextMenu->addAction("Scan For New Sessions", this, &PSHelperMainWindow::scanForNewSessions);
 
     mGUI = new Ui_PSHelperMainWindow();
@@ -71,38 +74,7 @@ void PSHelperMainWindow::setModelData(PSandPhotoScanner* pScanner) {
     mDataModel = new PSProjectDataModel(pScanner->getPSProjectData(), this);
     //mDataInfoStore = pScanner->getInfoStore();
 
-    mGUI->PSDataTableView->setModel(mDataModel);
-    mGUI->PSDataTableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(
-        mGUI->PSDataTableView, &QTableView::customContextMenuRequested,
-        this, &PSHelperMainWindow::showContextMenu
-    );
-
-    QSettings settings;
-    settings.beginGroup("ViewOptions");
-    int extended = settings.value("ExtendedInfo", "0").toInt();
-    int colors = settings.value("ColorsForStatus", "0").toInt();
-    settings.endGroup();
-
-    if(extended == 1) {
-        mGUI->action_ShowExtendedInfo->setChecked(true);
-        mDataModel->setExtendedColsEnabled(true);
-    }
-
-    if(colors == 1) {
-        mGUI->action_ShowColorsForStatus->setChecked(true);
-        mDataModel->setShowColorForStatus(true);
-    }
-
-
-    mGUI->DataInfoLabel->setText(
-        QString::asprintf("%d projects (%d unique), %d w/o PSZ fies, %d w/o image align, %d w/o dense cloud, %d w/o model",
-        pScanner->getPSProjectData().size(), pScanner->countUniqueDirs(), pScanner->countDirsWithoutProjects(),
-        pScanner->countDirsWithoutImageAlign(), pScanner->countDirsWithoutDenseCloud(),
-        pScanner->countDirsWithoutModels())
-    );
-    mGUI->PSDataTableView->resizeColumnsToContents();
-    mGUI->PSDataTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    updateProjectDataModel();
 }
 
 void PSHelperMainWindow::addModelData(PSandPhotoScanner *pScanner) {
@@ -115,6 +87,16 @@ void PSHelperMainWindow::addModelData(PSandPhotoScanner *pScanner) {
 
     mDataModel = new PSProjectDataModel(lData, this);
 
+    updateProjectDataModel();
+}
+
+void PSHelperMainWindow::addNewSession(PSSessionData* pSession) {
+    mDataModel->appendNewSession(pSession);
+
+    updateProjectDataModel();
+}
+
+void PSHelperMainWindow::updateProjectDataModel() {
     mGUI->PSDataTableView->setModel(mDataModel);
     mGUI->PSDataTableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(
@@ -141,9 +123,9 @@ void PSHelperMainWindow::addModelData(PSandPhotoScanner *pScanner) {
 
     mGUI->DataInfoLabel->setText(
         QString::asprintf("%d projects (%d unique), %d w/o PSZ fies, %d w/o image align, %d w/o dense cloud, %d w/o model",
-        pScanner->getPSProjectData().size(), pScanner->countUniqueDirs(), pScanner->countDirsWithoutProjects(),
-        pScanner->countDirsWithoutImageAlign(), pScanner->countDirsWithoutDenseCloud(),
-        pScanner->countDirsWithoutModels())
+        mDataModel->getData().size(), mDataModel->countUniqueDirs(), mDataModel->countDirsWithoutProjects(),
+        mDataModel->countDirsWithoutImageAlign(), mDataModel->countDirsWithoutDenseCloud(),
+        mDataModel->countDirsWithoutModels())
     );
     mGUI->PSDataTableView->resizeColumnsToContents();
     mGUI->PSDataTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -427,6 +409,40 @@ void PSHelperMainWindow::queueExposeImagesAction() {
 //            mProcessQueue.add(mRawExposer);
 //            QListWidgetItem lNewItem = new QListWidgetItem(mRawExposer->describeProcess(), mGUI->QueueListWidget);
 //        } catch (std::exception& e) {}
+    }
+}
+
+void PSHelperMainWindow::createNewSession() {
+    CreateNewSessionDialog lNewSessionDialog;
+    int lRet = lNewSessionDialog.exec();
+    QDir lCollectionDir(mCollectionDir);
+    PSSessionData* lNewSession;
+
+    switch (lRet) {
+    case QDialog::Accepted:
+        lCollectionDir.mkdir(lNewSessionDialog.getFolderName());
+        lNewSession = new PSSessionData(QDir(mCollectionDir + QDir::separator() + lNewSessionDialog.getFolderName()));
+        lNewSession->convertToPSSession();
+        addNewSession(lNewSession);
+        break;
+    case QDialog::Rejected:
+        return;
+        break;
+    default:
+        break;
+    }
+
+    CaptureSessionDialog lCaptureSessionDialog(lNewSession);
+    lRet = lCaptureSessionDialog.exec();
+
+    switch (lRet) {
+    case QDialog::Accepted:
+        lNewSession->updateOutOfSyncSession();
+        break;
+    case QDialog::Rejected:
+        break;
+    default:
+        break;
     }
 }
 

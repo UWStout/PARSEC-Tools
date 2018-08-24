@@ -6,6 +6,7 @@
 #include <QColor>
 #include <QBrush>
 #include <QTextStream>
+#include <QSet>
 
 // Colors used for indicating status
 const QColor PSProjectDataModel::doneColor = QColor(0x99FF99);		// Light Green
@@ -23,6 +24,10 @@ PSProjectDataModel::PSProjectDataModel(QVector<PSSessionData*> data, QObject* pa
 
 PSProjectDataModel::~PSProjectDataModel() {}
 
+void PSProjectDataModel::appendNewSession(PSSessionData *pSession) {
+    mData.append(pSession);
+}
+
 void PSProjectDataModel::setExtendedColsEnabled(bool pExtendedColsEnabled) {
     emit layoutAboutToBeChanged();
     mExtendedColsEnabled = pExtendedColsEnabled;
@@ -33,6 +38,62 @@ void PSProjectDataModel::setShowColorForStatus(bool pShowColorForStatus) {
     emit layoutAboutToBeChanged();
     mShowColorForStatus = pShowColorForStatus;
     emit layoutChanged();
+}
+
+int PSProjectDataModel::countUniqueDirs() const {
+    QSet<QString> lDirSet;
+    for(const PSSessionData* lData : mData) {
+        QString lPath = lData->getSessionFolder().path();
+        if (!lDirSet.contains(lPath)) {
+            lDirSet.insert(lPath);
+        }
+    }
+
+    return lDirSet.size();
+}
+
+int PSProjectDataModel::countDirsWithoutProjects() const {
+    int count = 0;
+    for(PSSessionData* lProj : mData) {
+        QFileInfo lFile = lProj->getPSProjectFile();
+        if(lFile.filePath() == "") { count++; }
+    }
+
+    return count;
+}
+
+int PSProjectDataModel::countDirsWithoutImageAlign() const {
+    int count = 0;
+    for(const PSSessionData* lData : mData) {
+        if(lData->describeImageAlignPhase() == "N/A") {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int PSProjectDataModel::countDirsWithoutDenseCloud() const {
+
+    int count = 0;
+    for(const PSSessionData* lData : mData) {
+        if(lData->describeDenseCloudPhase() == "N/A") {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int PSProjectDataModel::countDirsWithoutModels() const {
+    int count = 0;
+    for(const PSSessionData* lData : mData) {
+        if(lData->describeModelGenPhase() == "N/A") {
+            count++;
+        }
+    }
+
+    return count;
 }
 
 // Our model is not hierarchical

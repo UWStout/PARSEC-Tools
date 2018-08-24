@@ -92,6 +92,8 @@ public:
     const QFileInfoList& getProcessedFileList(bool pForceRecheck = false);
     const QFileInfoList& getMaskFileList(bool pForceRecheck = false);
 
+    const QDir& getRawFolder() { return mRawFolder; }
+
     void writeGeneralSettings();
     void readGeneralSettings();
     void writeExposureSettings(ExposureSettings pExpSettings);
