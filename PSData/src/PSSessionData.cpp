@@ -161,9 +161,9 @@ void PSSessionData::convertToPSSession(const QDir& pRawFolder, const QDir &pProc
     mBlockWritingOfSettings = false;
 
     // Update status and create initial INI file
+    mIsInitialized = true;
     autoSetStatus();
     writeGeneralSettings();
-    mIsInitialized = true;
 }
 
 void PSSessionData::setExplicitlyIgnored(bool pIgnore) {
@@ -459,6 +459,7 @@ void PSSessionData::writeGeneralSettings() {
     lSettings.setValue("Status", static_cast<int>(mStatus));
 
     lSettings.setValue("ExplicitlyIgnored", mExplicitlyIgnored);
+    lSettings.setValue("IsInitialized", mIsInitialized);
     lSettings.endGroup();
 
     // Store image counts so we can read them without scaning the image directories
@@ -522,6 +523,8 @@ void PSSessionData::readGeneralSettings() {
         lSettings.endGroup();
         return;
     }
+
+    mIsInitialized = lSettings.value("IsInitialized", true).toBool();
 
     // Retrieve the general settings
     mID = lSettings.value("ID", mID).toULongLong();

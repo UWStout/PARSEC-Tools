@@ -413,16 +413,16 @@ void PSHelperMainWindow::queueExposeImagesAction() {
 }
 
 void PSHelperMainWindow::createNewSession() {
-    CreateNewSessionDialog lNewSessionDialog;
+    CreateNewSessionDialog lNewSessionDialog(mCollectionDir);
     int lRet = lNewSessionDialog.exec();
     QDir lCollectionDir(mCollectionDir);
     PSSessionData* lNewSession;
 
     switch (lRet) {
     case QDialog::Accepted:
-        lCollectionDir.mkdir(lNewSessionDialog.getFolderName());
-        lNewSession = new PSSessionData(QDir(mCollectionDir + QDir::separator() + lNewSessionDialog.getFolderName()));
-        lNewSession->convertToPSSession();
+        lCollectionDir.mkdir(lNewSessionDialog.getSessionFolderName());
+        lNewSession = new PSSessionData(QDir(mCollectionDir + QDir::separator() + lNewSessionDialog.getSessionFolderName()));
+        lNewSession->convertToPSSession(lNewSessionDialog.getRawFolderPath(), lNewSessionDialog.getProcessedFolderPath(), lNewSessionDialog.getMasksFolderPath());
         addNewSession(lNewSession);
         break;
     case QDialog::Rejected:
