@@ -25,6 +25,9 @@ class PSDATASHARED_EXPORT PSProjectDataModel : public QAbstractItemModel {
     // Are the status colors enabled
     bool mShowColorForStatus;
 
+    // The last way the data was sorted
+    Qt::SortOrder mLastSortOrder;
+
 public:
     // Make a PSProjectDataModel with the provided data
     PSProjectDataModel(QVector<PSSessionData*> data, QObject* parent);
@@ -53,6 +56,7 @@ public:
     // Inform the view about the data in the table
     QVariant data(const QModelIndex& index, int role) const;
     void sort(int column, Qt::SortOrder order);
+    void sort(int column);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
 
@@ -61,6 +65,7 @@ public:
     bool outputToCSVFile(QString destFilename);
 
     QVector<PSSessionData*> getData();
+    bool isIDUnique(const uint64_t pID) const;
 };
 
 #endif

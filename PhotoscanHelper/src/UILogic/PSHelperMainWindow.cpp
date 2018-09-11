@@ -16,6 +16,7 @@
 #include "GeneralSettingsDialog.h"
 #include "InteractivePhotoScanDialog.h"
 #include "ScriptedPhotoScanDialog.h"
+#include "ScriptedPhase1Dialog.h"
 
 #include "ui_AboutDialog.h"
 
@@ -28,6 +29,7 @@
 #include "QuickPreviewDialog.h"
 #include "CreateNewSessionDialog.h"
 #include "CaptureSessionDialog.h"
+#include "PhotoScanPhase1Dialog.h"
 
 const QString PSHelperMainWindow::WINDOWS_PATH = "C:\\Windows;C:\\Program Files\\ImageMagick;C:\\Program Files\\GraphicsMagick;C:\\Program Files\\exiftool;C:\\Program Files\\dcraw";
 const QString PSHelperMainWindow::MAC_UNIX_PATH = "/usr/bin:/usr/local/bin:/opt/local/bin";
@@ -39,6 +41,7 @@ PSHelperMainWindow::PSHelperMainWindow(QWidget* parent) : QMainWindow(parent) {
     mContextMenu->addSeparator();
     mContextMenu->addAction("Expose Raw Images", this, &PSHelperMainWindow::runExposeImagesAction);
     mContextMenu->addAction("Quick Preview", this, &PSHelperMainWindow::runQuickPreviewAction);
+    mContextMenu->addAction("Interactive PhotoScan Console", this, &PSHelperMainWindow::runInteractiveConsoleAction);
     mContextMenu->addAction("Run PhotoScan Phase 1", this, &PSHelperMainWindow::runPhotoScanPhase1Action);
     mContextMenu->addAction("Run PhotoScan Phase 2", this, &PSHelperMainWindow::runPhotoScanPhase2Action);
     mContextMenu->addSeparator();
@@ -97,6 +100,7 @@ void PSHelperMainWindow::addNewSession(PSSessionData* pSession) {
 }
 
 void PSHelperMainWindow::updateProjectDataModel() {
+    mDataModel->sort(PSSessionData::getSortBy());
     mGUI->PSDataTableView->setModel(mDataModel);
     mGUI->PSDataTableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(
@@ -389,6 +393,34 @@ void PSHelperMainWindow::runQuickPreviewAction()
     }
 }
 
+void PSHelperMainWindow::runInteractiveConsoleAction() {
+    InteractivePhotoScanDialog lInteractiveDialog(this);
+    lInteractiveDialog.exec();
+}
+
+void PSHelperMainWindow::runPhotoScanPhase1Action() {
+    PhotoScanPhase1Dialog lPhase1Dialog(this);
+    int lResult = lPhase1Dialog.exec();
+    if(lResult == QDialog::Accepted) {
+        ScriptedPhase1Dialog lSP1Dialog(mLastData,
+                                        lPhase1Dialog.getProjectName(),
+                                        lPhase1Dialog.getAccuracy(),
+                                        lPhase1Dialog.getGenericPreselection(),
+                                        lPhase1Dialog.getReferencePreselection(),
+                                        lPhase1Dialog.getKeyPointLimit(),
+                                        lPhase1Dialog.getTiePointLimit(),
+                                        lPhase1Dialog.getApplyMasks(),
+                                        "10",
+                                        lPhase1Dialog.getAdaptiveCameraModel(),
+                                        lPhase1Dialog.getBuildDenseCloud(),
+                                        lPhase1Dialog.getQuality(),
+                                        lPhase1Dialog.getDepthFiltering(),
+                                        lPhase1Dialog.getPointColors(),
+                                        this);
+        lSP1Dialog.exec();
+    }
+}
+
 void PSHelperMainWindow::dequeue() {
     if(mGUI->QueueListWidget->count() > 0) {
         mGUI->QueueListWidget->removeItemWidget(mGUI->QueueListWidget->item(0));
@@ -413,7 +445,7 @@ void PSHelperMainWindow::queueExposeImagesAction() {
 }
 
 void PSHelperMainWindow::createNewSession() {
-    CreateNewSessionDialog lNewSessionDialog(mCollectionDir);
+    CreateNewSessionDialog lNewSessionDialog(mCollectionDir, mDataModel, this);
     int lRet = lNewSessionDialog.exec();
     QDir lCollectionDir(mCollectionDir);
     PSSessionData* lNewSession;
@@ -432,7 +464,7 @@ void PSHelperMainWindow::createNewSession() {
         break;
     }
 
-    CaptureSessionDialog lCaptureSessionDialog(lNewSession);
+    CaptureSessionDialog lCaptureSessionDialog(lNewSession, this);
     lRet = lCaptureSessionDialog.exec();
 
     switch (lRet) {

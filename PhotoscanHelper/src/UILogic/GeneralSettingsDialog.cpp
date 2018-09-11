@@ -24,7 +24,8 @@ void GeneralSettingsDialog::restoreSettings() {
     }
 
     mGUI->IDLineEdit->setText(QString::number(mProjectData->getID()));
-    mGUI->DescriptionLineEdit->setText(mProjectData->getName());
+    mGUI->NameLineEdit->setText(mProjectData->getName());
+    mGUI->DescriptionLineEdit->setText(mProjectData->getDescription());
     mGUI->SpecialNotesTextEdit->setPlainText(mProjectData->getNotes().join("; "));
 }
 
@@ -39,8 +40,11 @@ void GeneralSettingsDialog::on_buttonBox_clicked(QAbstractButton* pButton) {
             mProjectData->setCustomStatus(statusIndex);
 
             mProjectData->setID(mGUI->IDLineEdit->text().toULongLong());
-            mProjectData->setName(mGUI->DescriptionLineEdit->text());
+            mProjectData->setName(mGUI->NameLineEdit->text());
+            mProjectData->setDescription(mGUI->DescriptionLineEdit->text());
             mProjectData->addNotes(mGUI->SpecialNotesTextEdit->toPlainText());
+
+            //TODO: Rename Session folder to reflect updated ID and name
         break;
 
         case QDialogButtonBox::Cancel:

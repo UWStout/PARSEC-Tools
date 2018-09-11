@@ -57,6 +57,7 @@ public:
     virtual ~PSSessionData();
 
     static void setSortBy(Field pNewSortBy);
+    static PSSessionData::Field getSortBy();
 
     void convertToPSSession();
     void convertToPSSession(const QDir &pRawFolder, const QDir &pProcessedFolder, const QDir &pMasksFolder);
@@ -77,6 +78,7 @@ public:
     void setID(uint64_t mID);
     void addNotes(QString pNotes);
     void setName(QString pName);
+    void setDescription(QString pDescription);
     void setDateTimeCaptured(QDateTime pDateTimeCaptured);
 
     inline bool hasProject() const { return mPSProjectFile.filePath() != ""; }
@@ -93,6 +95,8 @@ public:
     const QFileInfoList& getMaskFileList(bool pForceRecheck = false);
 
     const QDir& getRawFolder() { return mRawFolder; }
+    const QDir& getProcessedFolder() { return mProcessedFolder; }
+    const QDir& getMasksFolder() { return mMasksFolder; }
 
     void writeGeneralSettings();
     void readGeneralSettings();
@@ -102,6 +106,7 @@ public:
     QDateTime getDateTimeCaptured() const;
     QStringList getNotes() const;
     QString getName() const;
+    QString getDescription() const;
     Status getStatus() const;
 
     QString describeImageAlignPhase() const;

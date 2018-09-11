@@ -1,76 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CaptureSessionDialog</class>
- <widget class="QDialog" name="CaptureSessionDialog">
+ <class>ScriptedPhase1Dialog</class>
+ <widget class="QDialog" name="ScriptedPhase1Dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>168</height>
+    <width>400</width>
+    <height>161</height>
    </rect>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>402</width>
-    <height>168</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>402</width>
-    <height>168</height>
-   </size>
-  </property>
   <property name="windowTitle">
-   <string>Capture Session</string>
+   <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="stageProgressLabel">
      <property name="text">
-      <string>1. Open digiCamControl</string>
+      <string>Stage Progress: Initializing ...</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>2. Select 'edit Session'</string>
+    <widget class="QProgressBar" name="stageProgressBar">
+     <property name="value">
+      <number>24</number>
+     </property>
+     <property name="format">
+      <string>%p%</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="overallProgressLabel">
      <property name="text">
-      <string>3. Change the folder to point towards the desitination below:</string>
+      <string>Overall Progress: Initializing ...</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QProgressBar" name="overallProgressBar">
+     <property name="value">
+      <number>24</number>
      </property>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="statusLabel">
        <property name="text">
-        <string>Raw Files Folder:</string>
+        <string>Status:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="rawFilesLineEdit">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="statusLineEdit"/>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>NOTE: Wait until digiCamControl is done transferring the photos to the directory</string>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -79,9 +66,6 @@
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -92,32 +76,32 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>CaptureSessionDialog</receiver>
+   <receiver>ScriptedPhase1Dialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>121</y>
+     <x>248</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
-     <y>138</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>CaptureSessionDialog</receiver>
+   <receiver>ScriptedPhase1Dialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>127</y>
+     <x>316</x>
+     <y>260</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
-     <y>138</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>

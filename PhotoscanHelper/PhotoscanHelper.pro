@@ -57,7 +57,9 @@ SOURCES += \
     src/UILogic/QtTrackball.cpp \
     src/UILogic/InitializeSessionDialog.cpp \
     src/UILogic/CreateNewSessionDialog.cpp \
-    src/UILogic/CaptureSessionDialog.cpp
+    src/UILogic/CaptureSessionDialog.cpp \
+    src/UILogic/PhotoScanPhase1Dialog.cpp \
+    src/UILogic/ScriptedPhase1Dialog.cpp
 
 HEADERS += \
     include/PSandPhotoScanner.h \
@@ -83,7 +85,9 @@ HEADERS += \
     include/QtTrackball.h \
     include/InitializeSessionDialog.h \
     include/CreateNewSessionDialog.h \
-    include/CaptureSessionDialog.h
+    include/CaptureSessionDialog.h \
+    include/PhotoScanPhase1Dialog.h \
+    include/ScriptedPhase1Dialog.h
 
 FORMS += \
     forms/AboutDialog.ui \
@@ -102,7 +106,9 @@ FORMS += \
     forms/ScriptedPhotoScanDialog.ui \
     forms/InitializeSessionDialog.ui \
     forms/CreateNewSessionDialog.ui \
-    forms/CaptureSessionDialog.ui
+    forms/CaptureSessionDialog.ui \
+    forms/PhotoScanPhase1Dialog.ui \
+    forms/ScriptedPhase1Dialog.ui
 
 RESOURCES += \
     PSHelper.qrc

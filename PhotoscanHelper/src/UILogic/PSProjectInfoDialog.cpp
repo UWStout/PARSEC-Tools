@@ -34,7 +34,8 @@ void PSProjectInfoDialog::setProjectData(const PSSessionData* pProjData) {
     mGUI->PSFileLabel->setText(pProjData->getPSProjectFile().filePath() == "" ? "N/A" : pProjData->getPSProjectFile().fileName());
     mGUI->PSFolderLabel->setText(pProjData->getSessionFolder().path());
 
-    mGUI->DescriptionLabel->setText(pProjData->getName());
+    mGUI->NameLabel->setText(pProjData->getName());
+    mGUI->DescriptionLabel->setText(pProjData->getDescription());
     mGUI->ImageInfoLabel->setText(QString::asprintf("%ld raw, %ld normal, %d depth map",
                                   pProjData->getRawImageCount(), pProjData->getProcessedImageCount(),
                                   pProjData->getDenseCloudDepthImages()));

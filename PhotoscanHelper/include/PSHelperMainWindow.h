@@ -81,7 +81,8 @@ private slots:
 
     void runExposeImagesAction();
     void runQuickPreviewAction();
-    void runPhotoScanPhase1Action() {}
+    void runInteractiveConsoleAction();
+    void runPhotoScanPhase1Action();
     void runPhotoScanPhase2Action() {}
 
     void dequeue();

@@ -1,6 +1,8 @@
 #ifndef CREATENEWSESSIONDIALOG_H
 #define CREATENEWSESSIONDIALOG_H
 
+#include "PSProjectDataModel.h"
+
 #include <QDialog>
 #include <QString>
 
@@ -13,7 +15,7 @@ class CreateNewSessionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreateNewSessionDialog(const QString& pCollectionDir, QWidget *parent = 0);
+    explicit CreateNewSessionDialog(const QString& pCollectionDir, PSProjectDataModel* pDataModel, QWidget *parent = 0);
     ~CreateNewSessionDialog();
 
     QString getSessionFolderName();
@@ -25,6 +27,7 @@ public:
 private:
     Ui::CreateNewSessionDialog* mGUI;
     const QString& mCollectionDir;
+    const PSProjectDataModel* mDataModel;
 
     void updateImageFolderLineEdits();
 

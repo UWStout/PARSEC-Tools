@@ -281,6 +281,7 @@ bool greaterThanPSSD(PSSessionData* A, PSSessionData* B) {
 }
 
 void PSProjectDataModel::sort(int column, Qt::SortOrder order) {
+    mLastSortOrder = order;
     PSSessionData::setSortBy(static_cast<PSSessionData::Field>(column));
     if (order == Qt::AscendingOrder) {
         std::sort(mData.begin(), mData.end(), greaterThanPSSD);
@@ -288,6 +289,10 @@ void PSProjectDataModel::sort(int column, Qt::SortOrder order) {
         std::sort(mData.rbegin(), mData.rend(), greaterThanPSSD);
     }
     emit layoutChanged();
+}
+
+void PSProjectDataModel::sort(int column) {
+    sort(column, mLastSortOrder);
 }
 
 QVariant PSProjectDataModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -389,4 +394,13 @@ bool PSProjectDataModel::outputToCSVFile(QString destFilename) {
 
 QVector<PSSessionData*> PSProjectDataModel::getData() {
     return mData;
+}
+
+bool PSProjectDataModel::isIDUnique(const uint64_t pID) const {
+    for(int i = 0; i < mData.length(); i++) {
+        if(pID == mData[i]->getID()) {
+            return false;
+        }
+    }
+    return true;
 }

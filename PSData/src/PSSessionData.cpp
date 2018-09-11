@@ -32,8 +32,12 @@ void PSSessionData::setSortBy(PSSessionData::Field pNewSortBy) {
     mSortBy = pNewSortBy;
 }
 
+PSSessionData::Field PSSessionData::getSortBy() {
+    return mSortBy;
+}
+
 // The next ID available that is guaranteed to be unique
-uint64_t PSSessionData::mNextID = 0;
+uint64_t PSSessionData::mNextID = 1;
 
 // File name filters
 // Note: raw file extensions from https://en.wikipedia.org/wiki/Raw_image_format
@@ -360,7 +364,8 @@ void PSSessionData::setCustomStatus(int statusIndex) {
 
 void PSSessionData::setID(uint64_t pID) {
     mID = pID;
-    if(mID > mNextID) {
+    mNextID = pID + 1;
+    if(mID >= mNextID) {
         mNextID = mID + 1;
     }
 }
@@ -369,6 +374,7 @@ uint64_t PSSessionData::getID() const { return mID; }
 uint64_t PSSessionData::getNextID() { return mNextID; }
 void PSSessionData::addNotes(QString pNotes) { mNotes.append(pNotes); }
 void PSSessionData::setName(QString pName) { mName = pName; }
+void PSSessionData::setDescription(QString pDescription) { mDescription = pDescription; }
 void PSSessionData::setDateTimeCaptured(QDateTime pDateTimeCaptured) {
     mDateTimeCaptured = pDateTimeCaptured;
 }
@@ -424,6 +430,7 @@ const QFileInfoList& PSSessionData::getMaskFileList(bool pForceRecheck) {
 QDateTime PSSessionData::getDateTimeCaptured() const { return mDateTimeCaptured; }
 QStringList PSSessionData::getNotes() const { return mNotes; }
 QString PSSessionData::getName() const { return mName; }
+QString PSSessionData::getDescription() const { return mDescription; }
 PSSessionData::Status PSSessionData::getStatus() const { return mStatus; }
 
 void PSSessionData::initSettingsFile() {
@@ -438,8 +445,9 @@ void PSSessionData::writeGeneralSettings() {
         qDebug("Error with session ini file.");
     }
 
+    lSettings.setValue("ID", mID);
+
     // Write these only if they are not empty
-    if(mID != NULL) { lSettings.setValue("ID", mID); }
     if(!mName.isEmpty()) { lSettings.setValue("Name", mName); }
     if(!mDescription.isEmpty()) { lSettings.setValue("Description", mDescription); }
     if(!mNotes.isEmpty()) {
