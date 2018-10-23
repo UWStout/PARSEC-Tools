@@ -67,7 +67,7 @@ void ScriptedPhotoScanDialog::startPhotoScan() {
 #endif
 
     // Command arguments
-    lArgs << "-r" << "QuickPreview.py" << mSession->getSessionFolder().absolutePath();
+    lArgs << "-r" << "QuickPreview.py" << mSession->getProcessedFolder().absolutePath();
     lArgs << mMaskDir.filePath();
 
     (mMaskDir.filePath() == "" ? lArgs << "False" : lArgs << "True");
@@ -92,6 +92,10 @@ void ScriptedPhotoScanDialog::startPhotoScan() {
 void ScriptedPhotoScanDialog::inputFromPS() {
     QByteArray stdOut = mPSProc.readAllStandardOutput();
     QByteArray stdErr = mPSProc.readAllStandardError();
+
+    // Debugging
+    qDebug("%s", stdOut.data());
+    qDebug("%s", stdErr.data());
 
     if (!stdErr.isEmpty()) {
         // Trim to one line of output

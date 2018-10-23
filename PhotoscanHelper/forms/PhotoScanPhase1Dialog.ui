@@ -26,7 +26,7 @@
      <item>
       <widget class="QLineEdit" name="projectNameLineEdit">
        <property name="text">
-        <string>NewProject.psx</string>
+        <string>NewProject</string>
        </property>
       </widget>
      </item>
@@ -111,7 +111,7 @@
           <item>
            <widget class="QLineEdit" name="keyPointLineEdit">
             <property name="text">
-             <string>40,000</string>
+             <string>40000</string>
             </property>
            </widget>
           </item>
@@ -145,7 +145,7 @@
           <item>
            <widget class="QLineEdit" name="tiePointLineEdit">
             <property name="text">
-             <string>4,000</string>
+             <string>4000</string>
             </property>
            </widget>
           </item>

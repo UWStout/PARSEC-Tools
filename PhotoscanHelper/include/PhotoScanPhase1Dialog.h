@@ -31,6 +31,9 @@ public:
 
 private:
     Ui::PhotScanPhase1Dialog* mGUI;
+
+private slots:
+    void accept();
 };
 
 #endif // PHOTOSCANPHASE1DIALOG_H
