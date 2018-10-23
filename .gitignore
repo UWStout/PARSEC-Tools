@@ -105,8 +105,3 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-PhotoscanHelper/src/UILogic/GeneralSettingsDialog.cpp
-PSData/include/PSSessionData.h
-PSData/src/PSProjectFileData.cpp
-PSData/src/PSSessionData.cpp
-*.cpp
