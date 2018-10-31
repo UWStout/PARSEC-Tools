@@ -6,6 +6,6 @@ SUBDIRS += \
     PSData \
     QPLY
 
-PSData.depends = QPly
+PSData.depends = QPLY
 PhotoscanHelper.depends = PSData
 PHTest.depends = PSData
